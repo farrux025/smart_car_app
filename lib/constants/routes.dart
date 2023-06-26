@@ -8,6 +8,8 @@ class Routes {
     return {
       // home
       Routes.home: (context) => const HomeScreen(),
+
+      // test
     };
   }
 }
