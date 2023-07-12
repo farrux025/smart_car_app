@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: () => MaterialApp(
         title: 'Smart Car App',
+        debugShowCheckedModeBanner: false,
         navigatorKey: MyApp.navigatorKey,
         theme: ThemeData(primarySwatch: Colors.blue),
         routes: Routes.routesMap(),
