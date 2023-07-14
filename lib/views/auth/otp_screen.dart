@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/routes.dart';
@@ -131,6 +132,7 @@ class _OtpScreenState extends State<OtpScreen> {
                               ])),
                               child: MaterialButton(
                                 onPressed: () {
+                                  closeKeyboard();
                                   log("ENTER OTP");
                                   MyApp.navigatorKey.currentState
                                       ?.pushNamed(Routes.onBoarding);
@@ -143,6 +145,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                     fontWeight: FontWeight.w500),
                               ),
                             ),
+                            SizedBox(height: 50.h)
                           ],
                         ),
                       ),

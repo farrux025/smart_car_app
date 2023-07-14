@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/constants/routes.dart';
+import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 void main() {
+  AndroidYandexMap.useAndroidViewSurface = false;
   runApp(const MyApp());
 }
 

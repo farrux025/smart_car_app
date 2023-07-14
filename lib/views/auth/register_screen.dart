@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/components/app_text_form_field.dart';
 import 'package:smart_car_app/constants/color.dart';
@@ -58,6 +59,7 @@ class RegisterScreen extends StatelessWidget {
                           flex: 2,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Container(
                                 width: ScreenUtil().screenWidth,
@@ -68,6 +70,7 @@ class RegisterScreen extends StatelessWidget {
                                 ])),
                                 child: MaterialButton(
                                   onPressed: () {
+                                    closeKeyboard();
                                     log("Enter and procced");
                                     MyApp.navigatorKey.currentState
                                         ?.pushNamed(Routes.otpWaiting);
