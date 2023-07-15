@@ -1,8 +1,11 @@
-import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:yandex_mapkit/yandex_mapkit.dart';
+import 'package:smart_car_app/components/app_text.dart';
+import 'package:smart_car_app/constants/color.dart';
+import 'package:smart_car_app/views/home/map_screen.dart';
+import 'package:smart_car_app/views/home/station_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,49 +14,96 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final Completer<YandexMapController> _completer = Completer();
-  final Point _point =
-      const Point(latitude: 41.328158265919704, longitude: 69.2353407464624);
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tabController;
+  bool selected1 = true;
+  bool selected2 = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _tabController.addListener(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: YandexMap(
-        onMapCreated: _onMapCreated,
-      ),
-      floatingActionButton: Column(
-        mainAxisSize: MainAxisSize.min,
+      body: Stack(
         children: [
-          FloatingActionButton(
-            onPressed: _zoomIn,
-            heroTag: "zoomIn",
-            child: const Icon(Icons.add),
+          TabBarView(
+            controller: _tabController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: const [MapScreen(), StationListScreen()],
           ),
-          SizedBox(height: 10.sp),
-          FloatingActionButton(
-              onPressed: _zoomOut,
-              heroTag: "zoomOut",
-              child: const Icon(Icons.remove)),
+          Container(
+            margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 52.h),
+            child: TabBar(
+              controller: _tabController,
+              indicatorColor: Colors.transparent,
+              onTap: (index) => _onTabTap(index),
+              tabs: [
+                _tabBarItem(title: "Map", isSelected: selected1),
+                _tabBarItem(title: "List View", isSelected: selected2),
+              ],
+            ),
+          )
         ],
+      ),
+      bottomNavigationBar: Container(
+        height: 62.sp,
+        width: ScreenUtil().screenWidth,
+        color: AppColor.backgroundColorDark,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            MaterialButton(
+                onPressed: () {},
+                height: 62.sp,
+                minWidth: 60.sp,
+                child: Icon(Icons.subject, color: Colors.white, size: 30.sp)),
+            MaterialButton(
+                onPressed: () {},
+                height: 62.sp,
+                child: Image.asset(
+                  "assets/images/car_icon.png",
+                )),
+          ],
+        ),
       ),
     );
   }
 
-  void _onMapCreated(YandexMapController controller) {
-    _completer.complete(controller);
-    controller.moveCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(target: _point)));
-    controller.moveCamera(CameraUpdate.zoomTo(12.8));
+  _tabBarItem({required String title, bool? isSelected}) {
+    return Container(
+        color: (isSelected ?? false) ? Colors.white : Colors.black,
+
+        height: 36.h,
+        width: 130.w,
+        child: Center(
+          child: AppText(
+            title,
+            size: 16.sp,
+            textColor: (isSelected ?? false) ? Colors.black : Colors.white,
+            fontWeight: FontWeight.w400,
+          ),
+        ));
   }
 
-  Future<void> _zoomIn() async {
-    YandexMapController yandexMapController = await _completer.future;
-    yandexMapController.moveCamera(CameraUpdate.zoomIn());
-  }
-
-  Future<void> _zoomOut() async {
-    YandexMapController yandexMapController = await _completer.future;
-    yandexMapController.moveCamera(CameraUpdate.zoomOut());
+  void _onTabTap(index) {
+    log("Tab index: $index");
+    if (index == 0) {
+      setState(() {
+        selected1 = true;
+        selected2 = false;
+      });
+    } else {
+      setState(() {
+        selected2 = true;
+        selected1 = false;
+      });
+    }
   }
 }
