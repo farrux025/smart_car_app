@@ -79,8 +79,7 @@ class _HomeScreenState extends State<HomeScreen>
   _tabBarItem({required String title, bool? isSelected}) {
     return Container(
         color: (isSelected ?? false) ? Colors.white : Colors.black,
-
-        height: 36.h,
+        height: 34.h,
         width: 130.w,
         child: Center(
           child: AppText(
@@ -106,4 +105,23 @@ class _HomeScreenState extends State<HomeScreen>
       });
     }
   }
+}
+
+ratingWidget({required String rating}) {
+  return Container(
+      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8.w),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(4.r),
+          color: AppColor.ratingBackgroundColor),
+      child: Row(
+        children: [
+          Icon(Icons.star_rate_rounded,
+              size: 20.sp, color: AppColor.starRatingColor),
+          SizedBox(width: 4.w),
+          AppText(rating,
+              textColor: AppColor.textColor,
+              size: 11.sp,
+              fontWeight: FontWeight.w500)
+        ],
+      ));
 }

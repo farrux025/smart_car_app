@@ -4,10 +4,13 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smart_car_app/components/app_text.dart';
+import 'package:smart_car_app/views/home/home.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../components/app_text_form_field.dart';
 import '../../constants/color.dart';
+import '../../constants/images.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -31,12 +34,12 @@ class _MapScreenState extends State<MapScreen> {
       isDraggable: true,
       opacity: 1,
       icon: PlacemarkIcon.single(PlacemarkIconStyle(
-        image: BitmapDescriptor.fromAssetImage(
-            "assets/images/map_point_indicator.png"),
+        image: BitmapDescriptor.fromAssetImage(AppImages.locationIndicator),
         scale: 3,
       )),
       onTap: (mapObject, point) {
         log(point.latitude.toString());
+        bottomSheet(stationName: "Charging station name goes here",address: "9502 Belmont Ave. Saint Augustine, FL 32084",distance: "5km Away",rating: "4.5");
       },
     );
   }
@@ -101,6 +104,80 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  void bottomSheet({
+    required String stationName,
+    required String rating,
+    required String address,
+    required String distance,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Scaffold(
+        body: Stack(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                children: [
+                  // name & rating
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AppText(stationName,
+                          size: 24.sp,
+                          textColor: AppColor.textColor,
+                          fontWeight: FontWeight.w600),
+                      ratingWidget(rating: rating)
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  // address & distance
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Flexible(
+                        flex: 7,
+                        child: Row(
+                          children: [
+                            Icon(Icons.location_on,
+                                size: 24.sp, color: Colors.black),
+                            SizedBox(width: 8.w),
+                            AppText(address,
+                                textColor: AppColor.textColor,
+                                size: 12.sp,
+                                fontWeight: FontWeight.w400,
+                                maxLines: 3)
+                          ],
+                        ),
+                      ),
+                      Flexible(
+                          flex: 3,
+                          child: AppText(distance,
+                              textColor: AppColor.textColor,
+                              size: 12.sp,
+                              fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                  // available connector
+                  AppText("Available Connector",
+                      textColor: AppColor.textColor.withOpacity(0.8),
+                      size: 11.sp,
+                      fontWeight: FontWeight.w400),
+                  SizedBox(height: 6.h),
+                  Row(
+                    children: [connectorItem(power: "AC 3.3kw",iconPath: AppImages.switchIconGreen,textColor: AppColor.textColorGreen)],
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   void _onMapCreated(YandexMapController controller) {
     _completer.complete(controller);
     controller.moveCamera(
@@ -119,5 +196,30 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _zoomOut() async {
     YandexMapController yandexMapController = await _completer.future;
     yandexMapController.moveCamera(CameraUpdate.zoomOut());
+  }
+
+  connectorItem(
+      {required String power,
+      required String iconPath,
+      Color? background,
+      Color? textColor}) {
+    return Container(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      decoration: BoxDecoration(
+          color: background ?? AppColor.white,
+          borderRadius: BorderRadius.circular(3.r)),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Image.asset(iconPath, fit: BoxFit.fill),
+          AppText(
+            power,
+            textColor: textColor ?? Colors.black,
+            size: 14.sp,
+            fontWeight: FontWeight.w500,
+          )
+        ],
+      ),
+    );
   }
 }
