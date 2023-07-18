@@ -5,6 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
+import 'package:smart_car_app/main.dart';
+import 'package:smart_car_app/services/map_service.dart';
+import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/home.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
@@ -39,7 +42,12 @@ class _MapScreenState extends State<MapScreen> {
       )),
       onTap: (mapObject, point) {
         log(point.latitude.toString());
-        bottomSheet(stationName: "Charging station name goes here",address: "9502 Belmont Ave. Saint Augustine, FL 32084",distance: "5km Away",rating: "4.5");
+        bottomSheet(
+            point: point,
+            stationName: "Charging station name goes here",
+            address: "9502 Belmont Ave. Saint Augustine, FL 32084",
+            distance: "5km Away",
+            rating: "4.5");
       },
     );
   }
@@ -105,32 +113,50 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void bottomSheet({
+    required Point point,
     required String stationName,
     required String rating,
     required String address,
     required String distance,
   }) {
+    closeKeyboard();
     showModalBottomSheet(
       context: context,
-      builder: (context) => Scaffold(
-        body: Stack(
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
+      backgroundColor: Colors.transparent,
+      builder: (context) => Stack(
+        children: [
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                toolbarHeight: 20.h,
+                leading: const SizedBox(),
+                elevation: 0),
+            body: Container(
+              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              color: AppColor.white,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(height: 32.h),
                   // name & rating
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      AppText(stationName,
-                          size: 24.sp,
-                          textColor: AppColor.textColor,
-                          fontWeight: FontWeight.w600),
-                      ratingWidget(rating: rating)
+                      Flexible(
+                        flex: 2,
+                        child: AppText(stationName,
+                            size: 24.sp,
+                            textColor: AppColor.textColor,
+                            fontWeight: FontWeight.w600),
+                      ),
+                      SizedBox(
+                        width: 70.sp,
+                        child: ratingWidget(rating: rating),
+                      )
                     ],
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 24.h),
                   // address & distance
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -143,11 +169,14 @@ class _MapScreenState extends State<MapScreen> {
                             Icon(Icons.location_on,
                                 size: 24.sp, color: Colors.black),
                             SizedBox(width: 8.w),
-                            AppText(address,
-                                textColor: AppColor.textColor,
-                                size: 12.sp,
-                                fontWeight: FontWeight.w400,
-                                maxLines: 3)
+                            SizedBox(
+                              width: ScreenUtil().screenWidth * 0.5,
+                              child: AppText(address,
+                                  textColor: AppColor.textColor,
+                                  size: 12.sp,
+                                  fontWeight: FontWeight.w400,
+                                  maxLines: 3),
+                            )
                           ],
                         ),
                       ),
@@ -159,21 +188,83 @@ class _MapScreenState extends State<MapScreen> {
                               fontWeight: FontWeight.w700))
                     ],
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 40.h),
                   // available connector
                   AppText("Available Connector",
-                      textColor: AppColor.textColor.withOpacity(0.8),
-                      size: 11.sp,
-                      fontWeight: FontWeight.w400),
-                  SizedBox(height: 6.h),
+                      textColor: AppColor.textColor.withOpacity(0.9),
+                      size: 12.sp,
+                      fontWeight: FontWeight.w500),
+                  SizedBox(height: 16.h),
                   Row(
-                    children: [connectorItem(power: "AC 3.3kw",iconPath: AppImages.switchIconGreen,textColor: AppColor.textColorGreen)],
-                  )
+                    children: [
+                      Expanded(
+                          child: connectorItem(
+                              power: "AC 3.3kw",
+                              bottomText: "Available",
+                              iconPath: AppImages.switchIconGreen,
+                              textColor: AppColor.textColorGreen,
+                              background: AppColor.backgroundColorGreen)),
+                      SizedBox(width: 6.w),
+                      Expanded(
+                          child: connectorItem(
+                              power: "DC 3.3kw",
+                              bottomText: "Occupied",
+                              iconPath: AppImages.switchIconRed,
+                              textColor: AppColor.textColorRed,
+                              background: AppColor.backgroundColorRed)),
+                    ],
+                  ),
+                  SizedBox(height: 24.h),
                 ],
               ),
-            )
-          ],
-        ),
+            ),
+            bottomNavigationBar: Row(
+              children: [
+                Expanded(
+                    child: MaterialButton(
+                  onPressed: () {
+                    log("BOOK NOW");
+                  },
+                  height: 48.h,
+                  color: AppColor.errorColor,
+                  child: AppText("BOOK NOW",
+                      size: 14.sp,
+                      textColor: AppColor.white,
+                      fontWeight: FontWeight.w500),
+                )),
+                SizedBox(width: 2.w),
+                Expanded(
+                    child: MaterialButton(
+                  onPressed: () {
+                    log("NAVIGATE");
+                    // MyApp.navigatorKey.currentState?.pop();
+                    MapService.launchMap(
+                        title: "Test",
+                        lat: point.latitude,
+                        lon: point.longitude);
+                  },
+                  color: AppColor.textColor,
+                  height: 48.h,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      AppText("NAVIGATE",
+                          size: 14.sp,
+                          textColor: AppColor.white,
+                          fontWeight: FontWeight.w500),
+                      SizedBox(width: 8.w),
+                      Image.asset(AppImages.navigatorIcon, fit: BoxFit.fill)
+                    ],
+                  ),
+                )),
+              ],
+            ),
+          ),
+          Positioned(
+              left: 30,
+              child: Image.asset(AppImages.stationPointer,
+                  fit: BoxFit.fill, height: 44.h, width: 36.w)),
+        ],
       ),
     );
   }
@@ -201,25 +292,36 @@ class _MapScreenState extends State<MapScreen> {
   connectorItem(
       {required String power,
       required String iconPath,
+      String? bottomText,
       Color? background,
       Color? textColor}) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
-      decoration: BoxDecoration(
-          color: background ?? AppColor.white,
-          borderRadius: BorderRadius.circular(3.r)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Image.asset(iconPath, fit: BoxFit.fill),
-          AppText(
-            power,
-            textColor: textColor ?? Colors.black,
-            size: 14.sp,
-            fontWeight: FontWeight.w500,
-          )
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          decoration: BoxDecoration(
+              color: background ?? AppColor.white,
+              borderRadius: BorderRadius.circular(3.r)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Image.asset(iconPath, fit: BoxFit.fill),
+              AppText(
+                power,
+                textColor: textColor ?? Colors.black,
+                size: 14.sp,
+                fontWeight: FontWeight.w500,
+              )
+            ],
+          ),
+        ),
+        SizedBox(height: 6.h),
+        AppText(bottomText ?? '',
+            size: 10.sp,
+            textColor: AppColor.buttonRightColor,
+            fontWeight: FontWeight.w400)
+      ],
     );
   }
 }

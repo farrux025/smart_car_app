@@ -3,13 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 
 import '../../main.dart';
+import '../../utils/functions.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});

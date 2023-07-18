@@ -57,7 +57,8 @@ class OnBoardingScreen extends StatelessWidget {
               textColor: AppColor.textColor),
           TextButton(
             onPressed: () {
-              MyApp.navigatorKey.currentState?.pushNamed(Routes.home);
+              MyApp.navigatorKey.currentState
+                  ?.pushNamedAndRemoveUntil(Routes.register, (route) => false);
               log("SKIP");
             },
             child: AppText(index == 3 ? "CONTINUE" : "SKIP",

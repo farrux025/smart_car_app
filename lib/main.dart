@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/constants/routes.dart';
+import 'package:smart_car_app/services/secure_storage.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
-void main() {
+import 'services/dio/dio_client.dart';
+
+main() async {
   AndroidYandexMap.useAndroidViewSurface = false;
+  await DioClient.init();
+  SecureStorage.init();
   runApp(const MyApp());
 }
 
@@ -26,7 +31,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: MyApp.navigatorKey,
         theme: ThemeData(primarySwatch: Colors.blue),
         routes: Routes.routesMap(),
-        initialRoute: Routes.home,
+        initialRoute: Routes.onBoarding,
       ),
     );
   }

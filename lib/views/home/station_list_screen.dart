@@ -49,7 +49,7 @@ class StationListScreen extends StatelessWidget {
             ),
           ),
           Flexible(
-            flex: 20,
+            flex: 22,
             child: ListView.builder(
                 shrinkWrap: true,
                 itemBuilder: (context, index) => chargingStation(

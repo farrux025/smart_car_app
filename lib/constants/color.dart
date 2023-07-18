@@ -11,6 +11,8 @@ class AppColor {
   static const buttonLeftColor = Color(0xFF202533);
   static const buttonRightColor = Color(0xFF6C6C71);
   static const backgroundColor = Color(0xFFDEE0E5);
+  static const backgroundColorGreen = Color(0xFFDEFCF1);
+  static const backgroundColorRed = Color(0xFFFFE8E8);
   static const backgroundColorBlue = Color(0xFFDEE0E5);
   static const backgroundColorDark = Color(0xFF212634);
   static const backgroundColorLight = Color(0xFFF3F5F8);
@@ -18,5 +20,4 @@ class AppColor {
   static const starRatingColor = Color(0xFFFFA724);
   static const ratingBackgroundColor = Color(0xFFFFF7EC);
   static const lightBlue = Color(0xFFDEF5FC);
-
 }

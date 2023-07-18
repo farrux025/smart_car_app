@@ -43,7 +43,10 @@ class AppTextFormField extends StatelessWidget {
       controller: textEditingController,
       maxLines: maxLines,
       maxLength: maxLength,
-      style: TextStyle(fontSize: 16.sp),
+      style: TextStyle(
+          fontSize: 16.sp,
+          color: AppColor.textColor,
+          fontWeight: FontWeight.w500),
       inputFormatters: inputFormatter,
       keyboardType: keyboardType,
       autofocus: autoFocus ?? true,
@@ -51,8 +54,9 @@ class AppTextFormField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hint,
-        contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 20.w),
-        hintStyle: TextStyle(fontSize: 16.sp, color: AppColor.buttonRightColor),
+        contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
+        hintStyle: TextStyle(
+            fontSize: 16.sp, color: AppColor.buttonRightColor.withOpacity(0.5)),
         prefix: prefix,
         prefixIcon: getPrefixIcon(),
         suffixIcon: suffixIcon,
