@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:smart_car_app/views/auth/login_screen.dart';
 import 'package:smart_car_app/views/auth/otp_screen.dart';
 import 'package:smart_car_app/views/auth/otp_waiting_screem.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
@@ -10,10 +11,11 @@ class Routes {
   static const home = "/home";
   static const onBoarding = "/on-boarding-screen";
 
-  // register
+  // auth
   static const register = "/register-screen";
   static const otpWaiting = "/otp-waiting-screen";
   static const otp = "/otp-screen";
+  static const login = "/login-screen";
 
   static Map<String, WidgetBuilder> routesMap() {
     return {
@@ -21,10 +23,11 @@ class Routes {
       Routes.home: (context) => const HomeScreen(),
       Routes.onBoarding: (context) => const OnBoardingScreen(),
 
-      // register
+      // auth
       Routes.register: (context) => RegisterScreen(),
       Routes.otpWaiting: (context) => const OtpWaitingScreen(),
       Routes.otp: (context) => const OtpScreen(),
+      Routes.login: (context) => const LoginScreen(),
     };
   }
 }

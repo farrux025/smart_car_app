@@ -44,7 +44,7 @@ class AppTextFormField extends StatelessWidget {
       maxLines: maxLines,
       maxLength: maxLength,
       style: TextStyle(
-          fontSize: 16.sp,
+          fontSize: 14.sp,
           color: AppColor.textColor,
           fontWeight: FontWeight.w500),
       inputFormatters: inputFormatter,
@@ -56,7 +56,7 @@ class AppTextFormField extends StatelessWidget {
         hintText: hint,
         contentPadding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
         hintStyle: TextStyle(
-            fontSize: 16.sp, color: AppColor.buttonRightColor.withOpacity(0.5)),
+            fontSize: 14.sp, color: AppColor.buttonRightColor.withOpacity(0.5)),
         prefix: prefix,
         prefixIcon: getPrefixIcon(),
         suffixIcon: suffixIcon,

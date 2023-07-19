@@ -48,10 +48,10 @@ class ApiInterceptors extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    final alert = DioException.fromDioError(err.type).toString();
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    final alert = CustomDioException.fromDioError(err).toString();
 
-    err = DioError(
+    err = DioException(
       requestOptions: err.requestOptions,
       error: alert,
       response: err.response,
@@ -83,7 +83,7 @@ class LoggingInterceptors extends Interceptor {
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     log("\n\n<-- error message: ${err.message} URL: ${(err.response?.requestOptions != null ? (err.response!.requestOptions.baseUrl + err.response!.requestOptions.path) : 'URL')}");
     log("data: ${err.response != null ? err.response!.data : 'Unknown Error'}");
     log("DioErrorType: ${err.type}");
@@ -102,11 +102,11 @@ class LoggingInterceptors extends Interceptor {
   }
 }
 
-class DioException implements Exception {
+class CustomDioException implements Exception {
   late String errorMessage;
 
-  DioException.fromDioError(DioExceptionType dioError) {
-    switch (dioError) {
+  CustomDioException.fromDioError(DioException dioException) {
+    switch (dioException.type) {
       case DioExceptionType.cancel:
         errorMessage = 'Request to the server was cancelled.';
         break;
@@ -126,11 +126,11 @@ class DioException implements Exception {
         errorMessage = 'Bad Certificate.';
         break;
       case DioExceptionType.badResponse:
-        errorMessage = "Bad response";
-        // errorMessage = _handleStatusCode();
+        // errorMessage = "Bad response";
+        errorMessage = _handleStatusCode(dioException.response?.statusCode);
         break;
       case DioExceptionType.unknown:
-        if (dioError.name.contains('SocketException')) {
+        if (dioException.message!.contains('SocketException')) {
           errorMessage = "Internet bilan aloqa uzilgan, qayta urinib koring!";
           break;
         }
@@ -140,6 +140,7 @@ class DioException implements Exception {
         errorMessage = 'Something went wrong';
         break;
     }
+
   }
 
   String _handleStatusCode(int? statusCode) {

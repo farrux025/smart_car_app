@@ -7,6 +7,7 @@ import 'package:map_launcher/map_launcher.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/main.dart';
+import 'package:smart_car_app/utils/functions.dart';
 
 class MapService {
   static launchMap(
@@ -37,7 +38,7 @@ class MapService {
                                 coords: coords,
                                 title: title,
                               );
-                              MyApp.navigatorKey.currentState?.pop();
+                              popBack();
                             },
                             padding: EdgeInsets.all(6.sp),
                             child: Column(

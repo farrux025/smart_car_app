@@ -46,7 +46,7 @@ String? AppTextValidator(
     return "Qiymat uzunligi bo'lishi kerak: ${availableLength.map((e) => '$e')}";
   }
   if (equalText != null && (val == null || val != equalText)) {
-    return "Tasdiqlash kodi noto'g'ri kiritilgan";
+    return "Parol mos emas";
   }
   // if (minAmount != null && (val == null || double.parse(val) < minAmount)) {
   //   return "Min: ${currencyFormatter.format(minAmount)}";

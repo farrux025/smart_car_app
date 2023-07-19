@@ -15,7 +15,7 @@ notWorking() {
       background: Colors.green.withOpacity(0.8));
 }
 
-loadingAlert() {
+openLoading() {
   var context = MyApp.navigatorKey.currentState!.context;
   showDialog(
       context: context,
@@ -38,6 +38,10 @@ loadingAlert() {
               ],
             ),
           ));
+}
+
+popBack() {
+  MyApp.navigatorKey.currentState?.pop();
 }
 
 String getPhone(String phone) {
