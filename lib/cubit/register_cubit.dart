@@ -44,8 +44,8 @@ class RegisterCubit extends Cubit<RegisterState> {
                 message: "User Created Successfully",
                 background: Colors.green.withOpacity(0.8));
             SecureStorage.write(key: SecureStorage.phone, value: phone);
-            MyApp.navigatorKey.currentState
-                ?.pushNamedAndRemoveUntil(Routes.home, (route) => false);
+            SecureStorage.write(key: SecureStorage.otp, value: res.toString());
+            MyApp.navigatorKey.currentState?.pushNamed(Routes.otp);
           }
         });
       }

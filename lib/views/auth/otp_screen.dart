@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:custom_timer/custom_timer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
@@ -18,8 +20,39 @@ class OtpScreen extends StatefulWidget {
   State<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpScreenState extends State<OtpScreen>
+    with SingleTickerProviderStateMixin {
   final _pinController = TextEditingController();
+  double percent = 0.0;
+  int maxDuration = 10;
+
+  late final CustomTimerController _timerController = CustomTimerController(
+      vsync: this,
+      begin: Duration(seconds: maxDuration),
+      end: const Duration(seconds: 0),
+      initialState: CustomTimerState.reset,
+      interval: CustomTimerInterval.seconds);
+
+  bool isReceiveOtp = true;
+  bool restartAnimation = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _timerController.start();
+    _timerController.addListener(() {
+      if (_timerController.state.value == CustomTimerState.finished) {
+        setState(() {
+          isReceiveOtp = false;
+          restartAnimation = true ;
+        });
+      } else if (_timerController.state.value == CustomTimerState.counting) {
+        setState(() {
+          isReceiveOtp = true;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,32 +130,70 @@ class _OtpScreenState extends State<OtpScreen> {
                                     fontWeight: FontWeight.w600),
                               ),
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                AppText("Didn’t Recieved ?",
-                                    textColor: AppColor.buttonRightColor,
-                                    size: 11.sp,
-                                    fontWeight: FontWeight.w400),
-                                Container(
-                                  width: 120.w,
-                                  height: 29.h,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: AppColor.textColor,
-                                          width: 1.sp)),
-                                  child: MaterialButton(
-                                    onPressed: () {
-                                      log("Re-Send");
-                                    },
-                                    child: AppText("Re-Send",
-                                        textColor: AppColor.textColor,
-                                        size: 11.sp,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ),
-                              ],
+                            Padding(
+                              padding: EdgeInsets.only(left: 16.w),
+                              child: CircularPercentIndicator(
+                                radius: 50.r,
+                                animationDuration: 10000,
+                                lineWidth: 5.sp,
+                                backgroundWidth: 3.sp,
+                                percent: 1,
+                                animation: true,
+                                backgroundColor: AppColor.secondary,
+                                progressColor: AppColor.textColor,
+                                onAnimationEnd: () {
+                                  log("Animation end");
+                                },
+                                restartAnimation:
+                                    restartAnimation ? true : false,
+                                addAutomaticKeepAlive: false,
+                                center: CustomTimer(
+                                    controller: _timerController,
+                                    builder: (state, time) {
+                                      return AppText(
+                                          "${time.minutes}:${time.seconds}",
+                                          textColor: AppColor.textColor,
+                                          size: 16.sp,
+                                          fontWeight: FontWeight.w500);
+                                    }),
+                              ),
                             ),
+                            isReceiveOtp
+                                ? const SizedBox()
+                                : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      AppText("Didn’t Recieved ?",
+                                          textColor: AppColor.buttonRightColor,
+                                          size: 11.sp,
+                                          fontWeight: FontWeight.w400),
+                                      Container(
+                                        width: 100.w,
+                                        height: 26.h,
+                                        decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: AppColor.textColor,
+                                                width: 1.sp)),
+                                        child: MaterialButton(
+                                          onPressed: () {
+                                            log("Re-Send");
+                                            setState(() {
+                                              _timerController.start();
+                                              setState(() {
+                                                isReceiveOtp = true;
+                                                restartAnimation = true;
+                                              });
+                                            });
+                                          },
+                                          child: AppText("Re-Send",
+                                              textColor: AppColor.textColor,
+                                              size: 11.sp,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                             Container(
                               width: ScreenUtil().screenWidth,
                               decoration: const BoxDecoration(

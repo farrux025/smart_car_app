@@ -112,6 +112,13 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  void _onMapCreated(YandexMapController controller) {
+    _completer.complete(controller);
+    controller.moveCamera(
+        CameraUpdate.newCameraPosition(CameraPosition(target: _initialPoint)));
+    controller.moveCamera(CameraUpdate.zoomTo(13));
+  }
+
   void bottomSheet({
     required Point point,
     required String stationName,
@@ -267,13 +274,6 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
     );
-  }
-
-  void _onMapCreated(YandexMapController controller) {
-    _completer.complete(controller);
-    controller.moveCamera(
-        CameraUpdate.newCameraPosition(CameraPosition(target: _initialPoint)));
-    controller.moveCamera(CameraUpdate.zoomTo(13));
   }
 
   Future<void> _zoomIn() async {

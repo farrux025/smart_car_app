@@ -11,6 +11,7 @@ import 'package:smart_car_app/utils/functions.dart';
 
 import '../constants/routes.dart';
 import '../main.dart';
+import '../services/secure_storage.dart';
 
 part 'login_state.dart';
 
@@ -34,6 +35,7 @@ class LoginCubit extends Cubit<LoginState> {
         await AuthService.doLogin(loginRequest).then((response) {
           if (response.statusCode == 200) {
             emit(LoginLoaded());
+            SecureStorage.write(key: SecureStorage.phone, value: phone);
             MyApp.navigatorKey.currentState
                 ?.pushNamedAndRemoveUntil(Routes.home, (route) => false);
           }

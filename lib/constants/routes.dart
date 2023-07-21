@@ -24,7 +24,7 @@ class Routes {
       Routes.onBoarding: (context) => const OnBoardingScreen(),
 
       // auth
-      Routes.register: (context) => RegisterScreen(),
+      Routes.register: (context) => const RegisterScreen(),
       Routes.otpWaiting: (context) => const OtpWaitingScreen(),
       Routes.otp: (context) => const OtpScreen(),
       Routes.login: (context) => const LoginScreen(),
