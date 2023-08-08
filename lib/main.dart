@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: MyApp.navigatorKey,
         theme: ThemeData(primarySwatch: Colors.blue),
         routes: Routes.routesMap(),
-        initialRoute: username != null ? Routes.otp : Routes.home,
+        initialRoute: username == null ? Routes.onBoarding : Routes.home,
       ),
     );
   }

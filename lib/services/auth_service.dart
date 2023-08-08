@@ -80,4 +80,13 @@ class AuthService {
   static Map<String, dynamic> getLoginConfig() {
     return {"username": "mobile", "password": "123456", "rememberMe": true};
   }
+
+  // ***************************************************************************
+
+  static Future<Response> doActivate({required String otp}) async {
+    Response response =
+        await DioClient.instance.get("${AppUrl.otpActivateUrl}?key=$otp");
+    log("Otp activate response: $response");
+    return response;
+  }
 }

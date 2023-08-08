@@ -11,15 +11,15 @@ class SecureStorage {
     secureStorage = const FlutterSecureStorage();
   }
 
-  static write({required String key, required String value}) async {
+  static Future  write({required String key, required String value}) async {
     return await secureStorage.write(key: key, value: value);
   }
 
-  static read({required String key}) async {
+  static Future read({required String key}) async {
     return await secureStorage.read(key: key);
   }
 
-  static delete({required String key}) async {
+  static Future delete({required String key}) async {
     return await secureStorage.delete(key: key);
   }
 }
