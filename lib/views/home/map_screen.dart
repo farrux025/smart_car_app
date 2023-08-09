@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:developer';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
-import 'package:smart_car_app/main.dart';
+import 'package:smart_car_app/models/global/LocationModel.dart';
+import 'package:smart_car_app/services/charge_box_service.dart';
 import 'package:smart_car_app/services/map_service.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/home.dart';
@@ -24,23 +25,32 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<YandexMapController> _completer = Completer();
-  final Point _initialPoint =
-      const Point(latitude: 41.328158265919704, longitude: 69.2353407464624);
+  final Point _initialPoint = Point(
+      latitude: LocationModel.latitude!, longitude: LocationModel.longitude!);
   List<MapObject> mapObjects = [];
   final searchController = TextEditingController();
 
   PlacemarkMapObject _placeMarkMapObject(
-      {required String mapObjectId, required double lat, required double lon}) {
+      {required String mapObjectId,
+      required double lat,
+      required double lon,
+      String? imagePath}) {
     return PlacemarkMapObject(
       mapId: MapObjectId(mapObjectId),
       point: Point(latitude: lat, longitude: lon),
       isDraggable: true,
       opacity: 1,
       icon: PlacemarkIcon.single(PlacemarkIconStyle(
-        image: BitmapDescriptor.fromAssetImage(AppImages.locationIndicator),
+        image: BitmapDescriptor.fromAssetImage(
+            imagePath ?? AppImages.locationIndicator),
         scale: 3,
       )),
-      onTap: (mapObject, point) {
+      onTap: (mapObject, point) async {
+        toast(message: point.latitude.toString());
+        await ChargeBoxService.doGetChargeBoxes(
+            lat: LocationModel.latitude!,
+            lon: LocationModel.longitude!,
+            distance: 100000);
         log(point.latitude.toString());
         bottomSheet(
             point: point,
@@ -70,6 +80,11 @@ class _MapScreenState extends State<MapScreen> {
           mapObjectId: "map_4", lat: 41.32064899838631, lon: 69.25345098086459),
       _placeMarkMapObject(
           mapObjectId: "map_5", lat: 41.34372198505876, lon: 69.23190747870876),
+      _placeMarkMapObject(
+          mapObjectId: "map_current",
+          lat: LocationModel.latitude!,
+          lon: LocationModel.longitude!,
+          imagePath: AppImages.currentPosition),
     ];
     mapObjects.addAll(list);
   }
