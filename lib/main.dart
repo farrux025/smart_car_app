@@ -20,7 +20,7 @@ main() async {
       await SecureStorage.read(key: SecureStorage.phone);
   Global.userModel.otp = await SecureStorage.read(key: SecureStorage.otp);
   LocationService.listen;
-  LocationService.getCurrentPositionStream();
+  // LocationService.getCurrentPositionStream();
   await LocationService.determinePosition().then((value) {
     LocationModel.latitude = value.latitude;
     LocationModel.longitude = value.longitude;

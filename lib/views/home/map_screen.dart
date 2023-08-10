@@ -15,9 +15,12 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../../components/app_text_form_field.dart';
 import '../../constants/color.dart';
 import '../../constants/images.dart';
+import '../../models/charge_box/ChargeBoxInfo.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final List<ChargeBoxInfo> list;
+
+  const MapScreen({super.key, required this.list});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -30,63 +33,25 @@ class _MapScreenState extends State<MapScreen> {
   List<MapObject> mapObjects = [];
   final searchController = TextEditingController();
 
-  PlacemarkMapObject _placeMarkMapObject(
-      {required String mapObjectId,
-      required double lat,
-      required double lon,
-      String? imagePath}) {
-    return PlacemarkMapObject(
-      mapId: MapObjectId(mapObjectId),
-      point: Point(latitude: lat, longitude: lon),
-      isDraggable: true,
-      opacity: 1,
-      icon: PlacemarkIcon.single(PlacemarkIconStyle(
-        image: BitmapDescriptor.fromAssetImage(
-            imagePath ?? AppImages.locationIndicator),
-        scale: 3,
-      )),
-      onTap: (mapObject, point) async {
-        toast(message: point.latitude.toString());
-        await ChargeBoxService.doGetChargeBoxes(
-            lat: LocationModel.latitude!,
-            lon: LocationModel.longitude!,
-            distance: 100000);
-        log(point.latitude.toString());
-        bottomSheet(
-            point: point,
-            stationName: "Charging station name goes here",
-            address: "9502 Belmont Ave. Saint Augustine, FL 32084",
-            distance: "5km Away",
-            rating: "4.5");
-      },
-    );
-  }
-
   @override
   void initState() {
     super.initState();
     List<MapObject> list = [
-      _placeMarkMapObject(
-          mapObjectId: "map_1", lat: 41.355190986894705, lon: 69.2516485364611),
-      _placeMarkMapObject(
-          mapObjectId: "map_2",
-          lat: 41.344301926904556,
-          lon: 69.20916234695063),
-      _placeMarkMapObject(
-          mapObjectId: "map_3",
-          lat: 41.324838834978976,
-          lon: 69.23027669567703),
-      _placeMarkMapObject(
-          mapObjectId: "map_4", lat: 41.32064899838631, lon: 69.25345098086459),
-      _placeMarkMapObject(
-          mapObjectId: "map_5", lat: 41.34372198505876, lon: 69.23190747870876),
       _placeMarkMapObject(
           mapObjectId: "map_current",
           lat: LocationModel.latitude!,
           lon: LocationModel.longitude!,
           imagePath: AppImages.currentPosition),
     ];
-    mapObjects.addAll(list);
+    for (var element in widget.list) {
+      list.add(_placeMarkMapObject(
+          mapObjectId: element.id ?? "",
+          lat: element.locationLatitude ?? 0,
+          lon: element.locationLongitude ?? 0));
+    }
+    setState(() {
+      mapObjects.addAll(list);
+    });
   }
 
   @override
@@ -132,6 +97,38 @@ class _MapScreenState extends State<MapScreen> {
     controller.moveCamera(
         CameraUpdate.newCameraPosition(CameraPosition(target: _initialPoint)));
     controller.moveCamera(CameraUpdate.zoomTo(13));
+  }
+
+  PlacemarkMapObject _placeMarkMapObject(
+      {required String mapObjectId,
+      required double lat,
+      required double lon,
+      String? imagePath}) {
+    return PlacemarkMapObject(
+      mapId: MapObjectId(mapObjectId),
+      point: Point(latitude: lat, longitude: lon),
+      isDraggable: true,
+      opacity: 1,
+      icon: PlacemarkIcon.single(PlacemarkIconStyle(
+        image: BitmapDescriptor.fromAssetImage(
+            imagePath ?? AppImages.locationIndicator),
+        scale: 3,
+      )),
+      onTap: (mapObject, point) async {
+        toast(message: point.latitude.toString());
+        await ChargeBoxService.doGetChargeBoxes(
+            lat: LocationModel.latitude.toString(),
+            lon: LocationModel.longitude.toString(),
+            distance: "100000");
+        log(point.latitude.toString());
+        bottomSheet(
+            point: point,
+            stationName: "Charging station name goes here",
+            address: "9502 Belmont Ave. Saint Augustine, FL 32084",
+            distance: "5km Away",
+            rating: "4.5");
+      },
+    );
   }
 
   void bottomSheet({

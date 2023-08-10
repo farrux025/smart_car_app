@@ -4,11 +4,11 @@ class AppUrl {
   static const loginUrl = "/api/authenticate";
   static const otpActivateUrl = "/api/activate";
 
-  static chargeBoxListUrl(double lat, double lon, double distance) {
-    return "/charge-boxes/public/distance/$lat/$lon/$distance";
+  static chargeBoxListUrl(String lat, String lon, String distance) {
+    return "/api/charge-boxes/public/distance/$lat/$lon/$distance";
   }
 
   static chargeBoxCountUrl() {
-    return "/charge-boxes/count";
+    return "/api/charge-boxes/count";
   }
 }

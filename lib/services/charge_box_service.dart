@@ -6,13 +6,13 @@ import 'package:smart_car_app/constants/variables.dart';
 import 'dio/dio_client.dart';
 
 class ChargeBoxService {
-  static Future<Response> doGetChargeBoxes(
-      {required double lat,
-      required double lon,
-      required double distance}) async {
-    Response response = await DioClient.instance
+  static Future<Response<List<dynamic>>> doGetChargeBoxes(
+      {required String lat,
+      required String lon,
+      required String distance}) async {
+    // var options = Options(headers: {"Content-type": "application/json"});
+    Response<List<dynamic>> response = await DioClient.instance
         .get(AppUrl.chargeBoxListUrl(lat, lon, distance));
-    // Response response=await DioClient.instance.get(AppUrl.chargeBoxCountUrl());
     log("Charge box list response: $response");
     return response;
   }
