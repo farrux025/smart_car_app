@@ -5,10 +5,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
+import 'package:smart_car_app/services/map_service.dart';
+import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/home.dart';
 
+import '../../models/charge_box/ChargeBoxInfo.dart';
+
 class StationListScreen extends StatelessWidget {
-  const StationListScreen({super.key});
+  final List<ChargeBoxInfo> list;
+
+  const StationListScreen({super.key, required this.list});
 
   @override
   Widget build(BuildContext context) {
@@ -52,12 +58,24 @@ class StationListScreen extends StatelessWidget {
             flex: 22,
             child: ListView.builder(
                 shrinkWrap: true,
-                itemBuilder: (context, index) => chargingStation(
-                    stationName: "Charging station name goes here $index",
-                    distance: "15.4 km",
-                    rating: "4.4",
-                    energyPower: "AC 3.3kw"),
-                itemCount: 10),
+                itemBuilder: (context, index) {
+                  var chargeBox = list[index];
+                  return GestureDetector(
+                    onTap: () => MapService.launchMap(
+                        title: "title",
+                        lat: chargeBox.locationLatitude ?? 0,
+                        lon: chargeBox.locationLongitude ?? 0),
+                    child: chargingStation(
+                        stationName: chargeBox.name ?? '',
+                        distance: distance(
+                                lat: chargeBox.locationLatitude ?? 0,
+                                lon: chargeBox.locationLongitude ?? 0)
+                            .replaceAll(" Away", ""),
+                        rating: "4.4",
+                        energyPower: "AC 3.3kw"),
+                  );
+                },
+                itemCount: list.length),
           )
         ],
       ),
@@ -89,11 +107,12 @@ class StationListScreen extends StatelessWidget {
                 Flexible(
                     flex: 2,
                     child: Image.asset(AppImages.stationPointer,
-                        fit: BoxFit.fill)),
+                        height: 30.h, width: 26.w, fit: BoxFit.fill)),
                 SizedBox(width: 4.w),
                 Flexible(
                   flex: 8,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // station name
                       AppText(stationName,
@@ -104,12 +123,13 @@ class StationListScreen extends StatelessWidget {
                       SizedBox(height: 12.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // rating
                           ratingWidget(rating: rating),
                           // energy power
                           Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Image.asset(AppImages.switchIcon,
                                   fit: BoxFit.fill),
@@ -128,20 +148,19 @@ class StationListScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: 4.w),
-                Flexible(
-                  flex: 3,
-                  child: Card(
-                    child: Container(
-                      decoration: BoxDecoration(
-                          color: AppColor.lightBlue,
-                          borderRadius: BorderRadius.circular(4.r)),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 6.w, vertical: 12.h),
-                      child: AppText(distance,
-                          textColor: AppColor.textColor,
-                          fontWeight: FontWeight.w500,
-                          size: 12.sp),
-                    ),
+                Card(
+                  child: Container(
+                    width: 70.w,
+                    decoration: BoxDecoration(
+                        color: AppColor.lightBlue,
+                        borderRadius: BorderRadius.circular(4.r)),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.w, vertical: 12.h),
+                    child: AppText(distance,
+                        textAlign: TextAlign.center,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w600,
+                        size: 11.sp),
                   ),
                 )
               ],

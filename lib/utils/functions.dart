@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/main.dart';
+
+import '../models/global/LocationModel.dart';
 
 closeKeyboard() {
   FocusManager.instance.primaryFocus?.unfocus();
@@ -51,4 +56,20 @@ String getPhone(String phone) {
       .replaceAll("-", "")
       .replaceAll("(", "")
       .replaceAll(")", "");
+}
+
+String distance({required double lat, required double lon}) {
+  String distance;
+  var distanceBetween = Geolocator.distanceBetween(
+      LocationModel.latitude!, LocationModel.longitude!, lat, lon);
+  log("Distance between: $distanceBetween");
+  if (distanceBetween.toInt() > 1000) {
+    double d = distanceBetween.toInt() / 1000;
+    var distanceString = d.toString();
+    distance =
+        "${distanceString.replaceRange(distanceString.length - 1, distanceString.length, "")} km Away";
+  } else {
+    distance = "${distanceBetween.toInt()} m Away";
+  }
+  return distance;
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
 
@@ -11,9 +12,9 @@ import '../../services/charge_box_service.dart';
 part 'charge_boxes_state.dart';
 
 class ChargeBoxesCubit extends Cubit<ChargeBoxesState> {
-  ChargeBoxesCubit() : super(ChargeBoxesInitial());
-
-  List<ChargeBoxInfo> list = [];
+  ChargeBoxesCubit() : super(ChargeBoxesLoading()) {
+    getChargeBoxes();
+  }
 
   getChargeBoxes() async {
     try {
@@ -29,12 +30,12 @@ class ChargeBoxesCubit extends Cubit<ChargeBoxesState> {
             var chargeBoxInfo = ChargeBoxInfo.fromJson(element);
             list.add(chargeBoxInfo);
           });
-          emit(ChargeBoxesLoaded());
+          emit(ChargeBoxesLoaded(list));
         }
       });
     } on DioException catch (e) {
       log("Charge box cubit ERROE: $e");
-      emit(ChargeBoxesError());
+      emit(ChargeBoxesError(e.toString()));
     }
   }
 }
