@@ -112,6 +112,7 @@ class _MapScreenState extends State<MapScreen> {
       onTap: (mapObject, point) async {
         toast(message: chargeBox.name.toString());
         log(chargeBox.id.toString());
+        await ChargeBoxService.doGetImages(id: chargeBox.id ?? '');
         bottomSheet(
             point: Point(
                 latitude: chargeBox.locationLatitude ?? 0,

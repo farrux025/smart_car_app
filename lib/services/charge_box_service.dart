@@ -16,4 +16,13 @@ class ChargeBoxService {
     log("Charge box list response: $response");
     return response;
   }
+
+  // ***************************************************************************
+
+  static Future<Response> doGetImages({required String id}) async {
+    Response response =
+        await DioClient.instance.get(AppUrl.chargeBoxImageUrl(id));
+    log("Image response: $response");
+    return response;
+  }
 }

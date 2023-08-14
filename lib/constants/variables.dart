@@ -8,7 +8,7 @@ class AppUrl {
     return "/api/charge-boxes/public/distance/$lat/$lon/$distance";
   }
 
-  static chargeBoxCountUrl() {
-    return "/api/charge-boxes/count";
+  static chargeBoxImageUrl(String id) {
+    return "/api/images/$id";
   }
 }
