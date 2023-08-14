@@ -6,6 +6,7 @@ class SecureStorage {
   // keys
   static const phone = 'phone';
   static const otp = 'otp';
+  static const token = 'token';
 
   static init() {
     secureStorage = const FlutterSecureStorage();

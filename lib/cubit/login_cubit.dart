@@ -25,6 +25,7 @@ class LoginCubit extends Cubit<LoginState> {
   LoginRequest? loginRequest;
 
   login() async {
+    emit(LoginLoading());
     try {
       if (formKey.currentState!.validate() &&
           formKeyPassword.currentState!.validate()) {

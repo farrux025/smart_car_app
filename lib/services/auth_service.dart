@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:smart_car_app/constants/variables.dart';
 import 'package:smart_car_app/models/auth/RegisterRequest.dart';
+import 'package:smart_car_app/services/secure_storage.dart';
 
 import '../models/auth/LoginRequest.dart';
 import 'dio/dio_client.dart';
@@ -72,6 +73,10 @@ class AuthService {
     Response response =
         await DioClient.instance.post(AppUrl.loginUrl, data: loginConfig);
     log("Login response: $response");
+    if (response.statusCode == 200) {
+      SecureStorage.write(
+          key: SecureStorage.token, value: response.data['id_token']);
+    }
     return response;
   }
 

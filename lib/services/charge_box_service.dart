@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:smart_car_app/constants/variables.dart';
+import 'package:smart_car_app/services/secure_storage.dart';
 
 import 'dio/dio_client.dart';
 
@@ -20,8 +21,12 @@ class ChargeBoxService {
   // ***************************************************************************
 
   static Future<Response> doGetImages({required String id}) async {
-    Response response =
-        await DioClient.instance.get(AppUrl.chargeBoxImageUrl(id));
+    String token = '';
+    await SecureStorage.read(key: SecureStorage.token)
+        .then((value) => token = value);
+    var options = Options(headers: {"Authorization": "Bearer $token"});
+    Response response = await DioClient.instance
+        .get(AppUrl.chargeBoxImageUrl(id), options: options);
     log("Image response: $response");
     return response;
   }

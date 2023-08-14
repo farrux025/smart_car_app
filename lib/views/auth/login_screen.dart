@@ -102,6 +102,9 @@ class LoginScreen extends StatelessWidget {
                                   onPressed: () {
                                     closeKeyboard();
                                     read.login();
+                                    if (state is LoginLoading) {
+                                      openLoading();
+                                    }
                                   },
                                   height: 57.h,
                                   elevation: 3.sp,

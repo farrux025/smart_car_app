@@ -125,7 +125,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     log("STATE: $state");
                                     read.register();
                                     if (state is RegisterLoading) {
-                                      log("RegisterInitial");
                                       openLoading();
                                     }
                                   },
