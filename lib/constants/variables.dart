@@ -11,4 +11,8 @@ class AppUrl {
   static chargeBoxImageUrl(String id) {
     return "/api/images/$id";
   }
+
+  static chargeBoxPublicDetails() {
+    return "/api/charge-boxes/public/details";
+  }
 }

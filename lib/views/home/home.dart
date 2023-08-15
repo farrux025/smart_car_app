@@ -48,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen>
           builder: (context, state) {
             log("State: $state");
             return Scaffold(
+              backgroundColor: AppColor.backgroundColorDark,
               body: Stack(
                 children: [
                   TabBarView(
@@ -58,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen>
                           ? MapScreen(list: state.list)
                           : const Center(
                               child: CircularProgressIndicator(
-                                  color: AppColor.textColorBlue),
+                                  color: AppColor.white),
                             ),
                       state is ChargeBoxesLoaded
                           ? StationListScreen(

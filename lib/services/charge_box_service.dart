@@ -30,4 +30,14 @@ class ChargeBoxService {
     log("Image response: $response");
     return response;
   }
+
+  // ***************************************************************************
+
+  static Future<Response> doGetPublicDetails(
+      {required String chargeBoxId}) async {
+    Response response = await DioClient.instance
+        .get(AppUrl.chargeBoxPublicDetails(), queryParameters: {"id": chargeBoxId});
+    log("Public details response: $response");
+    return response;
+  }
 }
