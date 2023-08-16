@@ -30,6 +30,9 @@ class DetailsCubit extends Cubit<DetailsState> {
     } on DioException catch (e) {
       log("Error in getPublicDetails: $e");
       emit(DetailsError(e.toString()));
+    } catch (error) {
+      emit(DetailsError(error.toString()));
+      log('Details cubit public error: $error');
     }
   }
 }

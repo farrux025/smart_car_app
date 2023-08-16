@@ -1,16 +1,14 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:popup_menu/popup_menu.dart' as popMenu;
 import 'package:smart_car_app/components/app_components.dart';
-import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
-import 'package:smart_car_app/services/charge_box_service.dart';
-import 'package:smart_car_app/services/map_service.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/charge_box_details.dart';
-import 'package:smart_car_app/views/home/home.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../components/app_text_form_field.dart';
@@ -21,7 +19,9 @@ import '../../models/charge_box/ChargeBoxInfo.dart';
 class MapScreen extends StatefulWidget {
   final List<ChargeBoxInfo> list;
 
-  const MapScreen({super.key, required this.list});
+  MapScreen({super.key, required this.list});
+
+  final targetWidgetKey = GlobalKey();
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -45,9 +45,30 @@ class _MapScreenState extends State<MapScreen> {
               locationLongitude: LocationModel.longitude!),
           imagePath: AppImages.currentPosition),
     ];
+    Set<ChargeBoxInfo> set = HashSet(
+      equals: (p0, p1) {
+        bool check = p0.locationLatitude != p1.locationLatitude &&
+            p0.locationLatitude != p1.locationLatitude;
+        return check;
+      },
+    );
     for (var element in widget.list) {
+      set.add(element);
       mapObjList.add(_placeMarkMapObject(chargeBox: element));
     }
+    List<ChargeBoxInfo> restList = [];
+    for (var set in set) {
+      for (var list in widget.list) {
+        if (set.locationLatitude != list.locationLatitude &&
+            set.locationLongitude != list.locationLongitude) {
+          restList.add(list);
+          mapObjList.add(_placeMarkMapObject(chargeBox: list));
+        }
+      }
+    }
+    // for (var element in set) {
+    //   mapObjList.add(_placeMarkMapObject(chargeBox: element));
+    // }
     mapObjects.addAll(mapObjList);
   }
 
@@ -113,6 +134,36 @@ class _MapScreenState extends State<MapScreen> {
       onTap: (mapObject, point) async {
         toast(message: chargeBox.name.toString());
         log(chargeBox.id.toString());
+        _filterChargeBox(chargeBoxList: widget.list, point: mapObject.point);
+
+        var menu = popMenu.PopupMenu(
+          context: context,
+          items: [
+            popMenu.MenuItem(title: "sd", image: const Icon(Icons.add)),
+            popMenu.MenuItem(title: "sd", image: const Icon(Icons.add)),
+          ],
+        );
+        menu.show(rect: Rect.largest);
+
+        // ContextualMenu(
+        //     targetWidgetKey: widget.targetWidgetKey,
+        //     items: [
+        //       CustomPopupMenuItem(
+        //           image: Icon(Icons.add),
+        //           press: () {},
+        //           textStyle: TextStyle(fontSize: 12.sp),
+        //           textAlign: TextAlign.center,
+        //           title: "Add"),
+        //       CustomPopupMenuItem(
+        //           image: Icon(Icons.add),
+        //           press: () {},
+        //           textStyle: TextStyle(fontSize: 12.sp),
+        //           textAlign: TextAlign.center,
+        //           title: "Add"),
+        //     ],
+        //     ctx: context,
+        //     child: const SizedBox());
+
         bottomSheet(
             chargeBoxId: chargeBox.id ?? '',
             point: Point(
@@ -126,6 +177,22 @@ class _MapScreenState extends State<MapScreen> {
             rating: "4.5");
       },
     );
+  }
+
+  List<ChargeBoxInfo> _filterChargeBox(
+      {required List<ChargeBoxInfo> chargeBoxList, required Point point}) {
+    List<ChargeBoxInfo> list = [];
+    for (var element in chargeBoxList) {
+      // log("Lat1: ${element.locationLatitude} <=> Lat2: ${point.latitude}\nLon1: ${element.locationLongitude} <=> Lon2: ${point.longitude}\n");
+      if (element.locationLatitude == point.latitude &&
+          element.locationLongitude == point.longitude) {
+        list.add(element);
+      }
+    }
+    for (var element in list) {
+      log("Filtered charge box: ${element.name} => ${element.locationLatitude}, ${element.locationLongitude}");
+    }
+    return list;
   }
 
   void bottomSheet({

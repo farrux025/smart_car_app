@@ -3,9 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:overscroll_pop/overscroll_pop.dart';
+import 'package:popup_banner/popup_banner.dart';
 import 'package:smart_car_app/cubit/charge_box/details_cubit.dart';
 import 'package:smart_car_app/models/charge_box/details/Images.dart';
 import 'package:smart_car_app/models/charge_box/details/PublicDetails.dart';
+import 'package:smart_car_app/utils/functions.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../components/app_text.dart';
@@ -65,10 +68,14 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                                 color: AppColor.backgroundColorDark));
                       } else if (state is DetailsError) {
                         return Center(
-                            child: AppText("Error",
-                                textColor: AppColor.errorColor,
-                                size: 14.sp,
-                                fontWeight: FontWeight.w500));
+                            child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 18.w),
+                          child: AppText(state.error,
+                              textColor: AppColor.errorColor,
+                              size: 14.sp,
+                              textAlign: TextAlign.center,
+                              fontWeight: FontWeight.w500),
+                        ));
                       }
                       PublicDetails? details =
                           state is DetailsLoaded ? state.details : null;
@@ -272,13 +279,16 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
                   return images[index].url != null
-                      ? Container(
-                          height: 60,
-                          width: 60,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.r)),
-                          child: Image.network(images[index].url ?? '',
-                              fit: BoxFit.fill),
+                      ? GestureDetector(
+                          onTap: () => openImage2(images),
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.r)),
+                            child: Image.network(images[index].url ?? '',
+                                fit: BoxFit.fill),
+                          ),
                         )
                       : const SizedBox();
                 },
@@ -286,5 +296,57 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                 itemCount: images.length),
           )
         : const SizedBox();
+  }
+
+  openImage2(List<Images> imageList) {
+    List<String> imageUrls = [];
+    for (var element in imageList) {
+      imageUrls.add(element.url ?? '');
+    }
+    PopupBanner(
+        context: context,
+        height: ScreenUtil().screenHeight * 0.8,
+        dotsAlignment: Alignment.bottomCenter,
+        dotsColorInactive: AppColor.white,
+        customCloseButton: CircleAvatar(
+            backgroundColor: Colors.black,
+            child: Icon(
+              Icons.cancel,
+              color: Colors.white,
+              size: 32.sp,
+            )),
+        images: imageUrls,
+        onClick: (index) {
+          log("CLICKED $index");
+        }).show();
+  }
+
+  void openImage(Images image) {
+    log(image.url ?? '');
+    pushDragToPopRoute(
+        context: context,
+        child: OverscrollPop(
+            scrollToPopOption: ScrollToPopOption.start,
+            dragToPopDirection: DragToPopDirection.vertical,
+            friction: 1.5,
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                leading: IconButton(
+                    onPressed: () => popBack(),
+                    icon: const Icon(Icons.close, color: AppColor.white)),
+              ),
+              body: SizedBox(
+                width: ScreenUtil().screenWidth,
+                height: ScreenUtil().screenHeight,
+                child: Center(
+                  child: Image.network(image.url ?? '',
+                      height: ScreenUtil().screenHeight * 0.8,
+                      width: ScreenUtil().screenWidth,
+                      fit: BoxFit.fill),
+                ),
+              ),
+            )));
   }
 }

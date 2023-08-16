@@ -46,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen>
         },
         child: BlocBuilder<ChargeBoxesCubit, ChargeBoxesState>(
           builder: (context, state) {
-            log("State: $state");
             return Scaffold(
               backgroundColor: AppColor.backgroundColorDark,
               body: Stack(

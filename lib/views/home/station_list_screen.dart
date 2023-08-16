@@ -18,6 +18,7 @@ class StationListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    log("Charge boxes count: ${list.length}");
     return Scaffold(
       backgroundColor: AppColor.backgroundColorLight,
       body: Column(

@@ -22,7 +22,7 @@ class ChargeBoxesCubit extends Cubit<ChargeBoxesState> {
       await ChargeBoxService.doGetChargeBoxes(
               lat: LocationModel.latitude.toString(),
               lon: LocationModel.longitude.toString(),
-              distance: "100000")
+              distance: "1000000")
           .then((response) {
         if (response.statusCode == 200) {
           List<ChargeBoxInfo> list = [];
@@ -34,7 +34,7 @@ class ChargeBoxesCubit extends Cubit<ChargeBoxesState> {
         }
       });
     } on DioException catch (e) {
-      log("Charge box cubit ERROE: $e");
+      log("Charge box cubit ERROR: $e");
       emit(ChargeBoxesError(e.toString()));
     }
   }

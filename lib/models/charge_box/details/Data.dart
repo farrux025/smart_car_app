@@ -17,16 +17,18 @@ class Data {
     chargeBox = json['chargeBox'] != null
         ? ChargeBox.fromJson(json['chargeBox'])
         : null;
-    if (json['images'] != null) {
+    if (json['images'] != null && json['images'][0] != null) {
       images = [];
       json['images'].forEach((v) {
         images?.add(Images.fromJson(v));
       });
     }
-    if (json['connectors'] != null) {
+    if (json['connectors'] != null && json['connectors'][0] != null) {
       connectors = [];
       json['connectors'].forEach((v) {
-        connectors?.add(Connectors.fromJson(v));
+        if (json['connectors'] != [null]) {
+          connectors?.add(Connectors.fromJson(v));
+        }
       });
     }
   }

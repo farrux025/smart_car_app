@@ -53,6 +53,10 @@ dependencies:
   geolocator: 9.0.2
   app_settings: 4.2.0
   fluttertoast: 8.2.2
+  overscroll_pop: 0.0.9
+  popup_banner: 1.0.0
+#  popup_menu_2: 0.0.7
+  popup_menu: ^2.0.0
 
 dev_dependencies:
   flutter_test:
