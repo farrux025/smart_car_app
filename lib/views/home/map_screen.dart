@@ -4,8 +4,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:popup_menu/popup_menu.dart' as popMenu;
 import 'package:smart_car_app/components/app_components.dart';
+import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/charge_box_details.dart';
@@ -19,9 +19,7 @@ import '../../models/charge_box/ChargeBoxInfo.dart';
 class MapScreen extends StatefulWidget {
   final List<ChargeBoxInfo> list;
 
-  MapScreen({super.key, required this.list});
-
-  final targetWidgetKey = GlobalKey();
+  const MapScreen({super.key, required this.list});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -45,30 +43,10 @@ class _MapScreenState extends State<MapScreen> {
               locationLongitude: LocationModel.longitude!),
           imagePath: AppImages.currentPosition),
     ];
-    Set<ChargeBoxInfo> set = HashSet(
-      equals: (p0, p1) {
-        bool check = p0.locationLatitude != p1.locationLatitude &&
-            p0.locationLatitude != p1.locationLatitude;
-        return check;
-      },
-    );
-    for (var element in widget.list) {
-      set.add(element);
-      mapObjList.add(_placeMarkMapObject(chargeBox: element));
-    }
-    List<ChargeBoxInfo> restList = [];
-    for (var set in set) {
-      for (var list in widget.list) {
-        if (set.locationLatitude != list.locationLatitude &&
-            set.locationLongitude != list.locationLongitude) {
-          restList.add(list);
-          mapObjList.add(_placeMarkMapObject(chargeBox: list));
-        }
-      }
-    }
-    // for (var element in set) {
+    // for (var element in widget.list) {
     //   mapObjList.add(_placeMarkMapObject(chargeBox: element));
     // }
+    separateChargeBoxList(mapObjList);
     mapObjects.addAll(mapObjList);
   }
 
@@ -134,56 +112,37 @@ class _MapScreenState extends State<MapScreen> {
       onTap: (mapObject, point) async {
         toast(message: chargeBox.name.toString());
         log(chargeBox.id.toString());
-        _filterChargeBox(chargeBoxList: widget.list, point: mapObject.point);
-
-        var menu = popMenu.PopupMenu(
-          context: context,
-          items: [
-            popMenu.MenuItem(title: "sd", image: const Icon(Icons.add)),
-            popMenu.MenuItem(title: "sd", image: const Icon(Icons.add)),
-          ],
-        );
-        menu.show(rect: Rect.largest);
-
-        // ContextualMenu(
-        //     targetWidgetKey: widget.targetWidgetKey,
-        //     items: [
-        //       CustomPopupMenuItem(
-        //           image: Icon(Icons.add),
-        //           press: () {},
-        //           textStyle: TextStyle(fontSize: 12.sp),
-        //           textAlign: TextAlign.center,
-        //           title: "Add"),
-        //       CustomPopupMenuItem(
-        //           image: Icon(Icons.add),
-        //           press: () {},
-        //           textStyle: TextStyle(fontSize: 12.sp),
-        //           textAlign: TextAlign.center,
-        //           title: "Add"),
-        //     ],
-        //     ctx: context,
-        //     child: const SizedBox());
-
-        bottomSheet(
-            chargeBoxId: chargeBox.id ?? '',
-            point: Point(
-                latitude: chargeBox.locationLatitude ?? 0,
-                longitude: chargeBox.locationLongitude ?? 0),
-            stationName: chargeBox.name ?? '',
-            address: "${chargeBox.street},\n${chargeBox.city}",
-            distance: distance(
-                lat: chargeBox.locationLatitude ?? 0,
-                lon: chargeBox.locationLongitude ?? 0),
-            rating: "4.5");
+        openDetails(chargeBox, mapObject);
       },
     );
+  }
+
+  void openDetails(ChargeBoxInfo chargeBox, PlacemarkMapObject mapObject) {
+    if (_filterChargeBox(chargeBoxList: widget.list, point: mapObject.point)
+            .length >
+        1) {
+      openChargeBoxListAlert(
+          _filterChargeBox(chargeBoxList: widget.list, point: mapObject.point));
+    } else {
+      bottomSheet(
+          chargeBoxId: chargeBox.id ?? '',
+          point: Point(
+              latitude: chargeBox.locationLatitude ?? 0,
+              longitude: chargeBox.locationLongitude ?? 0),
+          stationName: chargeBox.name ?? '',
+          address: "${chargeBox.street},\n${chargeBox.city}",
+          distance: distance(
+              lat: chargeBox.locationLatitude ?? 0,
+              lon: chargeBox.locationLongitude ?? 0),
+          rating: "4.5");
+    }
   }
 
   List<ChargeBoxInfo> _filterChargeBox(
       {required List<ChargeBoxInfo> chargeBoxList, required Point point}) {
     List<ChargeBoxInfo> list = [];
+    log("Charge box count: ${chargeBoxList.length}");
     for (var element in chargeBoxList) {
-      // log("Lat1: ${element.locationLatitude} <=> Lat2: ${point.latitude}\nLon1: ${element.locationLongitude} <=> Lon2: ${point.longitude}\n");
       if (element.locationLatitude == point.latitude &&
           element.locationLongitude == point.longitude) {
         list.add(element);
@@ -192,6 +151,7 @@ class _MapScreenState extends State<MapScreen> {
     for (var element in list) {
       log("Filtered charge box: ${element.name} => ${element.locationLatitude}, ${element.locationLongitude}");
     }
+    log("Count of charge boxes: ${list.length}");
     return list;
   }
 
@@ -229,5 +189,44 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _zoomOut() async {
     YandexMapController yandexMapController = await _completer.future;
     yandexMapController.moveCamera(CameraUpdate.zoomOut());
+  }
+
+  void separateChargeBoxList(List<MapObject> mapObjList) {
+    List<ChargeBoxInfo> mainList = widget.list;
+    Set<ChargeBoxInfo> set = HashSet();
+    for (var element in mainList) {
+      set.add(element);
+    }
+    for (var element in set) {
+      log("Set element: ${element.name} => Lat: ${element.locationLatitude}, Lon: ${element.locationLongitude}");
+      mapObjList.add(_placeMarkMapObject(chargeBox: element));
+    }
+    log("====================================================================");
+    log("Set length: ${set.length}");
+  }
+
+  void openChargeBoxListAlert(List<ChargeBoxInfo> list) {
+    showMenu(
+        context: context,
+        position: RelativeRect.fill,
+        items: List.generate(list.length, (index) {
+          ChargeBoxInfo chargeBox = list[index];
+          return PopupMenuItem(
+              child: MaterialButton(
+                  onPressed: () {
+                    bottomSheet(
+                        chargeBoxId: chargeBox.id ?? '',
+                        point: Point(
+                            latitude: chargeBox.locationLatitude ?? 0,
+                            longitude: chargeBox.locationLongitude ?? 0),
+                        stationName: chargeBox.name ?? '',
+                        address: "${chargeBox.street},\n${chargeBox.city}",
+                        distance: distance(
+                            lat: chargeBox.locationLatitude ?? 0,
+                            lon: chargeBox.locationLongitude ?? 0),
+                        rating: "4.5");
+                  },
+                  child: AppText(list[index].name ?? '')));
+        }));
   }
 }

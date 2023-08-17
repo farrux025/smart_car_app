@@ -1,3 +1,6 @@
+import 'dart:collection';
+import 'dart:developer';
+
 class ChargeBoxInfo {
   String? country;
   String? city;
@@ -41,5 +44,33 @@ class ChargeBoxInfo {
     map['name'] = name;
     map['id'] = id;
     return map;
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChargeBoxInfo &&
+          runtimeType == other.runtimeType &&
+          locationLatitude == other.locationLatitude &&
+          locationLongitude == other.locationLongitude;
+
+  @override
+  int get hashCode => locationLatitude.hashCode ^ locationLongitude.hashCode;
+}
+
+compareChargeBox() {
+  List<ChargeBoxInfo> list = [
+    ChargeBoxInfo(id: "1", name: "Name 1"),
+    ChargeBoxInfo(id: "2", name: "Name 2"),
+    ChargeBoxInfo(id: "1", name: "Name 3"),
+    ChargeBoxInfo(id: "2", name: "Name 4"),
+    ChargeBoxInfo(id: "3", name: "Name 5"),
+  ];
+  HashSet<ChargeBoxInfo> set = HashSet<ChargeBoxInfo>();
+  for (var element in list) {
+    set.add(element);
+  }
+  for (var element in set) {
+    log("Set element: ${element.name}");
   }
 }

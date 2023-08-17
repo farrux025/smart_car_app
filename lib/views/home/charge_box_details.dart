@@ -173,7 +173,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                                 ),
                                 SizedBox(height: 16.h),
                                 _imageList(details?.data?.images),
-                                SizedBox(height: 24.h),
+                                SizedBox(height: 50.h),
                               ],
                             ),
                           ),
@@ -290,7 +290,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                                 fit: BoxFit.fill),
                           ),
                         )
-                      : const SizedBox();
+                      : SizedBox(height: 30.h);
                 },
                 separatorBuilder: (context, index) => SizedBox(width: 10.w),
                 itemCount: images.length),
@@ -305,6 +305,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
     }
     PopupBanner(
         context: context,
+        fit: BoxFit.cover,
         height: ScreenUtil().screenHeight * 0.8,
         dotsAlignment: Alignment.bottomCenter,
         dotsColorInactive: AppColor.white,

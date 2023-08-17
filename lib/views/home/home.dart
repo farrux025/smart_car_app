@@ -90,7 +90,9 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     MaterialButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          compareChargeBox();
+                        },
                         height: 62.sp,
                         minWidth: 60.sp,
                         child: Icon(Icons.subject,
