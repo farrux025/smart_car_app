@@ -6,12 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
+import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/charge_box_details.dart';
+import 'package:smart_car_app/views/home/search.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
-import '../../components/app_text_form_field.dart';
 import '../../constants/color.dart';
 import '../../constants/images.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
@@ -71,15 +72,23 @@ class _MapScreenState extends State<MapScreen> {
             left: 4,
             child: Container(
               width: ScreenUtil().screenWidth,
-              margin: EdgeInsets.only(bottom: 24.h, left: 24.w, right: 24.h),
+              height: 50.h,
+              margin: EdgeInsets.only(bottom: 24.h, left: 16.w, right: 16.h),
               color: Colors.white,
-              child: AppTextFormField(
-                hint: "Where you are going to",
-                keyboardType: TextInputType.text,
-                textEditingController: searchController,
-                autoFocus: false,
-                suffixIcon: Icon(Icons.search,
-                    size: 20.sp, color: AppColor.backgroundColorDark),
+              child: MaterialButton(
+                onPressed: () => openSearchView(),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    AppText("Where you are going to",
+                        size: 14.sp,
+                        textColor:
+                            AppColor.backgroundColorDark.withOpacity(0.7),
+                        fontWeight: FontWeight.w500),
+                    Icon(Icons.search,
+                        size: 20.sp, color: AppColor.backgroundColorDark)
+                  ],
+                ),
               ),
             ),
           )
@@ -111,20 +120,31 @@ class _MapScreenState extends State<MapScreen> {
       )),
       onTap: (mapObject, point) async {
         toast(message: chargeBox.name.toString());
-        log(chargeBox.id.toString());
         openDetails(chargeBox, mapObject);
       },
     );
   }
 
+  void openSearchView() {
+    showModalBottomSheet(
+        context: context,
+        useRootNavigator: true,
+        isScrollControlled: true,
+        backgroundColor: AppColor.backgroundColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r))),
+        builder: (context) {
+          return SearchView(searchList: widget.list);
+        });
+  }
+
   void openDetails(ChargeBoxInfo chargeBox, PlacemarkMapObject mapObject) {
-    if (_filterChargeBox(chargeBoxList: widget.list, point: mapObject.point)
-            .length >
-        1) {
-      openChargeBoxListAlert(
-          _filterChargeBox(chargeBoxList: widget.list, point: mapObject.point));
-    } else {
+    if (mapObject.mapId.value != "map_current") {
       bottomSheet(
+          list: _filterChargeBox(
+              chargeBoxList: widget.list, point: mapObject.point),
           chargeBoxId: chargeBox.id ?? '',
           point: Point(
               latitude: chargeBox.locationLatitude ?? 0,
@@ -136,6 +156,25 @@ class _MapScreenState extends State<MapScreen> {
               lon: chargeBox.locationLongitude ?? 0),
           rating: "4.5");
     }
+    //   if (_filterChargeBox(chargeBoxList: widget.list, point: mapObject.point)
+    //           .length >
+    //       1) {
+    //     openChargeBoxListAlert(_filterChargeBox(
+    //         chargeBoxList: widget.list, point: mapObject.point));
+    //   } else {
+    //     bottomSheet(
+    //         chargeBoxId: chargeBox.id ?? '',
+    //         point: Point(
+    //             latitude: chargeBox.locationLatitude ?? 0,
+    //             longitude: chargeBox.locationLongitude ?? 0),
+    //         stationName: chargeBox.name ?? '',
+    //         address: "${chargeBox.street},\n${chargeBox.city}",
+    //         distance: distance(
+    //             lat: chargeBox.locationLatitude ?? 0,
+    //             lon: chargeBox.locationLongitude ?? 0),
+    //         rating: "4.5");
+    //   }
+    // }
   }
 
   List<ChargeBoxInfo> _filterChargeBox(
@@ -153,29 +192,6 @@ class _MapScreenState extends State<MapScreen> {
     }
     log("Count of charge boxes: ${list.length}");
     return list;
-  }
-
-  void bottomSheet({
-    required String chargeBoxId,
-    required Point point,
-    required String stationName,
-    required String rating,
-    required String address,
-    required String distance,
-  }) {
-    closeKeyboard();
-    showModalBottomSheet(
-      context: context,
-      useRootNavigator: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ChargeBoxDetailsWidget(
-          chargeBoxId: chargeBoxId,
-          point: point,
-          stationName: stationName,
-          rating: rating,
-          address: address,
-          distance: distance),
-    );
   }
 
   Future<void> _zoomIn() async {
@@ -215,6 +231,7 @@ class _MapScreenState extends State<MapScreen> {
               child: MaterialButton(
                   onPressed: () {
                     bottomSheet(
+                        list: list,
                         chargeBoxId: chargeBox.id ?? '',
                         point: Point(
                             latitude: chargeBox.locationLatitude ?? 0,
@@ -229,4 +246,30 @@ class _MapScreenState extends State<MapScreen> {
                   child: AppText(list[index].name ?? '')));
         }));
   }
+}
+
+void bottomSheet({
+  required List<ChargeBoxInfo> list,
+  required String chargeBoxId,
+  required Point point,
+  required String stationName,
+  required String rating,
+  required String address,
+  required String distance,
+}) {
+  var context = MyApp.navigatorKey.currentState!.context;
+  closeKeyboard();
+  showModalBottomSheet(
+    context: context,
+    useRootNavigator: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => ChargeBoxDetailsWidget(
+        mainList: list,
+        chargeBoxId: chargeBoxId,
+        point: point,
+        stationName: stationName,
+        rating: rating,
+        address: address,
+        distance: distance),
+  );
 }

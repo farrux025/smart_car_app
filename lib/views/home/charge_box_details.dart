@@ -14,6 +14,8 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 import '../../components/app_text.dart';
 import '../../constants/color.dart';
 import '../../constants/images.dart';
+import '../../models/charge_box/ChargeBoxInfo.dart';
+import '../../models/charge_box/details/Connectors.dart';
 import '../../services/map_service.dart';
 import 'home.dart';
 
@@ -24,9 +26,11 @@ class ChargeBoxDetailsWidget extends StatefulWidget {
   final String rating;
   final String address;
   final String distance;
+  final List<ChargeBoxInfo> mainList;
 
   const ChargeBoxDetailsWidget({
     super.key,
+    required this.mainList,
     required this.chargeBoxId,
     required this.point,
     required this.stationName,
@@ -39,7 +43,16 @@ class ChargeBoxDetailsWidget extends StatefulWidget {
   State<ChargeBoxDetailsWidget> createState() => _ChargeBoxDetailsWidgetState();
 }
 
-class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
+class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
+    with SingleTickerProviderStateMixin {
+  TabController? _tabController;
+
+  @override
+  void initState() {
+    _tabController = TabController(length: widget.mainList.length, vsync: this);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -56,132 +69,21 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                 elevation: 0),
             body: Container(
               color: AppColor.white,
-              child: BlocProvider(
-                create: (context) => DetailsCubit(widget.chargeBoxId),
-                child: BlocListener<DetailsCubit, DetailsState>(
-                  listener: (context, state) {},
-                  child: BlocBuilder<DetailsCubit, DetailsState>(
-                    builder: (context, state) {
-                      if (state is DetailsInitial) {
-                        return const Center(
-                            child: CircularProgressIndicator(
-                                color: AppColor.backgroundColorDark));
-                      } else if (state is DetailsError) {
-                        return Center(
-                            child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 18.w),
-                          child: AppText(state.error,
-                              textColor: AppColor.errorColor,
-                              size: 14.sp,
-                              textAlign: TextAlign.center,
-                              fontWeight: FontWeight.w500),
-                        ));
-                      }
-                      PublicDetails? details =
-                          state is DetailsLoaded ? state.details : null;
-                      return Container(
-                        color: AppColor.white,
-                        child: SingleChildScrollView(
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 24.w),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 32.h),
-                                // name & rating
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      flex: 2,
-                                      child: AppText(widget.stationName,
-                                          size: 24.sp,
-                                          textColor: AppColor.textColor,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    SizedBox(
-                                      width: 70.sp,
-                                      child:
-                                          ratingWidget(rating: widget.rating),
-                                    )
-                                  ],
-                                ),
-                                SizedBox(height: 24.h),
-                                // address & distance
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Flexible(
-                                      flex: 7,
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.location_on,
-                                              size: 24.sp, color: Colors.black),
-                                          SizedBox(width: 8.w),
-                                          SizedBox(
-                                            width:
-                                                ScreenUtil().screenWidth * 0.5,
-                                            child: AppText(widget.address,
-                                                textColor: AppColor.textColor,
-                                                size: 12.sp,
-                                                fontWeight: FontWeight.w400,
-                                                maxLines: 6),
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                    Flexible(
-                                        flex: 3,
-                                        child: AppText(widget.distance,
-                                            textColor: AppColor.textColor,
-                                            size: 12.sp,
-                                            textAlign: TextAlign.center,
-                                            fontWeight: FontWeight.w700))
-                                  ],
-                                ),
-                                SizedBox(height: 40.h),
-                                // available connector
-                                AppText("Available Connector",
-                                    textColor:
-                                        AppColor.textColor.withOpacity(0.9),
-                                    size: 12.sp,
-                                    fontWeight: FontWeight.w500),
-                                SizedBox(height: 16.h),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child: connectorItem(
-                                            power: "AC 3.3kw",
-                                            bottomText: "Available",
-                                            iconPath: AppImages.switchIconGreen,
-                                            textColor: AppColor.textColorGreen,
-                                            background:
-                                                AppColor.backgroundColorGreen)),
-                                    SizedBox(width: 6.w),
-                                    Expanded(
-                                        child: connectorItem(
-                                            power: "DC 3.3kw",
-                                            bottomText: "Occupied",
-                                            iconPath: AppImages.switchIconRed,
-                                            textColor: AppColor.textColorRed,
-                                            background:
-                                                AppColor.backgroundColorRed)),
-                                  ],
-                                ),
-                                SizedBox(height: 16.h),
-                                _imageList(details?.data?.images),
-                                SizedBox(height: 50.h),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+              child: SingleChildScrollView(
+                child: widget.mainList.length > 1
+                    ? SizedBox(
+                        height: ScreenUtil().screenHeight * 0.7,
+                        child: TabBarView(
+                            controller: _tabController,
+                            children:
+                                List.generate(widget.mainList.length, (index) {
+                              var chargeBox = widget.mainList[index];
+                              return _tabBarView(chargeBox);
+                            })),
+                      )
+                    : SizedBox(
+                        height: ScreenUtil().screenHeight * 0.7,
+                        child: _tabBarView(widget.mainList[0])),
               ),
             ),
             bottomNavigationBar: Row(
@@ -189,7 +91,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
                 Expanded(
                     child: MaterialButton(
                   onPressed: () {
-                    log("BOOK NOW");
+                    log("Tab index: ${_tabController?.index}");
                   },
                   height: 48.h,
                   color: AppColor.errorColor,
@@ -227,12 +129,176 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
             ),
           ),
           Positioned(
-              left: 30,
-              child: Image.asset(AppImages.stationPointer,
-                  fit: BoxFit.fill, height: 44.h, width: 36.w)),
+              left: widget.mainList.length > 1 ? 0 : 30,
+              child: widget.mainList.length > 1
+                  ? SizedBox(
+                      height: 50.h,
+                      width: ScreenUtil().screenWidth,
+                      child: TabBar(
+                          automaticIndicatorColorAdjustment: false,
+                          indicatorColor: Colors.transparent,
+                          labelColor: AppColor.yellow,
+                          unselectedLabelColor: Colors.white.withOpacity(0.8),
+                          tabs: List.generate(widget.mainList.length, (index) {
+                            return Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Stack(alignment: Alignment.center, children: [
+                                  Image.asset(AppImages.backImageOfIndicator,
+                                      fit: BoxFit.fill,
+                                      height: 40.h,
+                                      width: 34.w),
+                                  Tab(
+                                    child: AppText(
+                                      "${index + 1}",
+                                      size: 18.sp,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  )
+                                ]),
+                                // Tab(icon: Icon(Icons.circle,size: 8.sp),)
+                              ],
+                            );
+                          }),
+                          controller: _tabController),
+                    )
+                  : Image.asset(AppImages.stationPointer,
+                      fit: BoxFit.fill, height: 42.h, width: 34.w)),
         ],
       ),
     );
+  }
+
+  Widget _tabBarView(ChargeBoxInfo chargeBox) {
+    return BlocProvider(
+      create: (context) => DetailsCubit(chargeBox.id ?? ''),
+      child: BlocListener<DetailsCubit, DetailsState>(
+        listener: (context, state) {},
+        child: BlocBuilder<DetailsCubit, DetailsState>(
+          builder: (context, state) {
+            if (state is DetailsInitial) {
+              return const Center(
+                  child: CircularProgressIndicator(
+                      color: AppColor.backgroundColorDark));
+            } else if (state is DetailsError) {
+              return Center(
+                  child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.w),
+                child: AppText(state.error,
+                    textColor: AppColor.errorColor,
+                    size: 14.sp,
+                    textAlign: TextAlign.center,
+                    fontWeight: FontWeight.w500),
+              ));
+            }
+            PublicDetails? details =
+                state is DetailsLoaded ? state.details : null;
+            return Container(
+              color: AppColor.white,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                          height: widget.mainList.length > 1 ? 40.h : 32.h),
+                      // name & rating
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            flex: 2,
+                            child: AppText(chargeBox.name ?? '',
+                                size: 24.sp,
+                                textColor: AppColor.textColor,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          SizedBox(
+                            width: 70.sp,
+                            child: ratingWidget(rating: widget.rating),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: 24.h),
+                      // address & distance
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Flexible(
+                            flex: 7,
+                            child: Row(
+                              children: [
+                                Icon(Icons.location_on,
+                                    size: 24.sp, color: Colors.black),
+                                SizedBox(width: 8.w),
+                                SizedBox(
+                                  width: ScreenUtil().screenWidth * 0.5,
+                                  child: AppText(widget.address,
+                                      textColor: AppColor.textColor,
+                                      size: 12.sp,
+                                      fontWeight: FontWeight.w400,
+                                      maxLines: 6),
+                                )
+                              ],
+                            ),
+                          ),
+                          Flexible(
+                              flex: 3,
+                              child: AppText(widget.distance,
+                                  textColor: AppColor.textColor,
+                                  size: 12.sp,
+                                  textAlign: TextAlign.center,
+                                  fontWeight: FontWeight.w700))
+                        ],
+                      ),
+                      SizedBox(height: 40.h),
+                      // available connector
+                      AppText("Available Connector",
+                          textColor: AppColor.textColor.withOpacity(0.9),
+                          size: 12.sp,
+                          fontWeight: FontWeight.w500),
+                      SizedBox(height: 16.h),
+                      _connectorList(details?.data?.connectors),
+                      SizedBox(height: 16.h),
+                      _imageList(details?.data?.images),
+                      SizedBox(height: 50.h),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  _connectorList(List<Connectors>? list) {
+    return list != null
+        ? SizedBox(
+            height: 70.h,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: list.length,
+              itemBuilder: (context, index) {
+                var connector = list[index];
+                return connectorItem(
+                    power: connector.connectorTypeId ?? '',
+                    background: AppColor.backgroundColorGreen,
+                    bottomText: 'Available',
+                    textColor: AppColor.textColorGreen,
+                    iconPath: connector.imageUrl ?? '');
+              },
+            ),
+          )
+        : AppText("No connectors",
+            size: 14.sp,
+            fontWeight: FontWeight.w500,
+            textColor: AppColor.errorColor);
   }
 
   connectorItem(
@@ -245,14 +311,21 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.symmetric(vertical: 8.h),
+          margin: EdgeInsets.only(right: 10.w),
+          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
           decoration: BoxDecoration(
               color: background ?? AppColor.white,
               borderRadius: BorderRadius.circular(3.r)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Image.asset(iconPath, fit: BoxFit.fill),
+              ColorFiltered(
+                colorFilter: const ColorFilter.mode(
+                    AppColor.backgroundColorGreen, BlendMode.modulate),
+                child: Image.network(iconPath,
+                    fit: BoxFit.fill, height: 36, width: 36),
+              ),
+              SizedBox(width: 16.w),
               AppText(
                 power,
                 textColor: textColor ?? Colors.black,

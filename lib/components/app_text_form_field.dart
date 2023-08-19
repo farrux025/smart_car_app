@@ -18,6 +18,7 @@ class AppTextFormField extends StatelessWidget {
   TextInputType? keyboardType;
   ValueChanged<String>? onChanged;
   bool? autoFocus;
+  bool? readOnly;
 
   AppTextFormField(
       {this.labelText,
@@ -33,6 +34,7 @@ class AppTextFormField extends StatelessWidget {
       this.keyboardType,
       this.onChanged,
       this.autoFocus,
+      this.readOnly,
       Key? key})
       : super(key: key);
 
@@ -43,6 +45,7 @@ class AppTextFormField extends StatelessWidget {
       controller: textEditingController,
       maxLines: maxLines,
       maxLength: maxLength,
+      readOnly: readOnly ?? false,
       style: TextStyle(
           fontSize: 14.sp,
           color: AppColor.textColor,

@@ -20,4 +20,6 @@ class AppColor {
   static const starRatingColor = Color(0xFFFFA724);
   static const ratingBackgroundColor = Color(0xFFFFF7EC);
   static const lightBlue = Color(0xFFDEF5FC);
+  static const stationIndicatorColor = Color(0xFF30C58F);
+  static const yellow = Color(0xFFF6F100);
 }

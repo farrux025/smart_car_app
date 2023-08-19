@@ -57,6 +57,7 @@ dependencies:
   popup_banner: 1.0.0
 #  popup_menu_2: 0.0.7
   popup_menu: ^2.0.0
+  skeletons: ^0.0.3
 
 dev_dependencies:
   flutter_test:

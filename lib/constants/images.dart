@@ -7,6 +7,7 @@ class AppImages {
   // images
   static const locationIndicator = "assets/images/map_point_indicator.png";
   static const stationPointer = "assets/images/station_pointer.png";
+  static const backImageOfIndicator = "assets/images/back_image_of_indicator.png";
   static const switchIcon = "assets/images/switch_icon.png";
   static const switchIconGreen = "assets/images/switch_icon_green.png";
   static const switchIconRed = "assets/images/switch_icon_red.png";
