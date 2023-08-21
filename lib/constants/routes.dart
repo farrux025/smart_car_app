@@ -5,6 +5,7 @@ import 'package:smart_car_app/views/auth/otp_waiting_screem.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 import 'package:smart_car_app/views/home/home.dart';
 import 'package:smart_car_app/views/onboarding/onboarding_screen.dart';
+import 'package:smart_car_app/views/vehicle/vehicles_screen.dart';
 
 class Routes {
   // home
@@ -17,6 +18,9 @@ class Routes {
   static const otp = "/otp-screen";
   static const login = "/login-screen";
 
+  // vehicle
+  static const vehicles = "/vehicles";
+
   static Map<String, WidgetBuilder> routesMap() {
     return {
       // home
@@ -28,6 +32,9 @@ class Routes {
       Routes.otpWaiting: (context) => const OtpWaitingScreen(),
       Routes.otp: (context) => const OtpScreen(),
       Routes.login: (context) => const LoginScreen(),
+
+      // vehicles
+      Routes.vehicles: (context) => const VehiclesScreen(),
     };
   }
 }

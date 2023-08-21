@@ -124,16 +124,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     closeKeyboard();
                                     log("STATE: $state");
                                     read.register();
-                                    if (state is RegisterLoading) {
-                                      openLoading();
-                                    }
+                                    // if (state is RegisterLoading) {
+                                    //   openLoading();
+                                    // }
                                   },
                                   height: 57.h,
                                   elevation: 3.sp,
-                                  child: AppText("Enter and procced",
-                                      textColor: AppColor.white,
-                                      size: 14.sp,
-                                      fontWeight: FontWeight.w500),
+                                  child: state is RegisterLoaded ||
+                                          state is RegisterInitial ||
+                                          state is RegisterError
+                                      ? AppText("Enter and procced",
+                                          textColor: AppColor.white,
+                                          size: 14.sp,
+                                          fontWeight: FontWeight.w500)
+                                      : const SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: CircularProgressIndicator(
+                                              color: AppColor.white),
+                                        ),
                                 ),
                               ),
                               SizedBox(height: 40.h),

@@ -52,14 +52,12 @@ class RegisterCubit extends Cubit<RegisterState> {
     } on DioException catch (e) {
       emit(RegisterError());
       errorToUI(e);
-      emit(RegisterLoading());
     }
   }
 
   void errorToUI(DioException exception) {
-    popBack();
     if (exception.response?.data['errorKey'] == 'emailexists') {
-      openSnackBar(message: "Bunday foydalanuvchi mavjud!");
+      openSnackBar(message: "Bunday foydalanuvchi allaqachon mavjud!");
     } else if (exception.type == DioExceptionType.unknown) {
       openSnackBar(message: "Something went wrong!");
     }

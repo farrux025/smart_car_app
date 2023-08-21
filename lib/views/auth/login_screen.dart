@@ -102,16 +102,26 @@ class LoginScreen extends StatelessWidget {
                                   onPressed: () {
                                     closeKeyboard();
                                     read.login();
-                                    if (state is LoginLoading) {
-                                      openLoading();
-                                    }
+                                    // if (state is LoginLoading) {
+                                    //   openLoading();
+                                    // }
                                   },
                                   height: 57.h,
                                   elevation: 3.sp,
-                                  child: AppText("Login",
-                                      textColor: AppColor.white,
-                                      size: 14.sp,
-                                      fontWeight: FontWeight.w500),
+                                  child: state is LoginLoaded ||
+                                          state is LoginInitial ||
+                                          state is LoginError
+                                      ? AppText("Login",
+                                          textColor: AppColor.white,
+                                          size: 14.sp,
+                                          fontWeight: FontWeight.w500)
+                                      : const SizedBox(
+                                          height: 24,
+                                          width: 24,
+                                          child: Center(
+                                              child: CircularProgressIndicator(
+                                                  color: AppColor.white)),
+                                        ),
                                 ),
                               ),
                               SizedBox(height: 40.h),

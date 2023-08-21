@@ -5,11 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
+import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/cubit/charge_box/charge_boxes_cubit.dart';
 import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
-import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/map_screen.dart';
 import 'package:smart_car_app/views/home/station_list_screen.dart';
+
+import '../../main.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -98,7 +100,8 @@ class _HomeScreenState extends State<HomeScreen>
                         child: Icon(Icons.subject,
                             color: Colors.white, size: 30.sp)),
                     MaterialButton(
-                        onPressed: () {},
+                        onPressed: () => MyApp.navigatorKey.currentState
+                            ?.pushNamed(Routes.vehicles),
                         height: 62.sp,
                         child: Image.asset(
                           "assets/images/car_icon.png",

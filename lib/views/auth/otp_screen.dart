@@ -59,6 +59,7 @@ class _OtpScreenState extends State<OtpScreen>
     });
     SecureStorage.read(key: SecureStorage.otp).then((value) => otp = value);
   }
+
   @override
   void dispose() {
     _timerController.dispose();
@@ -242,10 +243,19 @@ class _OtpScreenState extends State<OtpScreen>
                                       },
                                       height: 57.h,
                                       elevation: 3.sp,
-                                      child: AppText("ENTER OTP",
-                                          textColor: AppColor.white,
-                                          size: 14.sp,
-                                          fontWeight: FontWeight.w500),
+                                      child: state is OtpLoaded ||
+                                              state is OtpInitial ||
+                                              state is OtpError
+                                          ? AppText("ENTER OTP",
+                                              textColor: AppColor.white,
+                                              size: 14.sp,
+                                              fontWeight: FontWeight.w500)
+                                          : const SizedBox(
+                                              height: 24,
+                                              width: 24,
+                                              child: CircularProgressIndicator(
+                                                  color: AppColor.white),
+                                            ),
                                     ),
                                   ),
                                   SizedBox(height: 50.h)
