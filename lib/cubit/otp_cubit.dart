@@ -5,6 +5,8 @@ import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/services/auth_service.dart';
 
+import '../components/app_components.dart';
+
 part 'otp_state.dart';
 
 class OtpCubit extends Cubit<OtpState> {
@@ -27,6 +29,11 @@ class OtpCubit extends Cubit<OtpState> {
       }
     } on DioException catch (e) {
       emit(OtpError());
+      errorToUI(e);
     }
+  }
+
+  void errorToUI(DioException exception) {
+    openSnackBar(message: "${exception.response?.data['detail']}");
   }
 }
