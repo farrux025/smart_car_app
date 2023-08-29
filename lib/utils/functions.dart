@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -72,4 +73,13 @@ String distance({required double lat, required double lon}) {
     distance = "${distanceBetween.toInt()} m Away";
   }
   return distance;
+}
+
+String separator(String str) {
+  var db = double.parse(str).toString();
+  var split = db.split(".");
+  var rev = StringUtils.reverse(split[0]);
+  var sep = StringUtils.addCharAtPosition(rev, ",", 3, repeat: true);
+  var seq = StringUtils.reverse(sep);
+  return "$seq.${split[1]}";
 }

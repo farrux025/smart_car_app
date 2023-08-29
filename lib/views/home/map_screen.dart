@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,12 +38,12 @@ class _MapScreenState extends State<MapScreen> {
   void initState() {
     super.initState();
     List<MapObject> mapObjList = [
-      _placeMarkMapObject(
-          chargeBox: ChargeBoxInfo(
-              id: "map_current",
-              locationLatitude: LocationModel.latitude!,
-              locationLongitude: LocationModel.longitude!),
-          imagePath: AppImages.currentPosition),
+      // _placeMarkMapObject(
+      //     chargeBox: ChargeBoxInfo(
+      //         id: "map_current",
+      //         locationLatitude: LocationModel.latitude!,
+      //         locationLongitude: LocationModel.longitude!),
+      //     imagePath: AppImages.currentPosition),
     ];
     // for (var element in widget.list) {
     //   mapObjList.add(_placeMarkMapObject(chargeBox: element));
@@ -63,6 +64,12 @@ class _MapScreenState extends State<MapScreen> {
               child: YandexMap(
                   onMapCreated: _onMapCreated,
                   mapObjects: mapObjects,
+                  // onCameraPositionChanged: (cameraPosition, reason, finished) {
+                  //   log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
+                  // },
+                  // onTrafficChanged: (trafficLevel) {
+                  //   log("onTrafficChanged: ${trafficLevel?.color} => ${trafficLevel?.level}");
+                  // },
                   nightModeEnabled: true),
             ),
           ),
@@ -261,15 +268,19 @@ void bottomSheet({
   closeKeyboard();
   showModalBottomSheet(
     context: context,
-    useRootNavigator: true,
+    isScrollControlled: true,
+    barrierColor: Colors.transparent.withOpacity(0.5),
     backgroundColor: Colors.transparent,
-    builder: (context) => ChargeBoxDetailsWidget(
-        mainList: list,
-        chargeBoxId: chargeBoxId,
-        point: point,
-        stationName: stationName,
-        rating: rating,
-        address: address,
-        distance: distance),
+    builder: (context) => BackdropFilter(
+      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+      child: ChargeBoxDetailsWidget(
+          mainList: list,
+          chargeBoxId: chargeBoxId,
+          point: point,
+          stationName: stationName,
+          rating: rating,
+          address: address,
+          distance: distance),
+    ),
   );
 }

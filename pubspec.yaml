@@ -55,9 +55,10 @@ dependencies:
   fluttertoast: 8.2.2
   overscroll_pop: 0.0.9
   popup_banner: 1.0.0
-#  popup_menu_2: 0.0.7
+  #  popup_menu_2: 0.0.7
   popup_menu: ^2.0.0
   skeletons: ^0.0.3
+  basic_utils: ^5.4.2
 
 dev_dependencies:
   flutter_test:

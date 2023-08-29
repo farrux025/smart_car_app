@@ -16,6 +16,7 @@ import '../../constants/color.dart';
 import '../../constants/images.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
 import '../../models/charge_box/details/Connectors.dart';
+import '../../models/charge_box/details/Data.dart';
 import '../../services/map_service.dart';
 import 'home.dart';
 
@@ -55,118 +56,127 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: ScreenUtil().screenHeight,
-      width: ScreenUtil().screenWidth,
-      child: Stack(
-        children: [
-          Scaffold(
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(
-                backgroundColor: Colors.transparent,
-                toolbarHeight: 20.h,
-                leading: const SizedBox(),
-                elevation: 0),
-            body: Container(
-              color: AppColor.white,
-              child: SingleChildScrollView(
-                child: widget.mainList.length > 1
-                    ? SizedBox(
-                        height: ScreenUtil().screenHeight * 0.7,
-                        child: TabBarView(
-                            controller: _tabController,
-                            children:
-                                List.generate(widget.mainList.length, (index) {
-                              var chargeBox = widget.mainList[index];
-                              return _tabBarView(chargeBox);
-                            })),
-                      )
-                    : SizedBox(
-                        height: ScreenUtil().screenHeight * 0.7,
-                        child: _tabBarView(widget.mainList[0])),
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.6,
+      minChildSize: 0.5,
+      maxChildSize: 0.8,
+      builder: (context, scrollController) => SizedBox(
+        height: ScreenUtil().screenHeight,
+        width: ScreenUtil().screenWidth,
+        child: Stack(
+          children: [
+            Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                  backgroundColor: Colors.transparent,
+                  toolbarHeight: 20.h,
+                  leading: const SizedBox(),
+                  elevation: 0),
+              body: Container(
+                color: AppColor.white,
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: widget.mainList.length > 1
+                      ? SizedBox(
+                          height: ScreenUtil().screenHeight * 0.7,
+                          child: TabBarView(
+                              controller: _tabController,
+                              children: List.generate(widget.mainList.length,
+                                  (index) {
+                                var chargeBox = widget.mainList[index];
+                                return _tabBarView(chargeBox);
+                              })),
+                        )
+                      : SizedBox(
+                          height: ScreenUtil().screenHeight * 0.7,
+                          child: _tabBarView(widget.mainList[0])),
+                ),
+              ),
+              bottomNavigationBar: Row(
+                children: [
+                  Expanded(
+                      child: MaterialButton(
+                    onPressed: () {
+                      log("Tab index: ${_tabController?.index}");
+                    },
+                    height: 48.h,
+                    color: AppColor.errorColor,
+                    child: AppText("BOOK NOW",
+                        size: 14.sp,
+                        textColor: AppColor.white,
+                        fontWeight: FontWeight.w500),
+                  )),
+                  SizedBox(width: 2.w),
+                  Expanded(
+                      child: MaterialButton(
+                    onPressed: () {
+                      log("NAVIGATE");
+                      // MyApp.navigatorKey.currentState?.pop();
+                      MapService.launchMap(
+                          title: "Test",
+                          lat: widget.point.latitude,
+                          lon: widget.point.longitude);
+                    },
+                    color: AppColor.textColor,
+                    height: 48.h,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AppText("NAVIGATE",
+                            size: 14.sp,
+                            textColor: AppColor.white,
+                            fontWeight: FontWeight.w500),
+                        SizedBox(width: 8.w),
+                        Image.asset(AppImages.navigatorIcon, fit: BoxFit.fill)
+                      ],
+                    ),
+                  )),
+                ],
               ),
             ),
-            bottomNavigationBar: Row(
-              children: [
-                Expanded(
-                    child: MaterialButton(
-                  onPressed: () {
-                    log("Tab index: ${_tabController?.index}");
-                  },
-                  height: 48.h,
-                  color: AppColor.errorColor,
-                  child: AppText("BOOK NOW",
-                      size: 14.sp,
-                      textColor: AppColor.white,
-                      fontWeight: FontWeight.w500),
-                )),
-                SizedBox(width: 2.w),
-                Expanded(
-                    child: MaterialButton(
-                  onPressed: () {
-                    log("NAVIGATE");
-                    // MyApp.navigatorKey.currentState?.pop();
-                    MapService.launchMap(
-                        title: "Test",
-                        lat: widget.point.latitude,
-                        lon: widget.point.longitude);
-                  },
-                  color: AppColor.textColor,
-                  height: 48.h,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      AppText("NAVIGATE",
-                          size: 14.sp,
-                          textColor: AppColor.white,
-                          fontWeight: FontWeight.w500),
-                      SizedBox(width: 8.w),
-                      Image.asset(AppImages.navigatorIcon, fit: BoxFit.fill)
-                    ],
-                  ),
-                )),
-              ],
-            ),
-          ),
-          Positioned(
-              left: widget.mainList.length > 1 ? 0 : 30,
-              child: widget.mainList.length > 1
-                  ? SizedBox(
-                      height: 50.h,
-                      width: ScreenUtil().screenWidth,
-                      child: TabBar(
-                          automaticIndicatorColorAdjustment: false,
-                          indicatorColor: Colors.transparent,
-                          labelColor: AppColor.yellow,
-                          unselectedLabelColor: Colors.white.withOpacity(0.8),
-                          tabs: List.generate(widget.mainList.length, (index) {
-                            return Column(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Stack(alignment: Alignment.center, children: [
-                                  Image.asset(AppImages.backImageOfIndicator,
-                                      fit: BoxFit.fill,
-                                      height: 40.h,
-                                      width: 34.w),
-                                  Tab(
-                                    child: AppText(
-                                      "${index + 1}",
-                                      size: 18.sp,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  )
-                                ]),
-                                // Tab(icon: Icon(Icons.circle,size: 8.sp),)
-                              ],
-                            );
-                          }),
-                          controller: _tabController),
-                    )
-                  : Image.asset(AppImages.stationPointer,
-                      fit: BoxFit.fill, height: 42.h, width: 34.w)),
-        ],
+            Positioned(
+                left: widget.mainList.length > 1 ? 0 : 30,
+                child: widget.mainList.length > 1
+                    ? SizedBox(
+                        height: 50.h,
+                        width: ScreenUtil().screenWidth,
+                        child: TabBar(
+                            automaticIndicatorColorAdjustment: false,
+                            indicatorColor: Colors.transparent,
+                            labelColor: AppColor.yellow,
+                            unselectedLabelColor: Colors.white.withOpacity(0.8),
+                            tabs:
+                                List.generate(widget.mainList.length, (index) {
+                              return Column(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Stack(alignment: Alignment.center, children: [
+                                    Image.asset(AppImages.backImageOfIndicator,
+                                        fit: BoxFit.fill,
+                                        height: 40.h,
+                                        width: 34.w),
+                                    Tab(
+                                      child: AppText(
+                                        "${index + 1}",
+                                        size: 18.sp,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    )
+                                  ]),
+                                  // Tab(icon: Icon(Icons.circle,size: 8.sp),)
+                                ],
+                              );
+                            }),
+                            controller: _tabController),
+                      )
+                    : Image.asset(AppImages.stationPointer,
+                        fit: BoxFit.fill, height: 42.h, width: 34.w)),
+          ],
+        ),
       ),
     );
   }
@@ -262,7 +272,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                           size: 12.sp,
                           fontWeight: FontWeight.w500),
                       SizedBox(height: 16.h),
-                      _connectorList(details?.data?.connectors),
+                      _connectorList(details?.data),
                       SizedBox(height: 16.h),
                       _imageList(details?.data?.images),
                       SizedBox(height: 50.h),
@@ -277,10 +287,11 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
     );
   }
 
-  _connectorList(List<Connectors>? list) {
+  _connectorList(Data? data) {
+    List<Connectors>? list = data?.connectors;
     return list != null
         ? SizedBox(
-            height: 70.h,
+            height: 90.h,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: list.length,
@@ -290,6 +301,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                     power: connector.connectorTypeId ?? '',
                     background: AppColor.backgroundColorGreen,
                     bottomText: 'Available',
+                    price: data?.chargeBox?.price.toString() ?? '',
                     textColor: AppColor.textColorGreen,
                     iconPath: connector.imageUrl ?? '');
               },
@@ -304,6 +316,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
   connectorItem(
       {required String power,
       required String iconPath,
+      required String price,
       String? bottomText,
       Color? background,
       Color? textColor}) {
@@ -331,15 +344,35 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                 textColor: textColor ?? Colors.black,
                 size: 14.sp,
                 fontWeight: FontWeight.w500,
-              )
+              ),
+              SizedBox(width: 30.w),
             ],
           ),
         ),
-        SizedBox(height: 6.h),
-        AppText(bottomText ?? '',
-            size: 10.sp,
-            textColor: AppColor.buttonRightColor,
-            fontWeight: FontWeight.w400)
+        // SizedBox(height: 6.h),
+        Row(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 10.w),
+              decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(3.r)),
+                  color: const Color(0xFFC8F4E4)),
+              child: AppText("${separator(price)} uzs/hr",
+                  textColor: textColor ?? AppColor.textColor,
+                  size: 11.sp,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 8.0.w),
+              child: AppText(bottomText ?? '',
+                  size: 10.sp,
+                  textColor: AppColor.buttonRightColor,
+                  fontWeight: FontWeight.w400),
+            ),
+          ],
+        )
       ],
     );
   }
@@ -354,18 +387,15 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                   return images[index].url != null
                       ? GestureDetector(
                           onTap: () => openImage2(images),
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(16.r)),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(6.r),
                             child: Image.network(images[index].url ?? '',
-                                fit: BoxFit.fill),
+                                height: 60, width: 70, fit: BoxFit.fill),
                           ),
                         )
                       : SizedBox(height: 30.h);
                 },
-                separatorBuilder: (context, index) => SizedBox(width: 10.w),
+                separatorBuilder: (context, index) => SizedBox(width: 12.w),
                 itemCount: images.length),
           )
         : const SizedBox();
