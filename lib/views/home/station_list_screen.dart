@@ -5,16 +5,19 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
-import 'package:smart_car_app/services/map_service.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/home.dart';
+import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../models/charge_box/ChargeBoxInfo.dart';
+import 'map_screen.dart';
 
 class StationListScreen extends StatelessWidget {
   final List<ChargeBoxInfo> list;
+  final String address;
 
-  const StationListScreen({super.key, required this.list});
+  const StationListScreen(
+      {super.key, required this.list, required this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +34,7 @@ class StationListScreen extends StatelessWidget {
                   color: AppColor.backgroundColorDark, size: 24.sp),
               title: Padding(
                 padding: EdgeInsets.only(right: 30.w),
-                child: AppText("9502 Belmont Ave. Saint Augustine, FL 32084",
+                child: AppText(address,
                     maxLines: 3,
                     size: 12.sp,
                     fontWeight: FontWeight.w400,
@@ -62,10 +65,7 @@ class StationListScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   var chargeBox = list[index];
                   return GestureDetector(
-                    onTap: () => MapService.launchMap(
-                        title: "title",
-                        lat: chargeBox.locationLatitude ?? 0,
-                        lon: chargeBox.locationLongitude ?? 0),
+                    onTap: () => _onItemTap(chargeBox),
                     child: chargingStation(
                         stationName: chargeBox.name ?? '',
                         distance: distance(
@@ -81,6 +81,20 @@ class StationListScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  _onItemTap(ChargeBoxInfo item) {
+    bottomSheet(
+        list: [item],
+        chargeBoxId: item.id ?? '',
+        point: Point(
+            latitude: item.locationLatitude ?? 0,
+            longitude: item.locationLongitude ?? 0),
+        stationName: item.name ?? '',
+        address: "${item.street},\n${item.city}",
+        distance: distance(
+            lat: item.locationLatitude ?? 0, lon: item.locationLongitude ?? 0),
+        rating: "4.5");
   }
 
   chargingStation({

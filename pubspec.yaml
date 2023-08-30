@@ -59,6 +59,7 @@ dependencies:
   popup_menu: ^2.0.0
   skeletons: ^0.0.3
   basic_utils: ^5.4.2
+  geocoding: ^2.1.0
 
 dev_dependencies:
   flutter_test:

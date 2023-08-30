@@ -57,8 +57,8 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
             ],
           ),
           Positioned(
-            width: 100,
-            left: -16,
+            width: 90.w,
+            left: -20.w,
             top: ScreenUtil().screenHeight * 0.48,
             child: RotationTransition(
               turns: const AlwaysStoppedAnimation<double>(1.25),

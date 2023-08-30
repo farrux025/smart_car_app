@@ -5,6 +5,7 @@ import 'package:smart_car_app/views/auth/otp_waiting_screem.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 import 'package:smart_car_app/views/home/home.dart';
 import 'package:smart_car_app/views/onboarding/onboarding_screen.dart';
+import 'package:smart_car_app/views/profile/profile_screen.dart';
 import 'package:smart_car_app/views/vehicle/vehicles_screen.dart';
 
 class Routes {
@@ -21,6 +22,9 @@ class Routes {
   // vehicle
   static const vehicles = "/vehicles";
 
+  // profile
+  static const profile = "/profile";
+
   static Map<String, WidgetBuilder> routesMap() {
     return {
       // home
@@ -35,6 +39,9 @@ class Routes {
 
       // vehicles
       Routes.vehicles: (context) => const VehiclesScreen(),
+
+      // profile
+      Routes.profile: (context) => const ProfileScreen(),
     };
   }
 }

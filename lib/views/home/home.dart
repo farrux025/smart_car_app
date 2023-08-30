@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/routes.dart';
@@ -11,7 +12,9 @@ import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
 import 'package:smart_car_app/views/home/map_screen.dart';
 import 'package:smart_car_app/views/home/station_list_screen.dart';
 
+import '../../components/app_components.dart';
 import '../../main.dart';
+import '../../models/global/LocationModel.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen>
   late final TabController _tabController;
   bool selected1 = true;
   bool selected2 = false;
+  String address = '';
 
   // List<ChargeBoxInfo> chargeBoxList = [];
 
@@ -33,6 +37,12 @@ class _HomeScreenState extends State<HomeScreen>
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() {});
+    _getAddress().then((value) {
+      var placemark = value[0];
+      log("Address: $placemark");
+      address =
+          "${placemark.subLocality}, ${placemark.locality}, ${placemark.country}";
+    });
     // ChargeBoxesCubit().getChargeBoxes();
   }
 
@@ -62,11 +72,13 @@ class _HomeScreenState extends State<HomeScreen>
                               child: CircularProgressIndicator(
                                   color: AppColor.white),
                             ),
-                      state is ChargeBoxesLoaded
-                          ? StationListScreen(
-                              list: state.list,
-                            )
-                          : const SizedBox()
+                      if (state is ChargeBoxesLoaded)
+                        StationListScreen(
+                          list: state.list,
+                          address: address,
+                        )
+                      else
+                        const SizedBox()
                     ],
                   ),
                   Container(
@@ -92,9 +104,8 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     MaterialButton(
-                        onPressed: () {
-                          compareChargeBox();
-                        },
+                        onPressed: () => MyApp.navigatorKey.currentState
+                            ?.pushNamed(Routes.profile),
                         height: 62.sp,
                         minWidth: 60.sp,
                         child: Icon(Icons.subject,
@@ -143,6 +154,17 @@ class _HomeScreenState extends State<HomeScreen>
         selected2 = true;
         selected1 = false;
       });
+    }
+  }
+
+  Future<List<Placemark>> _getAddress() async {
+    try {
+      return await placemarkFromCoordinates(
+          LocationModel.latitude ?? 0, LocationModel.longitude ?? 0);
+    } catch (error) {
+      log("Error while get address: $error");
+      openSnackBar(message: error.toString());
+      return [];
     }
   }
 }

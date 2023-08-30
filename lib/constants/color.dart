@@ -11,6 +11,7 @@ class AppColor {
   static const buttonLeftColor = Color(0xFF202533);
   static const buttonRightColor = Color(0xFF6C6C71);
   static const backgroundColor = Color(0xFFDEE0E5);
+  static const backgroundMain = Color(0xFFCED4E8);
   static const backgroundColorGreen = Color(0xFFDEFCF1);
   static const backgroundColorRed = Color(0xFFFFE8E8);
   static const backgroundColorBlue = Color(0xFFDEE0E5);
