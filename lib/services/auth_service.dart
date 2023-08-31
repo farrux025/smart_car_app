@@ -5,6 +5,8 @@ import 'package:smart_car_app/constants/variables.dart';
 import 'package:smart_car_app/models/auth/RegisterRequest.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
 
+import '../constants/routes.dart';
+import '../main.dart';
 import '../models/auth/LoginRequest.dart';
 import 'dio/dio_client.dart';
 
@@ -93,5 +95,12 @@ class AuthService {
         await DioClient.instance.get("${AppUrl.otpActivateUrl}?key=$otp");
     log("Otp activate response: $response");
     return response;
+  }
+
+  static logout() async {
+    log("USER LOG OUT!");
+    await SecureStorage.clearSecureStorage();
+    MyApp.navigatorKey.currentState
+        ?.pushNamedAndRemoveUntil(Routes.register, (route) => false);
   }
 }

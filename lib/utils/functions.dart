@@ -4,11 +4,14 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/main.dart';
+import 'package:smart_car_app/services/auth_service.dart';
 
+import '../constants/routes.dart';
 import '../models/global/LocationModel.dart';
 
 closeKeyboard() {
@@ -82,4 +85,43 @@ String separator(String str) {
   var sep = StringUtils.addCharAtPosition(rev, ",", 3, repeat: true);
   var seq = StringUtils.reverse(sep);
   return "$seq.${split[1]}";
+}
+
+Future<PackageInfo> packageInfo() async {
+  return await PackageInfo.fromPlatform();
+}
+
+logOut(BuildContext context) {
+  Widget cancelButton = TextButton(
+    child: AppText("Yo'q",
+        size: 14.sp,
+        fontWeight: FontWeight.bold,
+        textColor: AppColor.textColorBlue),
+    onPressed: () {
+      MyApp.navigatorKey.currentState?.pop();
+    },
+  );
+  Widget continueButton = TextButton(
+    child: AppText("Ha",
+        size: 14.sp,
+        fontWeight: FontWeight.bold,
+        textColor: AppColor.textColorBlue),
+    onPressed: () => AuthService.logout(),
+  );
+
+  AlertDialog dialog = AlertDialog(
+    title: AppText("Akkauntdan chiqish",
+        size: 18.sp,
+        fontWeight: FontWeight.bold,
+        textColor: AppColor.textColor),
+    content: AppText(
+        "Siz haqiqatdan ham akkauntingizdan chiqishni hohlaysizmi?",
+        size: 16.sp,
+        fontWeight: FontWeight.w400,
+        maxLines: 3,
+        textColor: AppColor.textColor),
+    actions: [cancelButton, continueButton],
+  );
+
+  showDialog(context: context, builder: (ctx) => dialog);
 }
