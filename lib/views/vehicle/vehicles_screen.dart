@@ -8,6 +8,8 @@ import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
 
+import '../../constants/routes.dart';
+import '../../main.dart';
 import '../../models/vehicle/VehicleModel.dart';
 
 class VehiclesScreen extends StatelessWidget {
@@ -144,6 +146,7 @@ class VehiclesScreen extends StatelessWidget {
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
         onPressed: () {
           toast(message: "Add vehicle");
+          MyApp.navigatorKey.currentState?.pushNamed(Routes.addVehicle);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

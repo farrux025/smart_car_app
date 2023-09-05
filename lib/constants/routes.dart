@@ -6,6 +6,7 @@ import 'package:smart_car_app/views/auth/register_screen.dart';
 import 'package:smart_car_app/views/home/home.dart';
 import 'package:smart_car_app/views/onboarding/onboarding_screen.dart';
 import 'package:smart_car_app/views/profile/profile_screen.dart';
+import 'package:smart_car_app/views/vehicle/add_vehicle_screen.dart';
 import 'package:smart_car_app/views/vehicle/vehicles_screen.dart';
 
 class Routes {
@@ -21,6 +22,7 @@ class Routes {
 
   // vehicle
   static const vehicles = "/vehicles";
+  static const addVehicle = "/add-vehicle";
 
   // profile
   static const profile = "/profile";
@@ -39,6 +41,7 @@ class Routes {
 
       // vehicles
       Routes.vehicles: (context) => const VehiclesScreen(),
+      Routes.addVehicle: (context) => const AddVehicleScreen(),
 
       // profile
       Routes.profile: (context) => const ProfileScreen(),
