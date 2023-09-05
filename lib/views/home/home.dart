@@ -8,13 +8,14 @@ import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/cubit/charge_box/charge_boxes_cubit.dart';
-import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
 import 'package:smart_car_app/views/home/map_screen.dart';
 import 'package:smart_car_app/views/home/station_list_screen.dart';
 
 import '../../components/app_components.dart';
 import '../../main.dart';
 import '../../models/global/LocationModel.dart';
+import '../../models/global/UserModel.dart';
+import '../../services/secure_storage.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -104,8 +105,14 @@ class _HomeScreenState extends State<HomeScreen>
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     MaterialButton(
-                        onPressed: () => MyApp.navigatorKey.currentState
-                            ?.pushNamed(Routes.profile),
+                        onPressed: () async {
+                          await SecureStorage.read(key: SecureStorage.phone)
+                              .then((value) {
+                            Global.userModel.username = value;
+                          });
+                          MyApp.navigatorKey.currentState
+                              ?.pushNamed(Routes.profile);
+                        },
                         height: 62.sp,
                         minWidth: 60.sp,
                         child: Icon(Icons.subject,

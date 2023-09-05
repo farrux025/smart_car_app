@@ -40,12 +40,13 @@ class RegisterCubit extends Cubit<RegisterState> {
         await AuthService.doRegister(request).then((res) {
           if (res.statusCode == 201) {
             emit(RegisterLoaded());
-            openSnackBar(
-                message: "User Created Successfully",
-                background: Colors.green.withOpacity(0.8));
+            log("Register successfully");
             SecureStorage.write(key: SecureStorage.phone, value: phone);
             SecureStorage.write(key: SecureStorage.otp, value: res.toString());
             MyApp.navigatorKey.currentState?.pushNamed(Routes.otp);
+            SecureStorage.read(key: SecureStorage.phone).then((value) {
+              log("Saved phone::: $value");
+            });
           }
         });
       }

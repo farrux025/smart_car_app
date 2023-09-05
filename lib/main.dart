@@ -7,6 +7,7 @@ import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/models/global/UserModel.dart';
 import 'package:smart_car_app/services/location_service.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
+import 'package:smart_car_app/utils/functions.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import 'services/dio/dio_client.dart';
@@ -24,6 +25,9 @@ main() async {
   await LocationService.determinePosition().then((value) {
     LocationModel.latitude = value.latitude;
     LocationModel.longitude = value.longitude;
+  });
+  await packageInfo().then((value) {
+    Global.myPackageInfo.appVersion = value.version;
   });
   runApp(const MyApp());
 }

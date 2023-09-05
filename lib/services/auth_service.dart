@@ -102,5 +102,8 @@ class AuthService {
     await SecureStorage.clearSecureStorage();
     MyApp.navigatorKey.currentState
         ?.pushNamedAndRemoveUntil(Routes.register, (route) => false);
+    await SecureStorage.read(key: SecureStorage.phone).then((value) {
+      log("Saved phone: $value");
+    });
   }
 }

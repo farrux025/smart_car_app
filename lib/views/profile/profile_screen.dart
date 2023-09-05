@@ -5,8 +5,6 @@ import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/models/global/UserModel.dart';
 import 'package:smart_car_app/utils/functions.dart';
 
-import '../../services/secure_storage.dart';
-
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -15,18 +13,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String appVersion = '';
-
-  @override
-  void initState() {
-    super.initState();
-    packageInfo().then((value) {
-      appVersion = value.version;
-    });
-    SecureStorage.read(key: SecureStorage.phone).then((value) {
-      Global.userModel.username = value;
-    });
-  }
+  String? appVersion = Global.myPackageInfo.appVersion;
 
   @override
   Widget build(BuildContext context) {

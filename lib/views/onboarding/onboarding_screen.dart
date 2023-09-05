@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:flutter/gestures.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
@@ -9,6 +9,7 @@ import 'package:smart_car_app/constants/images.dart';
 import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -20,6 +21,16 @@ class OnBoardingScreen extends StatefulWidget {
 class _OnBoardingScreenState extends State<OnBoardingScreen>
     with TickerProviderStateMixin {
   TabController? controller;
+  var activeIndex = 0;
+
+  List<OnBoardingDetails> list = [
+    OnBoardingDetails(
+        title: "YOUR SMART CAR", imagePath: AppImages.onBoarding1),
+    OnBoardingDetails(
+        title: "ELECTRIC CHARGING", imagePath: AppImages.onBoarding2),
+    OnBoardingDetails(
+        title: "FIND CHARGING STATION", imagePath: AppImages.onBoarding3),
+  ];
 
   @override
   void initState() {
@@ -39,47 +50,43 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
       backgroundColor: AppColor.backgroundColorBlue,
       body: Stack(
         children: [
-          TabBarView(
-            controller: controller,
-            children: [
-              pageItem(
-                  index: 1,
-                  title: "YOUR SMART CAR",
-                  imagePath: AppImages.onBoarding1),
-              pageItem(
-                  index: 2,
-                  title: "ELECTRIC CHARGING",
-                  imagePath: AppImages.onBoarding2),
-              pageItem(
-                  index: 3,
-                  title: "FIND CHARGING STATION",
-                  imagePath: AppImages.onBoarding3)
-            ],
+          CarouselSlider.builder(
+            itemCount: list.length,
+            itemBuilder: (context, index, realIndex) {
+              var details = list[index];
+              return pageItem(
+                  index: index,
+                  title: details.title ?? '',
+                  imagePath: details.imagePath ?? AppImages.onBoarding1);
+            },
+            options: CarouselOptions(
+              height: ScreenUtil().screenHeight,
+              initialPage: 0,
+              autoPlay: true,
+              autoPlayInterval: const Duration(seconds: 3),
+              viewportFraction: 1,
+              scrollDirection: Axis.vertical,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  activeIndex = index;
+                });
+              },
+            ),
           ),
           Positioned(
             width: 90.w,
             left: -20.w,
-            top: ScreenUtil().screenHeight * 0.48,
-            child: RotationTransition(
-              turns: const AlwaysStoppedAnimation<double>(1.25),
-              child: TabBar(
-                // padding: EdgeInsets.symmetric(horizontal: 8.h),
-                tabs: List.generate(
-                  controller?.length ?? 0,
-                  (index) => Tab(icon: Icon(Icons.circle, size: 12.sp)),
-                ),
-                // indicatorColor: Colors.transparent,
-                indicatorWeight: 6,
-                indicatorPadding:
-                    const EdgeInsets.only(bottom: 22, left: 10, top: 16),
-                indicator: BoxDecoration(
-                    borderRadius: BorderRadius.circular(6), // Creates border
-                    color: Colors.white),
-                unselectedLabelColor: AppColor.unselectedIndicatorColor,
-                automaticIndicatorColorAdjustment: true,
-                controller: controller,
-                labelColor: Colors.transparent,
-              ),
+            top: ScreenUtil().screenHeight * 0.45,
+            child: AnimatedSmoothIndicator(
+              activeIndex: activeIndex,
+              count: list.length,
+              effect: const ExpandingDotsEffect(
+                  dotWidth: 8,
+                  dotHeight: 8,
+                  dotColor: AppColor.unselectedIndicatorColor,
+                  activeDotColor: AppColor.white,
+                  spacing: 12),
+              axisDirection: Axis.vertical,
             ),
           )
         ],
@@ -120,4 +127,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
       ),
     );
   }
+}
+
+class OnBoardingDetails {
+  String? title;
+  String? imagePath;
+
+  OnBoardingDetails({this.title, this.imagePath});
 }

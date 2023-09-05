@@ -36,6 +36,7 @@ class LoginCubit extends Cubit<LoginState> {
         await AuthService.doLogin(loginRequest).then((response) {
           if (response.statusCode == 200) {
             emit(LoginLoaded());
+            log("Login successfully");
             SecureStorage.write(key: SecureStorage.phone, value: phone);
             MyApp.navigatorKey.currentState
                 ?.pushNamedAndRemoveUntil(Routes.home, (route) => false);
