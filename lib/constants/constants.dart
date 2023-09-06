@@ -9,6 +9,11 @@ class Mask {
       mask: "(##) ###-##-##",
       filter: {"#": RegExp(r'[0-9]')},
       type: MaskAutoCompletionType.lazy);
+  static MaskTextInputFormatter GOV_NUMBER = MaskTextInputFormatter(
+    mask: "## @ ### @@",
+    filter: {"#": RegExp(r'\d'), "@": RegExp('[A-Z]')},
+    type: MaskAutoCompletionType.lazy,
+  );
 }
 
 bool canValidate(bool? val) {

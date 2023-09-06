@@ -20,6 +20,14 @@
         <string>tomtomgo</string>
     </array>
 
+
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>LOCInUse</string>
+    <key>NSLocationAlwaysUsageDescription</key>
+	<string>LOCAlwaysUse</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>LOCAlwaysAndInUse</string>
+
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

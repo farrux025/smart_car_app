@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
+import 'package:smart_car_app/constants/constants.dart';
+import 'package:location/location.dart' as loc;
 
 class AddVehicleScreen extends StatefulWidget {
   const AddVehicleScreen({super.key});
@@ -11,8 +14,9 @@ class AddVehicleScreen extends StatefulWidget {
 }
 
 class _AddVehicleScreenState extends State<AddVehicleScreen> {
-  final list = ["Ford", "BMW", "Audi"];
-  String? ddValue;
+  var govNumberController1 = TextEditingController();
+  final vehicleTypeList = ["Car", "Scooter"];
+  String? vehicleTypeValue;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +27,9 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           SliverAppBar(
             leading: const BackButton(color: Colors.black),
             expandedHeight: 100.h,
+            pinned: true,
+            floating: true,
+            elevation: 0,
             backgroundColor: AppColor.backgroundColorLight,
             flexibleSpace: FlexibleSpaceBar(
               title: AppText("ADD YOUR VEHICLE",
@@ -80,8 +87,16 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20.h),
-                  dropDown(title: "Vehicle type", elements: list)
+                  SizedBox(height: 30.h),
+                  _dropDown(title: "Vehicle type", elements: vehicleTypeList),
+                  SizedBox(height: 30.h),
+                  _dropDown(title: "Company name", elements: vehicleTypeList),
+                  SizedBox(height: 30.h),
+                  _dropDown(title: "Brand name", elements: vehicleTypeList),
+                  SizedBox(height: 30.h),
+                  _enterNumberField(),
+                  SizedBox(height: 30.h),
+                  _addButton()
                 ],
               ),
             ),
@@ -91,31 +106,105 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     );
   }
 
-  dropDown({required String title, required List<String> elements}) {
+  _dropDown({required String title, required List<String> elements}) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AppText(title,
             size: 16.sp,
             fontWeight: FontWeight.w500,
             textColor: AppColor.textColor),
-        DropdownButton<String>(
-          items: elements.map(buildMenuItem).toList(),
-          onChanged: (value) {
-            setState(() {
-              ddValue = value;
-            });
-          },
+        SizedBox(height: 4.h),
+        Container(
+          padding: EdgeInsets.only(right: 8.w, bottom: 4.h),
+          decoration: BoxDecoration(
+              border:
+                  Border(bottom: BorderSide(color: Colors.black, width: 2.h))),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: vehicleTypeValue,
+              items: elements.map(_buildMenuItem).toList(),
+              isExpanded: true,
+              iconSize: 20.sp,
+              icon: const Icon(Icons.arrow_downward, color: Colors.black),
+              onChanged: (value) {
+                setState(() {
+                  vehicleTypeValue = value;
+                });
+              },
+            ),
+          ),
         )
       ],
     );
   }
 
-  DropdownMenuItem<String> buildMenuItem(String item) {
+  DropdownMenuItem<String> _buildMenuItem(String item) {
     return DropdownMenuItem(
         value: item,
         child: AppText(item,
             textColor: AppColor.textColor,
             fontWeight: FontWeight.w400,
-            size: 14.sp));
+            size: 15.sp));
+  }
+
+  _addButton() {
+    return Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              colors: [AppColor.buttonLeftColor, AppColor.buttonRightColor])),
+      child: MaterialButton(
+        onPressed: () {
+          _checkGps();
+        },
+        height: 57.sp,
+        minWidth: ScreenUtil().screenWidth,
+        child: AppText("ADD NOW",
+            textColor: AppColor.white,
+            fontWeight: FontWeight.w500,
+            size: 14.sp),
+      ),
+    );
+  }
+
+  _enterNumberField() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText("Gov number",
+            size: 16.sp,
+            fontWeight: FontWeight.w500,
+            textColor: AppColor.textColor),
+        SizedBox(height: 4.h),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 10.w),
+          child: Form(
+              child: TextFormField(
+            maxLines: 1,
+            decoration: InputDecoration(
+                border: UnderlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black, width: 2.h)),
+                hintText: '01 A 000 AA',
+                hintStyle: TextStyle(
+                    fontSize: 16.sp,
+                    color: Colors.black26,
+                    fontWeight: FontWeight.w400)),
+            keyboardType: TextInputType.text,
+            controller: govNumberController1,
+            textCapitalization: TextCapitalization.characters,
+            autofocus: false,
+            inputFormatters: [Mask.GOV_NUMBER],
+          )),
+        ),
+      ],
+    );
+  }
+
+  var location = loc.Location();
+
+  Future _checkGps() async {
+    if (!await location.serviceEnabled()) {
+      location.requestService();
+    }
   }
 }
