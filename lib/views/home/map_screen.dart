@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    List<MapObject> mapObjList = [
+    List<PlacemarkMapObject> mapObjList = [
       // _placeMarkMapObject(
       //     chargeBox: ChargeBoxInfo(
       //         id: "map_current",
@@ -49,7 +50,65 @@ class _MapScreenState extends State<MapScreen> {
     //   mapObjList.add(_placeMarkMapObject(chargeBox: element));
     // }
     separateChargeBoxList(mapObjList);
-    mapObjects.addAll(mapObjList);
+    var collection = ClusterizedPlacemarkCollection(
+        mapId: const MapObjectId("ssssss"),
+        placemarks: mapObjList,
+        radius: 50,
+        minZoom: 13,
+        onClusterAdded: (self, cluster) async {
+          return cluster.copyWith(
+              appearance: cluster.appearance.copyWith(
+            icon: PlacemarkIcon.single(PlacemarkIconStyle(
+                image: BitmapDescriptor.fromBytes(
+                    await _buildClusterAppearance(cluster)),
+                scale: 3)),
+            opacity: 1,
+            onTap: (mapObject, point) {
+              _zoomIn();
+            },
+          ));
+        },
+        onClusterTap: (self, cluster) {},
+        onTap: (mapObject, point) {});
+
+    mapObjects.add(collection);
+  }
+
+  Future<Uint8List> _buildClusterAppearance(Cluster cluster) async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    const size = Size(80, 80);
+    final fillPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    final strokePaint = Paint()
+      ..color = AppColor.textColorGreen
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+    const radius = 20.0;
+
+    final textPainter = TextPainter(
+        text: TextSpan(
+            text: cluster.size.toString(),
+            style: TextStyle(color: AppColor.textColorGreen, fontSize: 18.sp,fontWeight: FontWeight.w600)),
+        textDirection: TextDirection.ltr);
+
+    textPainter.layout(minWidth: 0, maxWidth: size.width);
+
+    final textOffset = Offset((size.width - textPainter.width) / 2,
+        (size.height - textPainter.height) / 2);
+    final circleOffset = Offset(size.height / 2, size.width / 2);
+
+    canvas.drawCircle(circleOffset, radius, fillPaint);
+    canvas.drawCircle(circleOffset, radius, strokePaint);
+    textPainter.paint(canvas, textOffset);
+
+    final image = await recorder
+        .endRecording()
+        .toImage(size.width.toInt(), size.height.toInt());
+    final pngBytes = await image.toByteData(format: ImageByteFormat.png);
+
+    return pngBytes!.buffer.asUint8List();
   }
 
   @override

@@ -63,7 +63,6 @@ dependencies:
   package_info_plus: ^4.1.0
   carousel_slider: ^4.2.1
   smooth_page_indicator: ^1.1.0
-  location: ^4.4.0
 
 dev_dependencies:
   flutter_test:

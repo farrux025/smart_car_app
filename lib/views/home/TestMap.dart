@@ -10,13 +10,14 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 class ClusterizedPlacemarkCollectionPage {
   const ClusterizedPlacemarkCollectionPage({Key? key}) : super();
 
-  @override
   Widget build(BuildContext context) {
-    return ClusterizedPlacemarkCollectionExample();
+    return const ClusterizedPlacemarkCollectionExample();
   }
 }
 
 class ClusterizedPlacemarkCollectionExample extends StatefulWidget {
+  const ClusterizedPlacemarkCollectionExample({super.key});
+
   @override
   _ClusterizedPlacemarkCollectionExampleState createState() =>
       _ClusterizedPlacemarkCollectionExampleState();
@@ -226,6 +227,7 @@ class _ClusterizedPlacemarkCollectionExampleState
                       onClusterTap: (ClusterizedPlacemarkCollection self,
                           Cluster cluster) {
                         print('Tapped cluster');
+
                       },
                       placemarks: List<PlacemarkMapObject>.generate(
                           kPlacemarkCount, (i) {

@@ -24,7 +24,6 @@ class VehiclesScreen extends StatelessWidget {
       VehicleModel("BMW X5", AppImages.onBoarding2, 0.9),
       VehicleModel("BMW X5", AppImages.onBoarding3, 0.4),
       VehicleModel("BMW X5", AppImages.currentPosition, 1),
-      VehicleModel("BMW X5", AppImages.locationIndicator, 0.9),
     ];
     return Scaffold(
       backgroundColor: AppColor.backgroundColor,
@@ -110,7 +109,7 @@ class VehiclesScreen extends StatelessWidget {
               child: Row(
                 children: [
                   Flexible(
-                    flex: 4,
+                    flex: 5,
                     child: LinearPercentIndicator(
                       barRadius: Radius.circular(10.r),
                       percent: vehicle.chargeValue,
@@ -120,7 +119,7 @@ class VehiclesScreen extends StatelessWidget {
                     ),
                   ),
                   Flexible(
-                    flex: 1,
+                    flex: 2,
                     child: AppText("${(vehicle.chargeValue * 100).toInt()}%",
                         size: 10.sp,
                         textColor: AppColor.buttonLeftColor,

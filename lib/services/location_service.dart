@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,10 +13,10 @@ class LocationService {
   static Future<Position> determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
+    // serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    // if (!serviceEnabled) {
+    //   return Future.error('Location services are disabled.');
+    // }
 
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -77,26 +78,30 @@ class LocationService {
   }
 
   static var listen = Geolocator.getServiceStatusStream().listen((status) {
-    log("Location status: $status");
+    log("Location aaaa status: $status");
     if (status == ServiceStatus.disabled) {
-      showDialog(
-          context: MyApp.navigatorKey.currentContext!,
-          barrierDismissible: false,
-          builder: (BuildContext ctx) {
-            return alert(
-                title: "Geolokatsiya o'chirilgan",
-                content:
-                    "Iltimos, ilovadan foydalanish uchun geolokatsiyani yoqing!",
-                buttonText: "OK",
-                onPressed: () {
-                  Geolocator.openLocationSettings();
-                  if (status == ServiceStatus.enabled) {
-                    MyApp.navigatorKey.currentState?.pop();
-                  }
-                });
-          });
+      turnOffGPSAlert(status: status);
     } else if (status == ServiceStatus.enabled) {
       MyApp.navigatorKey.currentState?.pop();
     }
   });
+}
+
+turnOffGPSAlert({ServiceStatus? status}) {
+  showDialog(
+      context: MyApp.navigatorKey.currentContext!,
+      barrierDismissible: false,
+      builder: (BuildContext ctx) {
+        return alert(
+            title: "Geolokatsiya o'chirilgan",
+            content:
+                "Iltimos, ilovadan foydalanish uchun geolokatsiyani yoqing!",
+            buttonText: "OK",
+            onPressed: () {
+              AppSettings.openLocationSettings();
+              if (status == ServiceStatus.enabled) {
+                MyApp.navigatorKey.currentState?.pop();
+              }
+            });
+      });
 }
