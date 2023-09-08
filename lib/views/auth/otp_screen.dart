@@ -9,13 +9,11 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/constants.dart';
-import 'package:smart_car_app/constants/routes.dart';
-import 'package:smart_car_app/cubit/login_cubit.dart';
+
 import 'package:smart_car_app/cubit/otp_cubit.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 
-import '../../main.dart';
 import '../../utils/functions.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -246,8 +244,13 @@ class _OtpScreenState extends State<OtpScreen>
                                       child: state is OtpLoaded ||
                                               state is OtpInitial ||
                                               state is OtpError
-                                          ? AppText("ENTER OTP",
-                                              textColor: AppColor.white,
+                                          ? AppText(
+                                              state is OtpError
+                                                  ? "Error"
+                                                  : "ENTER OTP",
+                                              textColor: state is OtpError
+                                                  ? AppColor.errorColor
+                                                  : AppColor.white,
                                               size: 14.sp,
                                               fontWeight: FontWeight.w500)
                                           : const SizedBox(

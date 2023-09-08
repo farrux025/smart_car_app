@@ -133,8 +133,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: state is RegisterLoaded ||
                                           state is RegisterInitial ||
                                           state is RegisterError
-                                      ? AppText("Enter and procced",
-                                          textColor: AppColor.white,
+                                      ? AppText(
+                                          state is RegisterError
+                                              ? "Error"
+                                              : "Enter and procced",
+                                          textColor: state is RegisterError
+                                              ? AppColor.errorColor
+                                              : AppColor.white,
                                           size: 14.sp,
                                           fontWeight: FontWeight.w500)
                                       : const SizedBox(

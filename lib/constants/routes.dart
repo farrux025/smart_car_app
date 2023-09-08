@@ -3,6 +3,7 @@ import 'package:smart_car_app/views/auth/login_screen.dart';
 import 'package:smart_car_app/views/auth/otp_screen.dart';
 import 'package:smart_car_app/views/auth/otp_waiting_screem.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
+import 'package:smart_car_app/views/charging/start_chaging_screen.dart';
 import 'package:smart_car_app/views/home/home.dart';
 import 'package:smart_car_app/views/onboarding/onboarding_screen.dart';
 import 'package:smart_car_app/views/profile/profile_screen.dart';
@@ -27,6 +28,10 @@ class Routes {
   // profile
   static const profile = "/profile";
 
+  // charging
+
+  static const startCharging = "/start-charging";
+
   static Map<String, WidgetBuilder> routesMap() {
     return {
       // home
@@ -45,6 +50,9 @@ class Routes {
 
       // profile
       Routes.profile: (context) => const ProfileScreen(),
+
+      // charging
+      Routes.startCharging: (context) => const StartChargingScreen(),
     };
   }
 }

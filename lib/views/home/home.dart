@@ -67,16 +67,35 @@ class _HomeScreenState extends State<HomeScreen>
                     controller: _tabController,
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
-                      state is ChargeBoxesLoaded
-                          ? MapScreen(list: state.list)
-                          : const Center(
-                              child: CircularProgressIndicator(
-                                  color: AppColor.white),
-                            ),
+                      if (state is ChargeBoxesLoaded)
+                        MapScreen(list: state.list)
+                      else if (state is ChargeBoxesError)
+                        Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Center(
+                              child: AppText(state.error,
+                                  size: 14.sp,
+                                  textColor: AppColor.errorColor,
+                                  textAlign: TextAlign.center)),
+                        )
+                      else
+                        const Center(
+                          child:
+                              CircularProgressIndicator(color: AppColor.white),
+                        ),
                       if (state is ChargeBoxesLoaded)
                         StationListScreen(
                           list: state.list,
                           address: address,
+                        )
+                      else if (state is ChargeBoxesError)
+                        Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Center(
+                              child: AppText(state.error,
+                                  size: 14.sp,
+                                  textColor: AppColor.errorColor,
+                                  textAlign: TextAlign.center)),
                         )
                       else
                         const SizedBox()

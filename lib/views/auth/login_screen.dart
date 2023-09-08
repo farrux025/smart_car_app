@@ -111,8 +111,13 @@ class LoginScreen extends StatelessWidget {
                                   child: state is LoginLoaded ||
                                           state is LoginInitial ||
                                           state is LoginError
-                                      ? AppText("Login",
-                                          textColor: AppColor.white,
+                                      ? AppText(
+                                          state is LoginError
+                                              ? "Error"
+                                              : "Login",
+                                          textColor: state is LoginError
+                                              ? AppColor.errorColor
+                                              : AppColor.white,
                                           size: 14.sp,
                                           fontWeight: FontWeight.w500)
                                       : const SizedBox(
