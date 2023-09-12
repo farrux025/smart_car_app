@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -7,6 +5,7 @@ import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
+import 'package:smart_car_app/views/vehicle/vehicle_detail_screen.dart';
 
 import '../../constants/routes.dart';
 import '../../main.dart';
@@ -65,7 +64,8 @@ class VehiclesScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return index == vehicleList.length
                       ? _addVehicle()
-                      : _itemGridView(vehicle: vehicleList[index]);
+                      : _itemGridView(
+                          vehicle: vehicleList[index], index: index);
                 },
               )
             ],
@@ -75,63 +75,76 @@ class VehiclesScreen extends StatelessWidget {
     );
   }
 
-  Widget _itemGridView({required VehicleModel vehicle}) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.h),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.r),
-          color: AppColor.backgroundColorLight),
-      child: Stack(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Center(
-                child: AppText(vehicle.vehicleName ?? '',
-                    textColor: Colors.black,
-                    size: 16.sp,
-                    fontWeight: FontWeight.w400),
-              ),
-              Image.asset(vehicle.imagePath ?? AppImages.currentPosition,
-                  height: 100.h, fit: BoxFit.cover)
-            ],
-          ),
-          Positioned(
-            bottom: 16.h,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16.r),
-                color: AppColor.white,
-              ),
-              padding: EdgeInsets.symmetric(vertical: 4.h),
-              margin: EdgeInsets.symmetric(horizontal: 10.w),
-              width: ScreenUtil().screenWidth * 0.35,
-              child: Row(
-                children: [
-                  Flexible(
-                    flex: 5,
-                    child: LinearPercentIndicator(
-                      barRadius: Radius.circular(10.r),
-                      percent: vehicle.chargeValue,
-                      lineHeight: 5.h,
-                      backgroundColor: AppColor.backgroundColor,
-                      progressColor: AppColor.stationIndicatorColor,
-                    ),
-                  ),
-                  Flexible(
-                    flex: 2,
-                    child: AppText("${(vehicle.chargeValue * 100).toInt()}%",
-                        size: 10.sp,
-                        textColor: AppColor.buttonLeftColor,
-                        fontWeight: FontWeight.w400),
-                  )
-                ],
-              ),
+  Widget _itemGridView({required VehicleModel vehicle, required int index}) {
+    return GestureDetector(
+      onTap: () => _onCarPressed(index),
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.h),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.r),
+            color: AppColor.backgroundColorLight),
+        child: Stack(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Center(
+                  child: AppText(vehicle.vehicleName ?? '',
+                      textColor: Colors.black,
+                      size: 16.sp,
+                      fontWeight: FontWeight.w400),
+                ),
+                Image.asset(vehicle.imagePath ?? AppImages.currentPosition,
+                    height: 100.h, fit: BoxFit.cover)
+              ],
             ),
-          )
-        ],
+            Positioned(
+              bottom: 16.h,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16.r),
+                  color: AppColor.white,
+                ),
+                padding: EdgeInsets.symmetric(vertical: 4.h),
+                margin: EdgeInsets.symmetric(horizontal: 10.w),
+                width: ScreenUtil().screenWidth * 0.35,
+                child: Row(
+                  children: [
+                    Flexible(
+                      flex: 5,
+                      child: LinearPercentIndicator(
+                        barRadius: Radius.circular(10.r),
+                        percent: vehicle.chargeValue,
+                        lineHeight: 5.h,
+                        backgroundColor: AppColor.backgroundColor,
+                        progressColor: AppColor.stationIndicatorColor,
+                      ),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: AppText("${(vehicle.chargeValue * 100).toInt()}%",
+                          size: 10.sp,
+                          textColor: AppColor.buttonLeftColor,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
+  }
+
+  _onCarPressed(int index) {
+    switch (index) {
+      case 0:
+        MyApp.navigatorKey.currentState?.push(MaterialPageRoute(
+          builder: (context) => const VehicleDetailScreen(),
+        ));
+        break;
+    }
   }
 
   Widget _addVehicle() {

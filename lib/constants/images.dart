@@ -16,4 +16,5 @@ class AppImages {
   static const currentPosition = "assets/images/current_position.png";
   static const connectorImage = "assets/images/connector_image.png";
   static const carImage = "assets/images/car.png";
+  static const carInConnected = "assets/images/car_in_connected.png";
 }

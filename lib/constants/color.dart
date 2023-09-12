@@ -6,13 +6,6 @@ class AppColor {
   static const white = Color(0xFFFFFFFF);
   static const buttonLeftColor = Color(0xFF202533);
   static const buttonRightColor = Color(0xFF6C6C71);
-  static const backgroundColor = Color(0xFFDEE0E5);
-  static const backgroundMain = Color(0xFFCED4E8);
-  static const backgroundColorGreen = Color(0xFFDEFCF1);
-  static const backgroundColorRed = Color(0xFFFFE8E8);
-  static const backgroundColorBlue = Color(0xFFDEE0E5);
-  static const backgroundColorDark = Color(0xFF212634);
-  static const backgroundColorLight = Color(0xFFF3F5F8);
   static const errorColor = Color(0xFFFF7676);
   static const starRatingColor = Color(0xFFFFA724);
   static const ratingBackgroundColor = Color(0xFFFFF7EC);
@@ -20,6 +13,16 @@ class AppColor {
   static const stationIndicatorColor = Color(0xFF30C58F);
   static const yellow = Color(0xFFF6F100);
   static const unselectedIndicatorColor = Color(0xFFAFB6C8);
+
+  // background
+
+  static const backgroundColor = Color(0xFFDEE0E5);
+  static const backgroundMain = Color(0xFFEDEDED);
+  static const backgroundColorGreen = Color(0xFFDEFCF1);
+  static const backgroundColorRed = Color(0xFFFFE8E8);
+  static const backgroundColorBlue = Color(0xFFDEE0E5);
+  static const backgroundColorDark = Color(0xFF212634);
+  static const backgroundColorLight = Color(0xFFF3F5F8);
 
   // text color
 

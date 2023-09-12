@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
         routes: Routes.routesMap(),
         initialRoute: username == null || username == ''
             ? Routes.register
-            : Routes.startCharging,
+            : Routes.home,
       ),
     );
   }

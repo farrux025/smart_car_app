@@ -5,6 +5,7 @@ import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
 import 'package:smart_car_app/main.dart';
+import 'package:smart_car_app/views/charging/connected_or_disconnected_screen.dart';
 
 import '../../components/app_components.dart';
 
@@ -110,7 +111,7 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
                         child: MaterialButton(
                           onPressed: () {},
                           padding: const EdgeInsets.symmetric(horizontal: 0),
-                          color: AppColor.errorColor,
+                          color: AppColor.textColorRed,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4.r)),
                           child: AppText("Recharge now",
@@ -161,8 +162,16 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
       bottomNavigationBar: MaterialButton(
         onPressed: () {
           toast(message: "STOP CHARGING");
+          MyApp.navigatorKey.currentState?.push(MaterialPageRoute(
+            builder: (context) => ConnectedOrDisconnectedScreen(
+                title: 'CONNECTED',
+                description:
+                    'The connection is successfully established between your car and with the charger',
+                icon: Icons.check,
+                iconColor: AppColor.stationIndicatorColor),
+          ));
         },
-        color: AppColor.errorColor,
+        color: AppColor.textColorRed,
         height: 57.sp,
         shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
         minWidth: ScreenUtil().screenWidth,
