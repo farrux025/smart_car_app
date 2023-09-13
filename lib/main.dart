@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(primarySwatch: Colors.blue),
         routes: Routes.routesMap(),
         initialRoute: username == null || username == ''
-            ? Routes.register
+            ? Routes.onBoarding
             : Routes.home,
       ),
     );

@@ -15,4 +15,8 @@ class AppUrl {
   static chargeBoxPublicDetails() {
     return "/api/charge-boxes/public/details";
   }
+
+  static addVehicleUrl() {
+    return "/api/vehicles";
+  }
 }

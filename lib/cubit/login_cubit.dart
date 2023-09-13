@@ -38,6 +38,7 @@ class LoginCubit extends Cubit<LoginState> {
             emit(LoginLoaded());
             log("Login successfully");
             SecureStorage.write(key: SecureStorage.phone, value: phone);
+            SecureStorage.write(key: SecureStorage.password, value: password);
             MyApp.navigatorKey.currentState
                 ?.pushNamedAndRemoveUntil(Routes.home, (route) => false);
           }

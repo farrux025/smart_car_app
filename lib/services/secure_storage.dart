@@ -5,6 +5,7 @@ class SecureStorage {
 
   // keys
   static const phone = 'phone';
+  static const password = 'password';
   static const otp = 'otp';
   static const token = 'token';
 
@@ -26,6 +27,7 @@ class SecureStorage {
 
   static clearSecureStorage() async {
     await SecureStorage.delete(key: SecureStorage.phone);
+    await SecureStorage.delete(key: SecureStorage.password);
     await SecureStorage.delete(key: SecureStorage.token);
     await SecureStorage.delete(key: SecureStorage.otp);
   }

@@ -42,6 +42,7 @@ class RegisterCubit extends Cubit<RegisterState> {
             emit(RegisterLoaded());
             log("Register successfully");
             SecureStorage.write(key: SecureStorage.phone, value: phone);
+            SecureStorage.write(key: SecureStorage.password, value: password);
             SecureStorage.write(key: SecureStorage.otp, value: res.toString());
             MyApp.navigatorKey.currentState?.pushNamed(Routes.otp);
             SecureStorage.read(key: SecureStorage.phone).then((value) {
