@@ -1,12 +1,19 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/constants.dart';
+import 'package:smart_car_app/constants/variables.dart';
 import 'package:smart_car_app/cubit/vehicle/add_vehicle_cubit.dart';
 import 'package:smart_car_app/models/vehicle/add_vehicle/req/ReqTag.dart';
 import 'package:smart_car_app/models/vehicle/add_vehicle/req/RequestAddVehicle.dart';
+import 'package:smart_car_app/services/image_service.dart';
+import 'package:smart_car_app/services/shared_prefs.dart';
 
 import '../../models/global/UserModel.dart';
 
@@ -26,6 +33,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
   String? vehicleTypeValue;
   String? brandValue;
   String? modelValue;
+  File? file;
 
   @override
   void initState() {
@@ -67,6 +75,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: 30.w, vertical: 20.h),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
                               "Take picture of your car with makers and model number the system Ai will do the rest of the things.",
@@ -76,7 +85,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                               fontWeight: FontWeight.w400),
                           SizedBox(height: 30.h),
                           MaterialButton(
-                            onPressed: () {},
+                            onPressed: () => _pickImage(),
                             height: 100.h,
                             minWidth: ScreenUtil().screenWidth,
                             color: AppColor.textColor,
@@ -115,7 +124,47 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 30.h),
+                          SizedBox(height: 20.h),
+                          ValueListenableBuilder(
+                            valueListenable:
+                                MyValueNotifiers.uploadImageLoading,
+                            builder: (context, String value, child) {
+                              if (value == "uploadImageLoaded") {
+                                return file != null
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(10.r),
+                                        child: Image.file(
+                                          file!,
+                                          height: 80.h,
+                                          width: 80.w,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : const SizedBox();
+                              } else if (value == "uploadImageLoading") {
+                                return const Center(
+                                    child: CircularProgressIndicator(
+                                        color: Colors.black));
+                              } else if (value == "uploadImageError") {
+                                return Center(
+                                  child: Container(
+                                    padding: EdgeInsets.only(
+                                        bottom: 20.h, left: 20.w, right: 20.w),
+                                    child: AppText(
+                                        "Rasm yuklashda xatolik. Qaytadan urunib ko'ring",
+                                        size: 12.sp,
+                                        textAlign: TextAlign.center,
+                                        textColor: AppColor.errorColor,
+                                        maxLines: 3),
+                                  ),
+                                );
+                              } else {
+                                return const SizedBox();
+                              }
+                            },
+                          ),
+                          SizedBox(height: file == null ? 0 : 20.h),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -254,17 +303,24 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
           gradient: LinearGradient(
               colors: [AppColor.buttonLeftColor, AppColor.buttonRightColor])),
       child: MaterialButton(
-        onPressed: () {
+        onPressed: () async {
+          String? imageUrl;
+          await MySharedPrefs()
+              .getVehicleImage(key: MySharedPrefs.vehicleImageUrlKey)
+              .then((value) {
+            imageUrl = value;
+            log("Image Url: $imageUrl");
+          });
           if (_formKey.currentState!.validate()) {
             var requestAddVehicle = RequestAddVehicle(
                 modelId: 0,
                 manufactureId: 0,
-                imageUrl: 'test url',
+                imageUrl: imageUrl ?? '',
                 status: 'NEW',
                 username: Global.userModel.username ?? '',
                 carNumber: govNumberController.text.replaceAll(" ", ""),
                 tag: ReqTag(id: 2901));
-            read.addVehicle(request: requestAddVehicle);
+            await read.addVehicle(request: requestAddVehicle);
           }
         },
         height: 57.sp,
@@ -312,6 +368,69 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               inputFormatters: [Mask.GOV_NUMBER],
             )),
       ],
+    );
+  }
+
+  _pickImage() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColor.backgroundMain,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topRight: Radius.circular(16.r), topLeft: Radius.circular(16.r))),
+      builder: (context) => Container(
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(16.r)),
+          child: Wrap(
+            children: [
+              Center(
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.symmetric(vertical: 6.h),
+                  height: 5,
+                  width: 80,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.r),
+                      color: Colors.grey),
+                ),
+              ),
+              Container(height: 4.h),
+              MaterialButton(
+                onPressed: () async {
+                  file = await ImageService.pickImage(
+                      imageSource: ImageSource.camera);
+                  setState(() {});
+                },
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                child: Row(children: [
+                  Icon(Icons.camera_alt_outlined,
+                      color: AppColor.textColor, size: 28.sp),
+                  SizedBox(width: 12.w),
+                  AppText("Camera",
+                      size: 16.sp,
+                      textColor: AppColor.textColor,
+                      fontWeight: FontWeight.w400)
+                ]),
+              ),
+              MaterialButton(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                onPressed: () async {
+                  file = await ImageService.pickImage(
+                      imageSource: ImageSource.gallery);
+                  setState(() {});
+                },
+                child: Row(children: [
+                  Icon(Icons.image_outlined,
+                      color: AppColor.textColor, size: 28.sp),
+                  SizedBox(width: 12.w),
+                  AppText("Gallery",
+                      size: 16.sp,
+                      textColor: AppColor.textColor,
+                      fontWeight: FontWeight.w400)
+                ]),
+              ),
+              Container(height: 10.h)
+            ],
+          )),
     );
   }
 }

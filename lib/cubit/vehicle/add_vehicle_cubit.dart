@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
@@ -11,8 +12,8 @@ import 'package:smart_car_app/models/vehicle/add_vehicle/res/ResponseAddVehicle.
 import 'package:smart_car_app/services/auth_service.dart';
 import 'package:smart_car_app/services/dio/dio_client.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
-
-import '../../models/global/UserModel.dart';
+import 'package:smart_car_app/services/shared_prefs.dart';
+import 'package:http_parser/http_parser.dart';
 
 part 'add_vehicle_state.dart';
 

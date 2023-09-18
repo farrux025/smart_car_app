@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class AppUrl {
   static const baseUrl = "https://v220.uz";
   static const registerUrl = "/api/register";
@@ -19,4 +21,12 @@ class AppUrl {
   static addVehicleUrl() {
     return "/api/vehicles";
   }
+
+  static uploadImage() {
+    return "/api/images/upload";
+  }
+}
+
+class MyValueNotifiers {
+  static ValueNotifier<String> uploadImageLoading = ValueNotifier("Default");
 }
