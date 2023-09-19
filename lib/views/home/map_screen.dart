@@ -5,9 +5,11 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
+import 'package:smart_car_app/hive/hive_store.dart';
 import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/utils/functions.dart';
@@ -17,12 +19,16 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../constants/color.dart';
 import '../../constants/images.dart';
+import '../../cubit/charge_box/charge_boxes_cubit.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
 
 class MapScreen extends StatefulWidget {
-  final List<ChargeBoxInfo> list;
+  // final List<ChargeBoxInfo> list;
 
-  const MapScreen({super.key, required this.list});
+  const MapScreen({
+    super.key,
+    // required this.list,
+  });
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -34,131 +40,170 @@ class _MapScreenState extends State<MapScreen> {
       latitude: LocationModel.latitude!, longitude: LocationModel.longitude!);
   List<MapObject> mapObjects = [];
   final searchController = TextEditingController();
+  List<ChargeBoxInfo> mainList = [];
 
   @override
   void initState() {
     super.initState();
-    List<PlacemarkMapObject> mapObjList = [
-      // _placeMarkMapObject(
-      //     chargeBox: ChargeBoxInfo(
-      //         id: "map_current",
-      //         locationLatitude: LocationModel.latitude!,
-      //         locationLongitude: LocationModel.longitude!),
-      //     imagePath: AppImages.currentPosition),
-    ];
-    // for (var element in widget.list) {
-    //   mapObjList.add(_placeMarkMapObject(chargeBox: element));
-    // }
-    separateChargeBoxList(mapObjList);
-    var collection = ClusterizedPlacemarkCollection(
-        mapId: const MapObjectId("ssssss"),
-        placemarks: mapObjList,
-        radius: 50,
-        minZoom: 13,
-        onClusterAdded: (self, cluster) async {
-          return cluster.copyWith(
-              appearance: cluster.appearance.copyWith(
-            icon: PlacemarkIcon.single(PlacemarkIconStyle(
-                image: BitmapDescriptor.fromBytes(
-                    await _buildClusterAppearance(cluster)),
-                scale: 3)),
-            opacity: 1,
-            onTap: (mapObject, point) {
-              _zoomIn();
-            },
-          ));
-        },
-        onClusterTap: (self, cluster) {},
-        onTap: (mapObject, point) {});
-
-    mapObjects.add(collection);
-  }
-
-  Future<Uint8List> _buildClusterAppearance(Cluster cluster) async {
-    final recorder = PictureRecorder();
-    final canvas = Canvas(recorder);
-    const size = Size(80, 80);
-    final fillPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-    final strokePaint = Paint()
-      ..color = AppColor.textColorGreen
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 5;
-    const radius = 20.0;
-
-    final textPainter = TextPainter(
-        text: TextSpan(
-            text: cluster.size.toString(),
-            style: TextStyle(color: AppColor.textColorGreen, fontSize: 18.sp,fontWeight: FontWeight.w600)),
-        textDirection: TextDirection.ltr);
-
-    textPainter.layout(minWidth: 0, maxWidth: size.width);
-
-    final textOffset = Offset((size.width - textPainter.width) / 2,
-        (size.height - textPainter.height) / 2);
-    final circleOffset = Offset(size.height / 2, size.width / 2);
-
-    canvas.drawCircle(circleOffset, radius, fillPaint);
-    canvas.drawCircle(circleOffset, radius, strokePaint);
-    textPainter.paint(canvas, textOffset);
-
-    final image = await recorder
-        .endRecording()
-        .toImage(size.width.toInt(), size.height.toInt());
-    final pngBytes = await image.toByteData(format: ImageByteFormat.png);
-
-    return pngBytes!.buffer.asUint8List();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            physics: const NeverScrollableScrollPhysics(),
-            child: SizedBox(
-              height: ScreenUtil().screenHeight,
-              child: YandexMap(
-                  onMapCreated: _onMapCreated,
-                  mapObjects: mapObjects,
-                  // onCameraPositionChanged: (cameraPosition, reason, finished) {
-                  //   log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
-                  // },
-                  // onTrafficChanged: (trafficLevel) {
-                  //   log("onTrafficChanged: ${trafficLevel?.color} => ${trafficLevel?.level}");
-                  // },
-                  nightModeEnabled: true),
-            ),
-          ),
-          Positioned(
-            bottom: 4,
-            right: 4,
-            left: 4,
-            child: Container(
-              width: ScreenUtil().screenWidth,
-              height: 50.h,
-              margin: EdgeInsets.only(bottom: 24.h, left: 16.w, right: 16.h),
-              color: Colors.white,
-              child: MaterialButton(
-                onPressed: () => openSearchView(),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    AppText("Where you are going to",
-                        size: 14.sp,
-                        textColor:
-                            AppColor.backgroundColorDark.withOpacity(0.7),
-                        fontWeight: FontWeight.w500),
-                    Icon(Icons.search,
-                        size: 20.sp, color: AppColor.backgroundColorDark)
-                  ],
-                ),
+    return BlocProvider(
+      create: (BuildContext context) => ChargeBoxesCubit(),
+      child: BlocListener<ChargeBoxesCubit, ChargeBoxesState>(
+        listener: (BuildContext context, state) {
+          if (state is ChargeBoxesLoaded) {
+            log("State is ChargeBoxesLoaded");
+            mainList = state.list;
+          } else if (state is ChargeBoxesError) {
+            log("State is ChargeBoxesError");
+            List<ChargeBoxInfo>? list =
+                MyHiveStore.chargeBox.get(MyHiveBoxName.chargeBox);
+            mainList = list ?? [];
+            log(state.error);
+          }
+          List<PlacemarkMapObject> mapObjList = [
+            // _placeMarkMapObject(
+            //     chargeBox: ChargeBoxInfo(
+            //         id: "map_current",
+            //         locationLatitude: LocationModel.latitude!,
+            //         locationLongitude: LocationModel.longitude!),
+            //     imagePath: AppImages.currentPosition),
+          ];
+          // for (var element in widget.list) {
+          //   mapObjList.add(_placeMarkMapObject(chargeBox: element));
+          // }
+
+          separateChargeBoxList(mapObjList);
+          var collection = ClusterizedPlacemarkCollection(
+              mapId: const MapObjectId("ssssss"),
+              placemarks: mapObjList,
+              radius: 50,
+              minZoom: 13,
+              onClusterAdded: (self, cluster) async {
+                return cluster.copyWith(
+                    appearance: cluster.appearance.copyWith(
+                  icon: PlacemarkIcon.single(PlacemarkIconStyle(
+                      image: BitmapDescriptor.fromBytes(
+                          await _buildClusterAppearance(cluster)),
+                      scale: 3)),
+                  opacity: 1,
+                  onTap: (mapObject, point) {
+                    _zoomIn();
+                  },
+                ));
+              },
+              onClusterTap: (self, cluster) {},
+              onTap: (mapObject, point) {});
+
+          mapObjects.add(collection);
+        },
+        child: BlocBuilder<ChargeBoxesCubit, ChargeBoxesState>(
+          builder: (context, state) {
+            var read = context.read<ChargeBoxesCubit>();
+            return Scaffold(
+              body: Stack(
+                children: [
+                  SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    child: SizedBox(
+                      height: ScreenUtil().screenHeight,
+                      child: YandexMap(
+                          onMapCreated: _onMapCreated,
+                          mapObjects: mapObjects,
+                          // onCameraPositionChanged: (cameraPosition, reason, finished) {
+                          //   log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
+                          // },
+                          // onTrafficChanged: (trafficLevel) {
+                          //   log("onTrafficChanged: ${trafficLevel?.color} => ${trafficLevel?.level}");
+                          // },
+                          nightModeEnabled: true),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 4,
+                    right: 4,
+                    left: 4,
+                    child: Column(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.only(
+                              bottom: 12.h, left: 12.w, right: 12.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              SizedBox(
+                                height: 36.h,
+                                width: 36.h,
+                                child: FloatingActionButton(
+                                  onPressed: () async =>
+                                      await read.getChargeBoxes(),
+                                  heroTag: 'refresh',
+                                  backgroundColor:
+                                      Colors.black.withOpacity(0.5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.r)),
+                                  child: state is ChargeBoxesLoading
+                                      ? SizedBox(
+                                          width: 14.h,
+                                          height: 14.h,
+                                          child: CircularProgressIndicator(
+                                              color: AppColor.white,
+                                              strokeWidth: 2.4.w),
+                                        )
+                                      : Icon(Icons.refresh,
+                                          color: AppColor.white, size: 20.sp),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 36.h,
+                                width: 36.h,
+                                child: FloatingActionButton(
+                                  onPressed: () {},
+                                  heroTag: 'my-location',
+                                  backgroundColor:
+                                      Colors.black.withOpacity(0.5),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8.r)),
+                                  child: Icon(Icons.my_location,
+                                      color: AppColor.white, size: 20.sp),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: ScreenUtil().screenWidth,
+                          height: 50.h,
+                          margin: EdgeInsets.only(
+                              bottom: 24.h, left: 16.w, right: 16.h),
+                          color: Colors.white,
+                          child: MaterialButton(
+                            onPressed: () => openSearchView(),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                AppText("Where you are going to",
+                                    size: 14.sp,
+                                    textColor: AppColor.backgroundColorDark
+                                        .withOpacity(0.7),
+                                    fontWeight: FontWeight.w500),
+                                Icon(Icons.search,
+                                    size: 20.sp,
+                                    color: AppColor.backgroundColorDark)
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
               ),
-            ),
-          )
-        ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -191,6 +236,46 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
+  Future<Uint8List> _buildClusterAppearance(Cluster cluster) async {
+    final recorder = PictureRecorder();
+    final canvas = Canvas(recorder);
+    const size = Size(80, 80);
+    final fillPaint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+    final strokePaint = Paint()
+      ..color = AppColor.textColorGreen
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5;
+    const radius = 20.0;
+
+    final textPainter = TextPainter(
+        text: TextSpan(
+            text: cluster.size.toString(),
+            style: TextStyle(
+                color: AppColor.textColorGreen,
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600)),
+        textDirection: TextDirection.ltr);
+
+    textPainter.layout(minWidth: 0, maxWidth: size.width);
+
+    final textOffset = Offset((size.width - textPainter.width) / 2,
+        (size.height - textPainter.height) / 2);
+    final circleOffset = Offset(size.height / 2, size.width / 2);
+
+    canvas.drawCircle(circleOffset, radius, fillPaint);
+    canvas.drawCircle(circleOffset, radius, strokePaint);
+    textPainter.paint(canvas, textOffset);
+
+    final image = await recorder
+        .endRecording()
+        .toImage(size.width.toInt(), size.height.toInt());
+    final pngBytes = await image.toByteData(format: ImageByteFormat.png);
+
+    return pngBytes!.buffer.asUint8List();
+  }
+
   void openSearchView() {
     showModalBottomSheet(
         context: context,
@@ -202,15 +287,15 @@ class _MapScreenState extends State<MapScreen> {
                 topLeft: Radius.circular(16.r),
                 topRight: Radius.circular(16.r))),
         builder: (context) {
-          return SearchView(searchList: widget.list);
+          return SearchView(searchList: mainList);
         });
   }
 
   void openDetails(ChargeBoxInfo chargeBox, PlacemarkMapObject mapObject) {
     if (mapObject.mapId.value != "map_current") {
       bottomSheet(
-          list: _filterChargeBox(
-              chargeBoxList: widget.list, point: mapObject.point),
+          list:
+              _filterChargeBox(chargeBoxList: mainList, point: mapObject.point),
           chargeBoxId: chargeBox.id ?? '',
           point: Point(
               latitude: chargeBox.locationLatitude ?? 0,
@@ -274,7 +359,6 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   void separateChargeBoxList(List<MapObject> mapObjList) {
-    List<ChargeBoxInfo> mainList = widget.list;
     Set<ChargeBoxInfo> set = HashSet();
     for (var element in mainList) {
       set.add(element);

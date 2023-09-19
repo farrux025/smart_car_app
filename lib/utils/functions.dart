@@ -66,7 +66,7 @@ String distance({required double lat, required double lon}) {
   String distance;
   var distanceBetween = Geolocator.distanceBetween(
       LocationModel.latitude!, LocationModel.longitude!, lat, lon);
-  log("Distance between: $distanceBetween");
+  // log("Distance between: $distanceBetween");
   if (distanceBetween.toInt() > 1000) {
     double d = distanceBetween.toInt() / 1000;
     var distanceString = d.toString();

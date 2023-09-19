@@ -3,6 +3,11 @@ part of 'add_vehicle_cubit.dart';
 @immutable
 abstract class AddVehicleState extends Equatable {}
 
+class AddVehicleInitial extends AddVehicleState {
+  @override
+  List<Object?> get props => [];
+}
+
 class AddVehicleLoading extends AddVehicleState {
   @override
   List<Object?> get props => [];

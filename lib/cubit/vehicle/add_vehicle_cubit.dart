@@ -18,15 +18,17 @@ import 'package:http_parser/http_parser.dart';
 part 'add_vehicle_state.dart';
 
 class AddVehicleCubit extends Cubit<AddVehicleState> {
-  AddVehicleCubit() : super(AddVehicleLoading());
+  AddVehicleCubit() : super(AddVehicleInitial());
 
   addVehicle({required RequestAddVehicle request}) async {
+    emit(AddVehicleLoading());
     try {
       await _doAddVehicle(request: request).then((res) {
         if (res.statusCode == 201) {
           ResponseAddVehicle vehicle = ResponseAddVehicle.fromJson(res.data);
           log("Response: $res");
           log("Vehicle: ${vehicle.carNumber}");
+          emit(AddVehicleLoaded(vehicle));
         }
       });
     } on DioException catch (e) {

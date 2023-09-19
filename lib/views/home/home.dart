@@ -1,13 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/routes.dart';
-import 'package:smart_car_app/cubit/charge_box/charge_boxes_cubit.dart';
 import 'package:smart_car_app/views/home/map_screen.dart';
 import 'package:smart_car_app/views/home/station_list_screen.dart';
 
@@ -49,105 +47,62 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (BuildContext context) => ChargeBoxesCubit(),
-      child: BlocListener<ChargeBoxesCubit, ChargeBoxesState>(
-        listener: (context, state) {
-          if (state is ChargeBoxesError) {
-            log("Error state: ${state.error}");
-          }
-        },
-        child: BlocBuilder<ChargeBoxesCubit, ChargeBoxesState>(
-          builder: (context, state) {
-            return Scaffold(
-              backgroundColor: AppColor.backgroundColorDark,
-              body: Stack(
-                children: [
-                  TabBarView(
-                    controller: _tabController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      if (state is ChargeBoxesLoaded)
-                        MapScreen(list: state.list)
-                      else if (state is ChargeBoxesError)
-                        Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Center(
-                              child: AppText(state.error,
-                                  size: 14.sp,
-                                  textColor: AppColor.errorColor,
-                                  textAlign: TextAlign.center)),
-                        )
-                      else
-                        const Center(
-                          child:
-                              CircularProgressIndicator(color: AppColor.white),
-                        ),
-                      if (state is ChargeBoxesLoaded)
-                        StationListScreen(
-                          list: state.list,
-                          address: address,
-                        )
-                      else if (state is ChargeBoxesError)
-                        Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: Center(
-                              child: AppText(state.error,
-                                  size: 14.sp,
-                                  textColor: AppColor.errorColor,
-                                  textAlign: TextAlign.center)),
-                        )
-                      else
-                        const SizedBox()
-                    ],
-                  ),
-                  Container(
-                    margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 52.h),
-                    child: TabBar(
-                      controller: _tabController,
-                      indicatorColor: Colors.transparent,
-                      onTap: (index) => _onTabTap(index),
-                      tabs: [
-                        _tabBarItem(title: "Map", isSelected: selected1),
-                        _tabBarItem(title: "List View", isSelected: selected2),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              bottomNavigationBar: Container(
+    return Scaffold(
+      backgroundColor: AppColor.backgroundColorDark,
+      body: Stack(
+        children: [
+          TabBarView(
+            controller: _tabController,
+            physics: const NeverScrollableScrollPhysics(),
+            children: [
+              const MapScreen(),
+              StationListScreen(
+                list: const [],
+                address: address,
+              )
+            ],
+          ),
+          Container(
+            margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 52.h),
+            child: TabBar(
+              controller: _tabController,
+              indicatorColor: Colors.transparent,
+              onTap: (index) => _onTabTap(index),
+              tabs: [
+                _tabBarItem(title: "Map", isSelected: selected1),
+                _tabBarItem(title: "List View", isSelected: selected2),
+              ],
+            ),
+          )
+        ],
+      ),
+      bottomNavigationBar: Container(
+        height: 62.sp,
+        width: ScreenUtil().screenWidth,
+        color: AppColor.backgroundColorDark,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            MaterialButton(
+                onPressed: () async {
+                  await SecureStorage.read(key: SecureStorage.phone)
+                      .then((value) {
+                    Global.userModel.username = value;
+                  });
+                  MyApp.navigatorKey.currentState?.pushNamed(Routes.profile);
+                },
                 height: 62.sp,
-                width: ScreenUtil().screenWidth,
-                color: AppColor.backgroundColorDark,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    MaterialButton(
-                        onPressed: () async {
-                          await SecureStorage.read(key: SecureStorage.phone)
-                              .then((value) {
-                            Global.userModel.username = value;
-                          });
-                          MyApp.navigatorKey.currentState
-                              ?.pushNamed(Routes.profile);
-                        },
-                        height: 62.sp,
-                        minWidth: 60.sp,
-                        child: Icon(Icons.subject,
-                            color: Colors.white, size: 30.sp)),
-                    MaterialButton(
-                        onPressed: () => MyApp.navigatorKey.currentState
-                            ?.pushNamed(Routes.vehicles),
-                        height: 62.sp,
-                        child: Image.asset(
-                          "assets/images/car_icon.png",
-                        )),
-                  ],
-                ),
-              ),
-            );
-          },
+                minWidth: 60.sp,
+                child: Icon(Icons.subject, color: Colors.white, size: 30.sp)),
+            MaterialButton(
+                onPressed: () =>
+                    MyApp.navigatorKey.currentState?.pushNamed(Routes.vehicles),
+                height: 62.sp,
+                child: Image.asset(
+                  "assets/images/car_icon.png",
+                )),
+          ],
         ),
       ),
     );

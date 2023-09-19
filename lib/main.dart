@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/constants/routes.dart';
+import 'package:smart_car_app/hive/hive_store.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/models/global/UserModel.dart';
 import 'package:smart_car_app/services/location_service.dart';
@@ -16,6 +17,7 @@ main() async {
   AndroidYandexMap.useAndroidViewSurface = false;
   WidgetsFlutterBinding.ensureInitialized();
   await DioClient.init();
+  await MyHiveStore.init();
   SecureStorage.init();
   Global.userModel.username =
       await SecureStorage.read(key: SecureStorage.phone);

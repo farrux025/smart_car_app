@@ -16,14 +16,7 @@ class VehiclesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<VehicleModel> vehicleList = [
-      VehicleModel("BMW X5", AppImages.currentPosition, 0.7),
-      VehicleModel("BMW X5", AppImages.onBoarding1, 0.4),
-      VehicleModel("BMW X5", AppImages.currentPosition, 1),
-      VehicleModel("BMW X5", AppImages.onBoarding2, 0.9),
-      VehicleModel("BMW X5", AppImages.onBoarding3, 0.4),
-      VehicleModel("BMW X5", AppImages.currentPosition, 1),
-    ];
+    List<VehicleModel> vehicleList = [];
     return Scaffold(
       backgroundColor: AppColor.backgroundColor,
       appBar: AppBar(

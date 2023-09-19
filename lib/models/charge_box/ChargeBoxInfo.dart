@@ -1,14 +1,28 @@
 import 'dart:collection';
 import 'dart:developer';
 
+import 'package:hive/hive.dart';
+import 'package:smart_car_app/hive/hive_store.dart';
+
+part 'ChargeBoxInfo.g.dart';
+
+@HiveType(typeId: MyHiveTypeId.chargeBoxId)
 class ChargeBoxInfo {
+  @HiveField(0)
   String? country;
+  @HiveField(1)
   String? city;
+  @HiveField(2)
   String? addressName;
+  @HiveField(3)
   String? street;
+  @HiveField(4)
   double? locationLatitude;
+  @HiveField(5)
   double? locationLongitude;
+  @HiveField(6)
   String? name;
+  @HiveField(7)
   String? id;
 
   ChargeBoxInfo({

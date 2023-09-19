@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/constants.dart';
@@ -14,6 +15,7 @@ import 'package:smart_car_app/models/vehicle/add_vehicle/req/ReqTag.dart';
 import 'package:smart_car_app/models/vehicle/add_vehicle/req/RequestAddVehicle.dart';
 import 'package:smart_car_app/services/image_service.dart';
 import 'package:smart_car_app/services/shared_prefs.dart';
+import 'package:smart_car_app/utils/functions.dart';
 
 import '../../models/global/UserModel.dart';
 
@@ -41,6 +43,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     vehicleTypeValue = vehicleTypeList[0];
     brandValue = brandList[0];
     modelValue = modelList[0];
+    MySharedPrefs().delete(key: MySharedPrefs.vehicleImageKey);
+    MySharedPrefs().delete(key: MySharedPrefs.vehicleImageUrlKey);
   }
 
   @override
@@ -48,7 +52,12 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     return BlocProvider(
       create: (BuildContext context) => AddVehicleCubit(),
       child: BlocListener<AddVehicleCubit, AddVehicleState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if (state is AddVehicleError) {
+            openSnackBar(
+                message: "Xatolik sodir bo'ldi. Qaytadan urunib ko'ring!");
+          }
+        },
         child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
           builder: (context, state) {
             AddVehicleCubit read = context.read<AddVehicleCubit>();
@@ -273,7 +282,19 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           SizedBox(height: 30.h),
                           _enterNumberField(),
                           SizedBox(height: 30.h),
-                          _addButton(read),
+                          _addButton(
+                            read,
+                            child: state is AddVehicleLoading
+                                ? SizedBox(
+                                    height: 18.h,
+                                    width: 18.h,
+                                    child: const CircularProgressIndicator(
+                                        color: AppColor.white, strokeWidth: 4))
+                                : AppText("ADD NOW",
+                                    textColor: AppColor.white,
+                                    fontWeight: FontWeight.w500,
+                                    size: 14.sp),
+                          ),
                           SizedBox(height: 30.h),
                         ],
                       ),
@@ -297,13 +318,14 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             size: 15.sp));
   }
 
-  _addButton(AddVehicleCubit read) {
+  _addButton(AddVehicleCubit read, {required Widget child}) {
     return Container(
       decoration: const BoxDecoration(
           gradient: LinearGradient(
               colors: [AppColor.buttonLeftColor, AppColor.buttonRightColor])),
       child: MaterialButton(
         onPressed: () async {
+          closeKeyboard();
           String? imageUrl;
           await MySharedPrefs()
               .getVehicleImage(key: MySharedPrefs.vehicleImageUrlKey)
@@ -325,10 +347,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         },
         height: 57.sp,
         minWidth: ScreenUtil().screenWidth,
-        child: AppText("ADD NOW",
-            textColor: AppColor.white,
-            fontWeight: FontWeight.w500,
-            size: 14.sp),
+        child: child,
       ),
     );
   }

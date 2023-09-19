@@ -17,4 +17,9 @@ class MySharedPrefs {
     var imagePath = instance.getString(key);
     return imagePath ?? "";
   }
+
+  delete({required String key}) async {
+    final instance = await _sharedPrefs;
+    instance.remove(key);
+  }
 }
