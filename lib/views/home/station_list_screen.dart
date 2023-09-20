@@ -2,84 +2,104 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
+import 'package:smart_car_app/cubit/charge_box/charge_boxes_cubit.dart';
+import 'package:smart_car_app/hive/hive_store.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/home.dart';
+import 'package:smart_car_app/views/home/search.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../models/charge_box/ChargeBoxInfo.dart';
 import 'map_screen.dart';
 
-class StationListScreen extends StatelessWidget {
-  final List<ChargeBoxInfo> list;
+class StationListScreen extends StatefulWidget {
   final String address;
 
-  const StationListScreen(
-      {super.key, required this.list, required this.address});
+  const StationListScreen({super.key, required this.address});
+
+  @override
+  State<StationListScreen> createState() => _StationListScreenState();
+}
+
+class _StationListScreenState extends State<StationListScreen> {
+  late List<ChargeBoxInfo>? list;
 
   @override
   Widget build(BuildContext context) {
-    log("Charge boxes count: ${list.length}");
-    return Scaffold(
-      backgroundColor: AppColor.backgroundColorLight,
-      body: Column(
-        children: [
-          SizedBox(height: 100.h),
-          Flexible(
-            flex: 2,
-            child: ListTile(
-              leading: Icon(Icons.location_on,
-                  color: AppColor.backgroundColorDark, size: 24.sp),
-              title: Padding(
-                padding: EdgeInsets.only(right: 30.w),
-                child: AppText(address,
-                    maxLines: 3,
-                    size: 12.sp,
-                    fontWeight: FontWeight.w400,
-                    textColor: AppColor.textColor),
-              ),
-              trailing: Container(
-                height: 26.h,
-                width: 74.w,
-                decoration: BoxDecoration(
-                    border: Border.all(color: AppColor.textColor),
-                    borderRadius: BorderRadius.circular(3.r)),
-                child: MaterialButton(
-                  onPressed: () {
-                    log("Filter");
-                  },
-                  child: AppText("Filter",
-                      textColor: AppColor.textColor,
-                      size: 12.sp,
-                      fontWeight: FontWeight.w400),
+    var box = Hive.box<List<ChargeBoxInfo>>(MyHiveBoxName.chargeBox);
+    return ValueListenableBuilder(
+      valueListenable: box.listenable(),
+      builder: (context, value, child) {
+        list = box.get(MyHiveBoxName.chargeBox);
+        log("Charge boxes count: ${list?.length}");
+        return Scaffold(
+          backgroundColor: AppColor.backgroundColorLight,
+          body: Column(
+            children: [
+              SizedBox(height: 100.h),
+              Flexible(
+                flex: 2,
+                child: ListTile(
+                  leading: Icon(Icons.location_on,
+                      color: AppColor.backgroundColorDark, size: 24.sp),
+                  title: Padding(
+                    padding: EdgeInsets.only(right: 30.w),
+                    child: AppText(widget.address,
+                        maxLines: 3,
+                        size: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        textColor: AppColor.textColor),
+                  ),
+                  trailing: Container(
+                    height: 26.h,
+                    width: 74.w,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: AppColor.textColor),
+                        borderRadius: BorderRadius.circular(3.r)),
+                    child: MaterialButton(
+                      onPressed: () =>
+                          MySearch.openSearchView(list: list ?? []),
+                      child: AppText("Filter",
+                          textColor: AppColor.textColor,
+                          size: 12.sp,
+                          fontWeight: FontWeight.w400),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              Flexible(
+                flex: 22,
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    await ChargeBoxesCubit().getChargeBoxes();
+                  },
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemBuilder: (context, index) {
+                        var chargeBox = list![index];
+                        return GestureDetector(
+                          onTap: () => _onItemTap(chargeBox),
+                          child: chargingStation(
+                              stationName: chargeBox.name ?? '',
+                              distance: distance(
+                                      lat: chargeBox.locationLatitude ?? 0,
+                                      lon: chargeBox.locationLongitude ?? 0)
+                                  .replaceAll(" Away", ""),
+                              rating: "4.4",
+                              energyPower: "AC 3.3kw"),
+                        );
+                      },
+                      itemCount: list?.length),
+                ),
+              )
+            ],
           ),
-          Flexible(
-            flex: 22,
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  var chargeBox = list[index];
-                  return GestureDetector(
-                    onTap: () => _onItemTap(chargeBox),
-                    child: chargingStation(
-                        stationName: chargeBox.name ?? '',
-                        distance: distance(
-                                lat: chargeBox.locationLatitude ?? 0,
-                                lon: chargeBox.locationLongitude ?? 0)
-                            .replaceAll(" Away", ""),
-                        rating: "4.4",
-                        energyPower: "AC 3.3kw"),
-                  );
-                },
-                itemCount: list.length),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 

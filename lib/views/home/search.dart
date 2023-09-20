@@ -189,3 +189,21 @@ class _SearchViewState extends State<SearchView> {
         rating: "4.5");
   }
 }
+
+class MySearch {
+  static void openSearchView({required List<ChargeBoxInfo> list}) {
+    var context = MyApp.navigatorKey.currentState!.context;
+    showModalBottomSheet(
+        context: context,
+        useRootNavigator: true,
+        isScrollControlled: true,
+        backgroundColor: AppColor.backgroundColor,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16.r),
+                topRight: Radius.circular(16.r))),
+        builder: (context) {
+          return SearchView(searchList: list);
+        });
+  }
+}

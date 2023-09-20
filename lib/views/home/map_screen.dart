@@ -7,6 +7,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/hive/hive_store.dart';
@@ -122,20 +123,21 @@ class _MapScreenState extends State<MapScreen> {
                     ),
                   ),
                   Positioned(
-                    bottom: 4,
-                    right: 4,
-                    left: 4,
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
                     child: Column(
                       children: [
                         Container(
                           margin: EdgeInsets.only(
                               bottom: 12.h, left: 12.w, right: 12.h),
                           child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               SizedBox(
-                                height: 36.h,
-                                width: 36.h,
+                                height: 32.h,
+                                width: 32.h,
                                 child: FloatingActionButton(
                                   onPressed: () async =>
                                       await read.getChargeBoxes(),
@@ -156,19 +158,56 @@ class _MapScreenState extends State<MapScreen> {
                                           color: AppColor.white, size: 20.sp),
                                 ),
                               ),
-                              SizedBox(
-                                height: 36.h,
-                                width: 36.h,
-                                child: FloatingActionButton(
-                                  onPressed: () {},
-                                  heroTag: 'my-location',
-                                  backgroundColor:
-                                      Colors.black.withOpacity(0.5),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.r)),
-                                  child: Icon(Icons.my_location,
-                                      color: AppColor.white, size: 20.sp),
-                                ),
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: 32.h,
+                                    width: 32.h,
+                                    child: FloatingActionButton(
+                                      onPressed: () => _zoomIn(),
+                                      heroTag: 'zoom-in',
+                                      backgroundColor:
+                                          Colors.black.withOpacity(0.5),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.r)),
+                                      child: Icon(Icons.add,
+                                          color: AppColor.white, size: 20.sp),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  SizedBox(
+                                    height: 32.h,
+                                    width: 32.h,
+                                    child: FloatingActionButton(
+                                      onPressed: () => _zoomOut(),
+                                      heroTag: 'zoom-out',
+                                      backgroundColor:
+                                          Colors.black.withOpacity(0.5),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.r)),
+                                      child: Icon(Icons.remove,
+                                          color: AppColor.white, size: 20.sp),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  SizedBox(
+                                    height: 32.h,
+                                    width: 32.h,
+                                    child: FloatingActionButton(
+                                      onPressed: () => _goMyLocation(),
+                                      heroTag: 'my-location',
+                                      backgroundColor:
+                                          Colors.black.withOpacity(0.5),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.r)),
+                                      child: Icon(Icons.my_location,
+                                          color: AppColor.white, size: 20.sp),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -177,10 +216,11 @@ class _MapScreenState extends State<MapScreen> {
                           width: ScreenUtil().screenWidth,
                           height: 50.h,
                           margin: EdgeInsets.only(
-                              bottom: 24.h, left: 16.w, right: 16.h),
+                              bottom: 20.h, left: 16.w, right: 16.h),
                           color: Colors.white,
                           child: MaterialButton(
-                            onPressed: () => openSearchView(),
+                            onPressed: () =>
+                                MySearch.openSearchView(list: mainList),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -196,6 +236,22 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                           ),
                         ),
+                        state is ChargeBoxesError
+                            ? Container(
+                                color: AppColor.backgroundColorError,
+                                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                width: ScreenUtil().screenWidth,
+                                height: 36.h,
+                                child: Center(
+                                  child: AppText(state.error,
+                                      size: 11.sp,
+                                      textColor: AppColor.white,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              )
+                            : const SizedBox()
                       ],
                     ),
                   )
@@ -213,6 +269,7 @@ class _MapScreenState extends State<MapScreen> {
     controller.moveCamera(
         CameraUpdate.newCameraPosition(CameraPosition(target: _initialPoint)));
     controller.moveCamera(CameraUpdate.zoomTo(13));
+    controller.toggleUserLayer(visible: true);
   }
 
   PlacemarkMapObject _placeMarkMapObject(
@@ -274,21 +331,6 @@ class _MapScreenState extends State<MapScreen> {
     final pngBytes = await image.toByteData(format: ImageByteFormat.png);
 
     return pngBytes!.buffer.asUint8List();
-  }
-
-  void openSearchView() {
-    showModalBottomSheet(
-        context: context,
-        useRootNavigator: true,
-        isScrollControlled: true,
-        backgroundColor: AppColor.backgroundColor,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(16.r),
-                topRight: Radius.circular(16.r))),
-        builder: (context) {
-          return SearchView(searchList: mainList);
-        });
   }
 
   void openDetails(ChargeBoxInfo chargeBox, PlacemarkMapObject mapObject) {
@@ -356,6 +398,17 @@ class _MapScreenState extends State<MapScreen> {
   Future<void> _zoomOut() async {
     YandexMapController yandexMapController = await _completer.future;
     yandexMapController.moveCamera(CameraUpdate.zoomOut());
+  }
+
+  Future<void> _goMyLocation() async {
+    YandexMapController yandexMapController = await _completer.future;
+    Geolocator.getCurrentPosition().then((pos) {
+      yandexMapController.moveCamera(
+          CameraUpdate.newCameraPosition(CameraPosition(
+              target: Point(latitude: pos.latitude, longitude: pos.longitude))),
+          animation:
+              const MapAnimation(type: MapAnimationType.linear, duration: 1));
+    });
   }
 
   void separateChargeBoxList(List<MapObject> mapObjList) {

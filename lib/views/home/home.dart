@@ -54,13 +54,7 @@ class _HomeScreenState extends State<HomeScreen>
           TabBarView(
             controller: _tabController,
             physics: const NeverScrollableScrollPhysics(),
-            children: [
-              const MapScreen(),
-              StationListScreen(
-                list: const [],
-                address: address,
-              )
-            ],
+            children: [const MapScreen(), StationListScreen(address: address)],
           ),
           Container(
             margin: EdgeInsets.only(left: 24.w, right: 24.w, top: 52.h),

@@ -23,6 +23,7 @@ class AppColor {
   static const backgroundColorBlue = Color(0xFFDEE0E5);
   static const backgroundColorDark = Color(0xFF212634);
   static const backgroundColorLight = Color(0xFFF3F5F8);
+  static const backgroundColorError = Color(0xFFDA584B);
 
   // text color
 
