@@ -6,6 +6,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/routes.dart';
+import 'package:smart_car_app/services/stomp_client.dart';
 import 'package:smart_car_app/views/home/map_screen.dart';
 import 'package:smart_car_app/views/home/station_list_screen.dart';
 
@@ -80,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen>
           children: [
             MaterialButton(
                 onPressed: () async {
+                  StompSendRequest.openConnection();
                   await SecureStorage.read(key: SecureStorage.phone)
                       .then((value) {
                     Global.userModel.username = value;

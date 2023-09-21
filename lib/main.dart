@@ -8,6 +8,7 @@ import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/models/global/UserModel.dart';
 import 'package:smart_car_app/services/location_service.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
+import 'package:smart_car_app/services/stomp_client.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
@@ -31,6 +32,7 @@ main() async {
   await packageInfo().then((value) {
     Global.myPackageInfo.appVersion = value.version;
   });
+  await StompClientInstance.connect();
   runApp(const MyApp());
 }
 

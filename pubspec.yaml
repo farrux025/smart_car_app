@@ -68,6 +68,8 @@ dependencies:
   http_parser:
   hive: ^2.2.3
   hive_flutter: ^1.1.0
+  stomp_dart_client: ^1.0.0
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   flutter_test:
