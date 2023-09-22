@@ -15,16 +15,23 @@ part 'charge_boxes_state.dart';
 
 class ChargeBoxesCubit extends Cubit<ChargeBoxesState> {
   ChargeBoxesCubit() : super(ChargeBoxesLoading()) {
-    getChargeBoxes();
+    if (LocationModel.latitude != null && LocationModel.longitude != null) {
+      getChargeBoxes(
+          lat: LocationModel.latitude!, lon: LocationModel.longitude!);
+    } else {
+      String error = 'Current location not detected';
+      emit(ChargeBoxesError(error));
+    }
   }
 
-  getChargeBoxes() async {
+  getChargeBoxes({
+    required double lat,
+    required double lon,
+  }) async {
     try {
       emit(ChargeBoxesLoading());
       await ChargeBoxService.doGetChargeBoxes(
-              lat: LocationModel.latitude.toString(),
-              lon: LocationModel.longitude.toString(),
-              distance: "1000000")
+              lat: lat.toString(), lon: lon.toString(), distance: "50000")
           .then((response) {
         if (response.statusCode == 200) {
           List<ChargeBoxInfo> list = [];

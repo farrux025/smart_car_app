@@ -24,16 +24,14 @@ import '../../cubit/charge_box/charge_boxes_cubit.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
 
 class MapScreen extends StatefulWidget {
-  // final List<ChargeBoxInfo> list;
-
-  const MapScreen({
-    super.key,
-    // required this.list,
-  });
+  const MapScreen({super.key});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
+
+double? mainLat = LocationModel.latitude;
+double? mainLon = LocationModel.longitude;
 
 class _MapScreenState extends State<MapScreen> {
   final Completer<YandexMapController> _completer = Completer();
@@ -92,6 +90,8 @@ class _MapScreenState extends State<MapScreen> {
                   opacity: 1,
                   onTap: (mapObject, point) {
                     _zoomIn();
+                    // log("message");
+                    // mapObject.copyWith();
                   },
                 ));
               },
@@ -113,9 +113,17 @@ class _MapScreenState extends State<MapScreen> {
                       child: YandexMap(
                           onMapCreated: _onMapCreated,
                           mapObjects: mapObjects,
-                          // onCameraPositionChanged: (cameraPosition, reason, finished) {
-                          //   log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
-                          // },
+                          onCameraPositionChanged:
+                              (cameraPosition, reason, finished) async {
+                            if (finished) {
+                              log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
+                              mainLat = cameraPosition.target.latitude;
+                              mainLon = cameraPosition.target.longitude;
+                              await read.getChargeBoxes(
+                                  lat: cameraPosition.target.latitude,
+                                  lon: cameraPosition.target.longitude);
+                            }
+                          },
                           // onTrafficChanged: (trafficLevel) {
                           //   log("onTrafficChanged: ${trafficLevel?.color} => ${trafficLevel?.level}");
                           // },
@@ -140,7 +148,8 @@ class _MapScreenState extends State<MapScreen> {
                                 width: 32.h,
                                 child: FloatingActionButton(
                                   onPressed: () async =>
-                                      await read.getChargeBoxes(),
+                                      await read.getChargeBoxes(
+                                          lat: mainLat!, lon: mainLon!),
                                   heroTag: 'refresh',
                                   backgroundColor:
                                       Colors.black.withOpacity(0.5),
@@ -219,8 +228,10 @@ class _MapScreenState extends State<MapScreen> {
                               bottom: 20.h, left: 16.w, right: 16.h),
                           color: Colors.white,
                           child: MaterialButton(
-                            onPressed: () =>
-                                MySearch.openSearchView(list: mainList),
+                            onPressed: () => MySearch.openSearchView(
+                                list: mainList,
+                                isMap: true,
+                                completer: _completer),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

@@ -81,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen>
           children: [
             MaterialButton(
                 onPressed: () async {
-                  StompSendRequest.openConnection();
                   await SecureStorage.read(key: SecureStorage.phone)
                       .then((value) {
                     Global.userModel.username = value;

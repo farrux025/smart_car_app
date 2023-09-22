@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
@@ -12,8 +14,12 @@ import '../../main.dart';
 
 class SearchView extends StatefulWidget {
   final List<ChargeBoxInfo> searchList;
+  final bool isMap;
+  final Completer<YandexMapController>? completer;
 
-  const SearchView({Key? key, required this.searchList}) : super(key: key);
+  const SearchView(
+      {Key? key, required this.searchList, required this.isMap, this.completer})
+      : super(key: key);
 
   @override
   State<SearchView> createState() => _SearchViewState();
@@ -175,23 +181,39 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
-  _onItemTap(ChargeBoxInfo item) {
-    bottomSheet(
-        list: [item],
-        chargeBoxId: item.id ?? '',
-        point: Point(
-            latitude: item.locationLatitude ?? 0,
-            longitude: item.locationLongitude ?? 0),
-        stationName: item.name ?? '',
-        address: "${item.street},\n${item.city}",
-        distance: distance(
-            lat: item.locationLatitude ?? 0, lon: item.locationLongitude ?? 0),
-        rating: "4.5");
+  _onItemTap(ChargeBoxInfo item) async {
+    if (widget.isMap) {
+      popBack();
+      YandexMapController? yandexMapController = await widget.completer?.future;
+      yandexMapController?.moveCamera(
+          CameraUpdate.newCameraPosition(CameraPosition(
+              target: Point(
+                  latitude: item.locationLatitude ?? 0,
+                  longitude: item.locationLongitude ?? 0))),
+          animation:
+              const MapAnimation(type: MapAnimationType.linear, duration: 1));
+    } else {
+      bottomSheet(
+          list: [item],
+          chargeBoxId: item.id ?? '',
+          point: Point(
+              latitude: item.locationLatitude ?? 0,
+              longitude: item.locationLongitude ?? 0),
+          stationName: item.name ?? '',
+          address: "${item.street},\n${item.city}",
+          distance: distance(
+              lat: item.locationLatitude ?? 0,
+              lon: item.locationLongitude ?? 0),
+          rating: "4.5");
+    }
   }
 }
 
 class MySearch {
-  static void openSearchView({required List<ChargeBoxInfo> list}) {
+  static void openSearchView(
+      {required List<ChargeBoxInfo> list,
+      required bool isMap,
+      Completer<YandexMapController>? completer}) {
     var context = MyApp.navigatorKey.currentState!.context;
     showModalBottomSheet(
         context: context,
@@ -203,7 +225,8 @@ class MySearch {
                 topLeft: Radius.circular(16.r),
                 topRight: Radius.circular(16.r))),
         builder: (context) {
-          return SearchView(searchList: list);
+          return SearchView(
+              searchList: list, isMap: isMap, completer: completer);
         });
   }
 }

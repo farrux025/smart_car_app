@@ -32,7 +32,7 @@ main() async {
   await packageInfo().then((value) {
     Global.myPackageInfo.appVersion = value.version;
   });
-  await StompClientInstance.connect();
+  // await StompClientInstance.connect();
   runApp(const MyApp());
 }
 

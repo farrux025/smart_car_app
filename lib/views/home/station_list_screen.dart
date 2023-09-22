@@ -61,8 +61,8 @@ class _StationListScreenState extends State<StationListScreen> {
                         border: Border.all(color: AppColor.textColor),
                         borderRadius: BorderRadius.circular(3.r)),
                     child: MaterialButton(
-                      onPressed: () =>
-                          MySearch.openSearchView(list: list ?? []),
+                      onPressed: () => MySearch.openSearchView(
+                          list: list ?? [], isMap: false),
                       child: AppText("Filter",
                           textColor: AppColor.textColor,
                           size: 12.sp,
@@ -75,7 +75,8 @@ class _StationListScreenState extends State<StationListScreen> {
                 flex: 22,
                 child: RefreshIndicator(
                   onRefresh: () async {
-                    await ChargeBoxesCubit().getChargeBoxes();
+                    await ChargeBoxesCubit()
+                        .getChargeBoxes(lat: mainLat!, lon: mainLon!);
                   },
                   child: ListView.builder(
                       shrinkWrap: true,
