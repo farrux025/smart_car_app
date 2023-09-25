@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:overscroll_pop/overscroll_pop.dart';
 import 'package:popup_banner/popup_banner.dart';
 import 'package:smart_car_app/cubit/charge_box/details_cubit.dart';
@@ -128,7 +129,8 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                             textColor: AppColor.white,
                             fontWeight: FontWeight.w500),
                         SizedBox(width: 8.w),
-                        Image.asset(AppImages.navigatorIcon, fit: BoxFit.fill)
+                        SvgPicture.asset(AppImages.navigatorIconSvg,
+                            fit: BoxFit.cover, height: 13.sp, width: 13.sp)
                       ],
                     ),
                   )),
@@ -145,7 +147,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                             automaticIndicatorColorAdjustment: false,
                             indicatorColor: Colors.transparent,
                             labelColor: AppColor.yellow,
-                            unselectedLabelColor: Colors.white.withOpacity(0.8),
+                            unselectedLabelColor: Colors.white.withOpacity(0.9),
                             tabs:
                                 List.generate(widget.mainList.length, (index) {
                               return Column(
@@ -155,10 +157,11 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
                                   Stack(alignment: Alignment.center, children: [
-                                    Image.asset(AppImages.backImageOfIndicator,
-                                        fit: BoxFit.fill,
-                                        height: 40.h,
-                                        width: 34.w),
+                                    SvgPicture.asset(
+                                        AppImages.backImageOfIndicatorSvg,
+                                        fit: BoxFit.cover,
+                                        height: 44.sp,
+                                        width: 34.sp),
                                     Tab(
                                       child: AppText(
                                         "${index + 1}",
@@ -173,7 +176,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                             }),
                             controller: _tabController),
                       )
-                    : Image.asset(AppImages.stationPointer,
+                    : SvgPicture.asset(AppImages.stationPointerSvg,
                         fit: BoxFit.fill, height: 42.h, width: 34.w)),
           ],
         ),
@@ -223,9 +226,11 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                             flex: 2,
                             child: AppText(chargeBox.name ?? '',
                                 size: 24.sp,
+                                fontFamily: 'RobotoCondense',
                                 textColor: AppColor.textColor,
-                                fontWeight: FontWeight.w600),
+                                fontWeight: FontWeight.w800),
                           ),
+                          SizedBox(width: 10.w),
                           SizedBox(
                             width: 70.sp,
                             child: ratingWidget(rating: widget.rating),
@@ -242,8 +247,10 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                             flex: 7,
                             child: Row(
                               children: [
-                                Icon(Icons.location_on,
-                                    size: 24.sp, color: Colors.black),
+                                SvgPicture.asset(AppImages.locationPointerSvg,
+                                    fit: BoxFit.cover,
+                                    height: 22.sp,
+                                    width: 18.sp),
                                 SizedBox(width: 8.w),
                                 SizedBox(
                                   width: ScreenUtil().screenWidth * 0.5,
@@ -358,7 +365,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                   borderRadius:
                       BorderRadius.vertical(bottom: Radius.circular(3.r)),
                   color: const Color(0xFFC8F4E4)),
-              child: AppText("${separator(price)} uzs/hr",
+              child: AppText("${separator(price)} uzs/kWt",
                   textColor: textColor ?? AppColor.textColor,
                   size: 11.sp,
                   fontWeight: FontWeight.w500,

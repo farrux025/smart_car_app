@@ -14,6 +14,7 @@ import 'package:smart_car_app/cubit/vehicle/add_vehicle_cubit.dart';
 import 'package:smart_car_app/models/vehicle/add_vehicle/req/ReqTag.dart';
 import 'package:smart_car_app/models/vehicle/add_vehicle/req/RequestAddVehicle.dart';
 import 'package:smart_car_app/services/image_service.dart';
+import 'package:smart_car_app/services/secure_storage.dart';
 import 'package:smart_car_app/services/shared_prefs.dart';
 import 'package:smart_car_app/utils/functions.dart';
 
@@ -333,6 +334,8 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
             imageUrl = value;
             log("Image Url: $imageUrl");
           });
+          Global.userModel.username =
+              await SecureStorage.read(key: SecureStorage.phone);
           if (_formKey.currentState!.validate()) {
             var requestAddVehicle = RequestAddVehicle(
                 modelId: 0,

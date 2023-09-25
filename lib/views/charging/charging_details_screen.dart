@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
@@ -93,8 +94,8 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
                   _chargingMainInfo(
                       mainInfo: '100%',
                       info: 'Charging',
-                      topWidget: Image.asset(
-                        AppImages.stationPointer,
+                      topWidget: SvgPicture.asset(
+                        AppImages.stationPointerSvg,
                         fit: BoxFit.cover,
                       )),
                   _chargingMainInfo(

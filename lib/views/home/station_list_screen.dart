@@ -2,6 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
@@ -13,13 +16,12 @@ import 'package:smart_car_app/views/home/home.dart';
 import 'package:smart_car_app/views/home/search.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
+import '../../components/app_components.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
 import 'map_screen.dart';
 
 class StationListScreen extends StatefulWidget {
-  final String address;
-
-  const StationListScreen({super.key, required this.address});
+  const StationListScreen({super.key});
 
   @override
   State<StationListScreen> createState() => _StationListScreenState();
@@ -27,6 +29,22 @@ class StationListScreen extends StatefulWidget {
 
 class _StationListScreenState extends State<StationListScreen> {
   late List<ChargeBoxInfo>? list;
+  String address = '';
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      _getAddress().then((value) {
+        var placemark = value[0];
+        setState(() {
+          log("Address: $placemark");
+          address =
+              "${placemark.subLocality}, ${placemark.locality}, ${placemark.country}";
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +62,17 @@ class _StationListScreenState extends State<StationListScreen> {
               Flexible(
                 flex: 2,
                 child: ListTile(
-                  leading: Icon(Icons.location_on,
-                      color: AppColor.backgroundColorDark, size: 24.sp),
+                  leading: Padding(
+                    padding: EdgeInsets.only(left: 18.w),
+                    child: SvgPicture.asset(AppImages.locationPointerSvg,
+                        height: 18.sp,
+                        alignment: Alignment.centerRight,
+                        fit: BoxFit.cover,
+                        width: 15.sp),
+                  ),
                   title: Padding(
                     padding: EdgeInsets.only(right: 30.w),
-                    child: AppText(widget.address,
+                    child: AppText(address,
                         maxLines: 3,
                         size: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -142,7 +166,7 @@ class _StationListScreenState extends State<StationListScreen> {
               children: [
                 Flexible(
                     flex: 2,
-                    child: Image.asset(AppImages.stationPointer,
+                    child: SvgPicture.asset(AppImages.stationPointerSvg,
                         height: 30.h, width: 26.w, fit: BoxFit.fill)),
                 SizedBox(width: 4.w),
                 Flexible(
@@ -154,6 +178,7 @@ class _StationListScreenState extends State<StationListScreen> {
                       AppText(stationName,
                           textColor: AppColor.textColor,
                           size: 16.sp,
+                          fontFamily: 'RobotoCondense',
                           fontWeight: FontWeight.w400,
                           maxLines: 3),
                       SizedBox(height: 12.h),
@@ -206,5 +231,21 @@ class _StationListScreenState extends State<StationListScreen> {
         SizedBox(height: 10.h),
       ],
     );
+  }
+
+  Future<List<Placemark>> _getAddress() async {
+    try {
+      double latitude = 0;
+      double longitude = 0;
+      await Geolocator.getCurrentPosition().then((pos) {
+        latitude = pos.latitude;
+        longitude = pos.longitude;
+      });
+      return await placemarkFromCoordinates(latitude, longitude);
+    } catch (error) {
+      log("Error while get address: $error");
+      openSnackBar(message: error.toString());
+      return [];
+    }
   }
 }

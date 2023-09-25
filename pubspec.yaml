@@ -116,22 +116,16 @@ flutter:
       fonts:
         - asset: assets/fonts/PoppinsBlack.ttf
           style: normal
+    - family: Staatliches
+      fonts:
+        - asset: assets/fonts/StaatlichesRegular.ttf
+          style: normal
+    - family: RobotoCondense
+      fonts:
+        - asset: assets/fonts/RobotoCondenseRegular.ttf
+          style: normal
     - family: Roboto
       fonts:
-        - asset: assets/fonts/roboto/Roboto-Black.ttf
-          style: normal
-        - asset: assets/fonts/roboto/Roboto-BlackItalic.ttf
-          style: italic
-        - asset: assets/fonts/roboto/Roboto-Bold.ttf
-          style: normal
-        - asset: assets/fonts/roboto/Roboto-BoldItalic.ttf
-          style: italic
-        - asset: assets/fonts/roboto/Roboto-Italic.ttf
-          style: italic
-        - asset: assets/fonts/roboto/Roboto-Light.ttf
-          style: normal
-        - asset: assets/fonts/roboto/Roboto-LightItalic.ttf
-          style: italic
         - asset: assets/fonts/roboto/Roboto-Medium.ttf
           style: normal
         - asset: assets/fonts/roboto/Roboto-MediumItalic.ttf

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/images.dart';
 import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
@@ -143,7 +144,7 @@ class _SearchViewState extends State<SearchView> {
         elevation: 1,
         child: ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 14.w),
-          leading: Image.asset(AppImages.stationPointer, fit: BoxFit.fill),
+          leading: SvgPicture.asset(AppImages.stationPointerSvg, fit: BoxFit.fill),
           title: AppText(item.name ?? '',
               textColor: AppColor.textColor,
               size: 16.sp,

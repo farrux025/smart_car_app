@@ -14,7 +14,8 @@ import 'dio/dio_client.dart';
 class ImageService {
   static pickImage({required ImageSource imageSource}) async {
     try {
-      var image = await ImagePicker().pickImage(source: imageSource);
+      var image = await ImagePicker()
+          .pickImage(source: imageSource, maxWidth: 2400, maxHeight: 1080);
       if (image == null) return;
       await MySharedPrefs().saveVehicleImage(
           key: MySharedPrefs.vehicleImageKey, path: image.path);
