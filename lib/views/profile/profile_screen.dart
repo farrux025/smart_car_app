@@ -110,9 +110,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       case 1:
         return settingsItem(
             title: "Til",
-            subtitle: "O'zbek, English, Русский язык",
+            subtitle: "Қазақ тілі, O'zbek, Русский язык, English",
             icon: Icons.language,
-            onPressed: () {});
+            onPressed: () {
+              _changeLanguage();
+            });
       case 2:
         return settingsItem(
             title: "Parol",
@@ -134,5 +136,83 @@ class _ProfileScreenState extends State<ProfileScreen> {
       default:
         return const SizedBox();
     }
+  }
+
+  void _changeLanguage() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.5,
+          minChildSize: 0.4,
+          maxChildSize: 0.7,
+          builder: (context, scrollController) {
+            return Column(
+              children: [
+                SizedBox(height: 8.h),
+                Container(
+                    height: 3.h,
+                    width: 60.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.r),
+                        color: Colors.black26),
+                    padding: EdgeInsets.symmetric(vertical: 8.h)),
+                SizedBox(height: 8.h),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: AppText("Change language",
+                        textColor: AppColor.textColor,
+                        size: 16.sp,
+                        fontWeight: FontWeight.w800)),
+                RadioListTile(
+                    value: "value",
+                    groupValue: "groupValue",
+                    onChanged: (value) {},
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: AppText("Қазақ тілі",
+                        size: 14.sp,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w500)),
+                RadioListTile(
+                    value: "value",
+                    groupValue: "groupValue",
+                    onChanged: (value) {},
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: AppText("O'zbek",
+                        size: 14.sp,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w500)),
+                RadioListTile(
+                    value: "value",
+                    groupValue: "groupValue",
+                    onChanged: (value) {},
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: AppText("Русский язык",
+                        size: 14.sp,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w500)),
+                RadioListTile(
+                    value: "value",
+                    groupValue: "groupValue",
+                    onChanged: (value) {},
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: Row(
+                      children: [
+                        AppText("English",
+                            size: 14.sp,
+                            textColor: AppColor.textColor,
+                            fontWeight: FontWeight.w500),
+                      ],
+                    )),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 }
