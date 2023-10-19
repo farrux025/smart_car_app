@@ -2,11 +2,13 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/constants/constants.dart';
 import 'package:smart_car_app/models/auth/LoginRequest.dart';
 import 'package:smart_car_app/services/auth_service.dart';
+import 'package:smart_car_app/translations/locale_keys.g.dart';
 import 'package:smart_car_app/utils/functions.dart';
 
 import '../constants/routes.dart';
@@ -48,7 +50,7 @@ class LoginCubit extends Cubit<LoginState> {
       emit(LoginError());
       log("Login error: ${exception.response?.data}");
       if (exception.response?.data['detail'] == 'Bad credentials') {
-        openSnackBar(message: "Telefon raqam yoki parol noto'g'ri");
+        openSnackBar(message: LocaleKeys.phone_or_password_incorrect.tr());
       } else {
         openSnackBar(message: "${exception.response?.data['detail']}");
       }

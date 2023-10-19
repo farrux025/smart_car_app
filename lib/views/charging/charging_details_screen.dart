@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,6 +10,7 @@ import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/views/charging/connected_or_disconnected_screen.dart';
 
 import '../../components/app_components.dart';
+import '../../translations/locale_keys.g.dart';
 
 class ChargingDetailsScreen extends StatefulWidget {
   const ChargingDetailsScreen({super.key});
@@ -57,7 +59,7 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 32.w),
                 child: AppText(
-                  "Your car is in charging mood. Don't unplug cable",
+                  LocaleKeys.charging_mood_dont_unplug.tr(),
                   size: 14.sp,
                   textColor: AppColor.textSecondary,
                   fontWeight: FontWeight.w400,
@@ -93,18 +95,18 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
                 children: [
                   _chargingMainInfo(
                       mainInfo: '100%',
-                      info: 'Charging',
+                      info: LocaleKeys.charging.tr(),
                       topWidget: SvgPicture.asset(
                         AppImages.stationPointerSvg,
                         fit: BoxFit.cover,
                       )),
                   _chargingMainInfo(
                     mainInfo: '15:34',
-                    info: 'Time left',
+                    info: LocaleKeys.time_left.tr(),
                   ),
                   _chargingMainInfo(
                       mainInfo: '55.99',
-                      info: 'Amount left',
+                      info: LocaleKeys.amount_left.tr(),
                       leftPositioned: 20.w,
                       topWidget: SizedBox(
                         width: 80.w,
@@ -115,7 +117,7 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
                           color: AppColor.textColorRed,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4.r)),
-                          child: AppText("Recharge now",
+                          child: AppText(LocaleKeys.recharge_now.tr(),
                               size: 9.sp, textColor: AppColor.white),
                         ),
                       )),
@@ -162,12 +164,12 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
       ),
       bottomNavigationBar: MaterialButton(
         onPressed: () {
-          toast(message: "STOP CHARGING");
+          toast(message: LocaleKeys.STOP_CHARGING.tr());
           MyApp.navigatorKey.currentState?.push(MaterialPageRoute(
             builder: (context) => ConnectedOrDisconnectedScreen(
-                title: 'CONNECTED',
+                title: LocaleKeys.CONNECTED.tr(),
                 description:
-                    'The connection is successfully established between your car and with the charger',
+                LocaleKeys.connection_successfully.tr(),
                 icon: Icons.check,
                 iconColor: AppColor.stationIndicatorColor),
           ));
@@ -179,7 +181,7 @@ class _ChargingDetailsScreenState extends State<ChargingDetailsScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppText("STOP CHARGING",
+            AppText(LocaleKeys.STOP_CHARGING.tr(),
                 size: 14.sp,
                 textColor: AppColor.white,
                 fontWeight: FontWeight.w500),

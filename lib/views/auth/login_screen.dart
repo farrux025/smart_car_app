@@ -1,8 +1,10 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/cubit/login_cubit.dart';
+import 'package:smart_car_app/translations/locale_keys.g.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 
@@ -46,12 +48,12 @@ class LoginScreen extends StatelessWidget {
                                   maxLines: 2,
                                   textColor: AppColor.textColor),
                               SizedBox(height: 40.h),
-                              AppText("LOGIN",
+                              AppText(LocaleKeys.LOGIN.tr(),
                                   size: 18.sp,
                                   fontWeight: FontWeight.w600,
                                   textColor: AppColor.textColor),
                               SizedBox(height: 30.h),
-                              titleTextField(title: "Phone number"),
+                              titleTextField(title: LocaleKeys.phone_number.tr()),
                               Form(
                                 key: watch.formKey,
                                 child: AppTextFormField(
@@ -72,7 +74,7 @@ class LoginScreen extends StatelessWidget {
                                         size: 24.sp)),
                               ),
                               SizedBox(height: 20.h),
-                              titleTextField(title: "Password"),
+                              titleTextField(title: LocaleKeys.password.tr()),
                               Form(
                                 key: watch.formKeyPassword,
                                 child: FancyPasswordField(
@@ -113,8 +115,8 @@ class LoginScreen extends StatelessWidget {
                                           state is LoginError
                                       ? AppText(
                                           state is LoginError
-                                              ? "Error"
-                                              : "Login",
+                                              ? LocaleKeys.error.tr()
+                                              : LocaleKeys.login.tr(),
                                           textColor: state is LoginError
                                               ? AppColor.errorColor
                                               : AppColor.white,

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -18,6 +19,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../components/app_components.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
+import '../../translations/locale_keys.g.dart';
 import 'map_screen.dart';
 
 class StationListScreen extends StatefulWidget {
@@ -87,7 +89,7 @@ class _StationListScreenState extends State<StationListScreen> {
                     child: MaterialButton(
                       onPressed: () => MySearch.openSearchView(
                           list: list ?? [], isMap: false),
-                      child: AppText("Filter",
+                      child: AppText(LocaleKeys.filter.tr(),
                           textColor: AppColor.textColor,
                           size: 12.sp,
                           fontWeight: FontWeight.w400),
@@ -113,7 +115,7 @@ class _StationListScreenState extends State<StationListScreen> {
                               distance: distance(
                                       lat: chargeBox.locationLatitude ?? 0,
                                       lon: chargeBox.locationLongitude ?? 0)
-                                  .replaceAll(" Away", ""),
+                                  .replaceAll(" ${LocaleKeys.away.tr()}", ""),
                               rating: "4.4",
                               energyPower: "AC 3.3kw"),
                         );

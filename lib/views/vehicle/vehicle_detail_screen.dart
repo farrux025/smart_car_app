@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
+
+import '../../translations/locale_keys.g.dart';
 
 class VehicleDetailScreen extends StatelessWidget {
   const VehicleDetailScreen({super.key});
@@ -32,7 +35,7 @@ class VehicleDetailScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Column(
               children: [
-                AppText("Compellingly brand real-time 8897",
+                AppText(LocaleKeys.car_info_page_desc.tr(),
                     size: 12.sp,
                     textColor: AppColor.textSecondary,
                     fontWeight: FontWeight.w400),
@@ -51,13 +54,13 @@ class VehicleDetailScreen extends StatelessWidget {
                       children: [
                         _infoWidget(
                             icon: Icons.device_thermostat_outlined,
-                            subtitle: 'Temperature',
+                            subtitle: LocaleKeys.temperature.tr(),
                             mainInfo: _textInfo(
                                 text: '18', textColor: AppColor.textColorBlue)),
                         const SizedBox(width: 18),
                         _infoWidget(
                             icon: Icons.bolt,
-                            subtitle: 'Charge',
+                            subtitle: LocaleKeys.charge.tr(),
                             mainInfo: _textInfo(
                                 text: '65%',
                                 textColor: AppColor.stationIndicatorColor)),
@@ -69,13 +72,13 @@ class VehicleDetailScreen extends StatelessWidget {
                       children: [
                         _infoWidget(
                             icon: Icons.camera_rounded,
-                            subtitle: 'Tire Pressure',
+                            subtitle: LocaleKeys.tire_pressure.tr(),
                             mainInfo: _textInfo(
                                 text: '19%', textColor: AppColor.textColorRed)),
                         const SizedBox(width: 18),
                         _infoWidget(
                             icon: Icons.cable,
-                            subtitle: 'Electrical Wiring',
+                            subtitle: LocaleKeys.electrical_wiring.tr(),
                             mainInfo: Icon(
                               Icons.check_circle,
                               color: AppColor.stationIndicatorColor,

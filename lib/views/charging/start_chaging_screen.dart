@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -7,6 +8,8 @@ import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
 import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/main.dart';
+
+import '../../translations/locale_keys.g.dart';
 
 class StartChargingScreen extends StatefulWidget {
   const StartChargingScreen({super.key});
@@ -34,7 +37,7 @@ class _StartChargingScreenState extends State<StartChargingScreen> {
       appBar: AppBar(
           elevation: 0,
           backgroundColor: Colors.transparent,
-          title: AppText("Connection established",
+          title: AppText(LocaleKeys.connection_established.tr(),
               size: 12.sp,
               textColor: AppColor.textSecondary,
               fontWeight: FontWeight.w400),
@@ -141,7 +144,7 @@ class _StartChargingScreenState extends State<StartChargingScreen> {
       ),
       bottomNavigationBar: MaterialButton(
         onPressed: () {
-          toast(message: "START CHARGING");
+          toast(message: LocaleKeys.START_CHARGING.tr());
           MyApp.navigatorKey.currentState?.pushNamed(Routes.chargingDetails);
         },
         color: AppColor.stationIndicatorColor,
@@ -151,7 +154,7 @@ class _StartChargingScreenState extends State<StartChargingScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppText("START CHARGING",
+            AppText(LocaleKeys.START_CHARGING.tr(),
                 size: 14.sp,
                 textColor: AppColor.white,
                 fontWeight: FontWeight.w500),

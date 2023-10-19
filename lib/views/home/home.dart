@@ -1,22 +1,20 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
 import 'package:smart_car_app/constants/routes.dart';
-import 'package:smart_car_app/services/stomp_client.dart';
 import 'package:smart_car_app/views/home/map_screen.dart';
 import 'package:smart_car_app/views/home/station_list_screen.dart';
 
-import '../../components/app_components.dart';
 import '../../main.dart';
-import '../../models/global/LocationModel.dart';
 import '../../models/global/UserModel.dart';
 import '../../services/secure_storage.dart';
+import '../../translations/locale_keys.g.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -60,8 +58,8 @@ class _HomeScreenState extends State<HomeScreen>
               indicatorColor: Colors.transparent,
               onTap: (index) => _onTabTap(index),
               tabs: [
-                _tabBarItem(title: "Map", isSelected: selected1),
-                _tabBarItem(title: "List View", isSelected: selected2),
+                _tabBarItem(title: LocaleKeys.map.tr(), isSelected: selected1),
+                _tabBarItem(title: LocaleKeys.list_view.tr(), isSelected: selected2),
               ],
             ),
           )

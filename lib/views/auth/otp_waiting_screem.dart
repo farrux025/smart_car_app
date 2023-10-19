@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:custom_timer/custom_timer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -11,6 +12,7 @@ import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 
 import '../../constants/color.dart';
+import '../../translations/locale_keys.g.dart';
 
 class OtpWaitingScreen extends StatefulWidget {
   const OtpWaitingScreen({super.key});
@@ -62,7 +64,7 @@ class _OtpWaitingScreenState extends State<OtpWaitingScreen>
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  AppText("WAITING FOR THE OTP",
+                  AppText(LocaleKeys.waiting_otp.tr(),
                       size: 38.sp,
                       fontWeight: FontWeight.w600,
                       maxLines: 2,
@@ -135,7 +137,7 @@ class _OtpWaitingScreenState extends State<OtpWaitingScreen>
                             MyApp.navigatorKey.currentState
                                 ?.pushNamed(Routes.otp);
                           },
-                          child: AppText("ENTER OTP",
+                          child: AppText(LocaleKeys.ENTER_OTP.tr(),
                               size: 14.sp,
                               textColor: AppColor.white,
                               fontWeight: FontWeight.w500)))

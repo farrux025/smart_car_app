@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,6 +23,7 @@ import '../../constants/color.dart';
 import '../../constants/images.dart';
 import '../../cubit/charge_box/charge_boxes_cubit.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
+import '../../translations/locale_keys.g.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -235,7 +237,7 @@ class _MapScreenState extends State<MapScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                AppText("Where you are going to",
+                                AppText(LocaleKeys.search_title.tr(),
                                     size: 14.sp,
                                     textColor: AppColor.backgroundColorDark
                                         .withOpacity(0.7),

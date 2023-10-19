@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +20,7 @@ import '../../models/charge_box/ChargeBoxInfo.dart';
 import '../../models/charge_box/details/Connectors.dart';
 import '../../models/charge_box/details/Data.dart';
 import '../../services/map_service.dart';
+import '../../translations/locale_keys.g.dart';
 import 'home.dart';
 
 class ChargeBoxDetailsWidget extends StatefulWidget {
@@ -103,7 +105,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                     },
                     height: 48.h,
                     color: AppColor.errorColor,
-                    child: AppText("BOOK NOW",
+                    child: AppText(LocaleKeys.BOOK_NOW.tr(),
                         size: 14.sp,
                         textColor: AppColor.white,
                         fontWeight: FontWeight.w500),
@@ -124,7 +126,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        AppText("NAVIGATE",
+                        AppText(LocaleKeys.NAVIGATE.tr(),
                             size: 14.sp,
                             textColor: AppColor.white,
                             fontWeight: FontWeight.w500),
@@ -274,7 +276,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                       ),
                       SizedBox(height: 40.h),
                       // available connector
-                      AppText("Available Connector",
+                      AppText(LocaleKeys.available_connector.tr(),
                           textColor: AppColor.textColor.withOpacity(0.9),
                           size: 12.sp,
                           fontWeight: FontWeight.w500),
@@ -307,14 +309,14 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                 return connectorItem(
                     power: connector.connectorTypeId ?? '',
                     background: AppColor.backgroundColorGreen,
-                    bottomText: 'Available',
+                    bottomText: LocaleKeys.available.tr(),
                     price: data?.chargeBox?.price.toString() ?? '',
                     textColor: AppColor.textColorGreen,
                     iconPath: connector.imageUrl ?? '');
               },
             ),
           )
-        : AppText("No connectors",
+        : AppText(LocaleKeys.no_connectors.tr(),
             size: 14.sp,
             fontWeight: FontWeight.w500,
             textColor: AppColor.errorColor);

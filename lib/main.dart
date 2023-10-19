@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/constants/routes.dart';
@@ -8,17 +9,19 @@ import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/models/global/UserModel.dart';
 import 'package:smart_car_app/services/location_service.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
-import 'package:smart_car_app/services/stomp_client.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
+import 'constants/language.dart';
 import 'services/dio/dio_client.dart';
+import 'translations/codegen_loader.g.dart';
 
 main() async {
   AndroidYandexMap.useAndroidViewSurface = false;
   WidgetsFlutterBinding.ensureInitialized();
   await DioClient.init();
   await MyHiveStore.init();
+  await EasyLocalization.ensureInitialized();
   SecureStorage.init();
   Global.userModel.username =
       await SecureStorage.read(key: SecureStorage.phone);
@@ -33,7 +36,12 @@ main() async {
     Global.myPackageInfo.appVersion = value.version;
   });
   // await StompClientInstance.connect();
-  runApp(const MyApp());
+  runApp(EasyLocalization(
+      path: 'assets/translations',
+      fallbackLocale: uzLocale,
+      assetLoader: const CodegenLoader(),
+      supportedLocales: const [uzLocale, ruLocale, enLocale, kkLocale],
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -53,6 +61,9 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: () => MaterialApp(
         title: 'Smart Car App',
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         debugShowCheckedModeBanner: false,
         navigatorKey: MyApp.navigatorKey,
         theme: ThemeData(primarySwatch: Colors.blue),

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -12,6 +13,7 @@ import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../constants/color.dart';
 import '../../main.dart';
+import '../../translations/locale_keys.g.dart';
 
 class SearchView extends StatefulWidget {
   final List<ChargeBoxInfo> searchList;
@@ -81,15 +83,15 @@ class _SearchViewState extends State<SearchView> {
                             style: const TextStyle(
                                 color: Colors.black, fontSize: 18),
                             controller: editingController,
-                            decoration: const InputDecoration(
+                            decoration:  InputDecoration(
                               fillColor: Colors.black,
                               prefixIcon:
-                                  Icon(Icons.search, color: Colors.black),
+                                  const Icon(Icons.search, color: Colors.black),
                               hoverColor: Colors.black,
                               focusColor: Colors.black,
                               border: InputBorder.none,
-                              hintText: "Search",
-                              hintStyle: TextStyle(
+                              hintText: LocaleKeys.search.tr(),
+                              hintStyle: const TextStyle(
                                   color: Colors.black38, fontSize: 18),
                             ),
                           ),
@@ -124,10 +126,10 @@ class _SearchViewState extends State<SearchView> {
                         },
                         separatorBuilder: (context, index) =>
                             SizedBox(height: 10.h))
-                    : const Center(
+                    :  Center(
                         child: Text(
-                          "Nothing found!",
-                          style: TextStyle(color: Colors.black45, fontSize: 16),
+                          LocaleKeys.nothing_found.tr(),
+                          style: const TextStyle(color: Colors.black45, fontSize: 16),
                         ),
                       )),
           ],
@@ -169,7 +171,7 @@ class _SearchViewState extends State<SearchView> {
                     distance(
                             lat: item.locationLatitude ?? 0,
                             lon: item.locationLongitude ?? 0)
-                        .replaceAll(" Away", ""),
+                        .replaceAll(" ${LocaleKeys.away.tr()}", ""),
                     size: 12.sp,
                     textAlign: TextAlign.center,
                     textColor: AppColor.textColor,

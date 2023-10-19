@@ -1,9 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
+import 'package:smart_car_app/constants/language.dart';
+import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/models/global/UserModel.dart';
+import 'package:smart_car_app/translations/locale_keys.g.dart';
 import 'package:smart_car_app/utils/functions.dart';
+
+import '../../constants/routes.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -32,7 +38,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             pinned: true,
             floating: true,
             flexibleSpace: FlexibleSpaceBar(
-              title: AppText("Profile",
+              title: AppText(LocaleKeys.profile.tr(),
                   size: 22.sp,
                   textColor: AppColor.backgroundColorDark,
                   fontWeight: FontWeight.w500),
@@ -109,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     switch (index) {
       case 1:
         return settingsItem(
-            title: "Til",
+            title: LocaleKeys.language.tr(),
             subtitle: "Қазақ тілі, O'zbek, Русский язык, English",
             icon: Icons.language,
             onPressed: () {
@@ -117,19 +123,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
             });
       case 2:
         return settingsItem(
-            title: "Parol",
-            subtitle: "Parolni o'zgartirish",
+            title: LocaleKeys.password.tr(),
+            subtitle: LocaleKeys.change_password.tr(),
             icon: Icons.lock_reset,
             onPressed: () {});
       case 3:
         return settingsItem(
-            title: "Ilova haqida",
-            subtitle: "Version $appVersion",
+            title: LocaleKeys.about_app.tr(),
+            subtitle: "${LocaleKeys.version.tr()} $appVersion",
             icon: Icons.info_outline,
             onPressed: () {});
       case 0:
         return settingsItem(
-            title: "Stansiyalar",
+            title: LocaleKeys.charge_boxes.tr(),
             subtitle: "Saqlangan stansiyalar",
             icon: Icons.star_border_outlined,
             onPressed: () {});
@@ -139,8 +145,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _changeLanguage() {
+    var context = MyApp.navigatorKey.currentState?.context;
+    var groupValue = context?.locale;
     showModalBottomSheet(
-      context: context,
+      context: context!,
       isScrollControlled: true,
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
@@ -151,64 +159,91 @@ class _ProfileScreenState extends State<ProfileScreen> {
           minChildSize: 0.4,
           maxChildSize: 0.7,
           builder: (context, scrollController) {
-            return Column(
-              children: [
-                SizedBox(height: 8.h),
-                Container(
-                    height: 3.h,
-                    width: 60.w,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10.r),
-                        color: Colors.black26),
-                    padding: EdgeInsets.symmetric(vertical: 8.h)),
-                SizedBox(height: 8.h),
-                Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    child: AppText("Change language",
-                        textColor: AppColor.textColor,
-                        size: 16.sp,
-                        fontWeight: FontWeight.w800)),
-                RadioListTile(
-                    value: "value",
-                    groupValue: "groupValue",
-                    onChanged: (value) {},
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    title: AppText("Қазақ тілі",
-                        size: 14.sp,
-                        textColor: AppColor.textColor,
-                        fontWeight: FontWeight.w500)),
-                RadioListTile(
-                    value: "value",
-                    groupValue: "groupValue",
-                    onChanged: (value) {},
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    title: AppText("O'zbek",
-                        size: 14.sp,
-                        textColor: AppColor.textColor,
-                        fontWeight: FontWeight.w500)),
-                RadioListTile(
-                    value: "value",
-                    groupValue: "groupValue",
-                    onChanged: (value) {},
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    title: AppText("Русский язык",
-                        size: 14.sp,
-                        textColor: AppColor.textColor,
-                        fontWeight: FontWeight.w500)),
-                RadioListTile(
-                    value: "value",
-                    groupValue: "groupValue",
-                    onChanged: (value) {},
-                    controlAffinity: ListTileControlAffinity.trailing,
-                    title: Row(
-                      children: [
-                        AppText("English",
-                            size: 14.sp,
-                            textColor: AppColor.textColor,
-                            fontWeight: FontWeight.w500),
-                      ],
-                    )),
-              ],
+            return StatefulBuilder(
+              builder: (context, setState) =>  Column(
+                children: [
+                  SizedBox(height: 8.h),
+                  Container(
+                      height: 3.h,
+                      width: 60.w,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.r),
+                          color: Colors.black26),
+                      padding: EdgeInsets.symmetric(vertical: 8.h)),
+                  SizedBox(height: 8.h),
+                  Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10.h),
+                      child: AppText("Change language",
+                          textColor: AppColor.textColor,
+                          size: 16.sp,
+                          fontWeight: FontWeight.w800)),
+                  RadioListTile(
+                      value: kkLocale,
+                      groupValue: groupValue,
+                      onChanged: (value) {
+                        groupValue = value!;
+                        context.setLocale(kkLocale);
+                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                            Routes.home, (route) => false);
+                      },
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      title: AppText("Қазақ тілі",
+                          size: 14.sp,
+                          textColor: AppColor.textColor,
+                          fontWeight: FontWeight.w500)),
+                  RadioListTile(
+                      value: uzLocale,
+                      groupValue: groupValue,
+                      onChanged: (value) {
+                        groupValue = value!;
+                        context.setLocale(uzLocale);
+                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                            Routes.home, (route) => false);
+                      },
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      title: AppText("O'zbek",
+                          size: 14.sp,
+                          textColor: AppColor.textColor,
+                          fontWeight: FontWeight.w500)),
+                  RadioListTile(
+                      value: ruLocale,
+                      groupValue: groupValue,
+                      onChanged: (value) {
+                        var buildContext = MyApp.navigatorKey.currentState?.context;
+                        groupValue = value!;
+                        buildContext?.setLocale(ruLocale);
+                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                            Routes.home, (route) => false);
+                      },
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      title: AppText("Русский язык",
+                          size: 14.sp,
+                          textColor: AppColor.textColor,
+                          fontWeight: FontWeight.w500)),
+                  RadioListTile(
+                      value: enLocale,
+                      groupValue: groupValue,
+                      onChanged: (value) {
+                        var buildContext = MyApp.navigatorKey.currentState?.context;
+                        setState(() {
+
+                          groupValue = value!;
+                          buildContext?.setLocale(enLocale);
+                        });
+                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                            Routes.home, (route) => false);
+                      },
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      title: Row(
+                        children: [
+                          AppText("English",
+                              size: 14.sp,
+                              textColor: AppColor.textColor,
+                              fontWeight: FontWeight.w500),
+                        ],
+                      )),
+                ],
+              ),
             );
           },
         );

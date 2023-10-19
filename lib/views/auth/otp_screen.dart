@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:custom_timer/custom_timer.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -14,6 +15,7 @@ import 'package:smart_car_app/cubit/otp_cubit.dart';
 import 'package:smart_car_app/services/secure_storage.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 
+import '../../translations/locale_keys.g.dart';
 import '../../utils/functions.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -97,13 +99,13 @@ class _OtpScreenState extends State<OtpScreen>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   SizedBox(height: 20.h),
-                                  AppText("ENTER OTP",
+                                  AppText(LocaleKeys.ENTER_OTP.tr(),
                                       textColor: AppColor.textColor,
                                       size: 18.sp,
                                       fontWeight: FontWeight.w600),
                                   SizedBox(height: 16.h),
                                   AppText(
-                                      "Enter the OTP recieved in your mobile number",
+                                      LocaleKeys.enter_otp_desc.tr(),
                                       textColor: AppColor.buttonRightColor,
                                       maxLines: 2,
                                       size: 12.sp,
@@ -193,7 +195,7 @@ class _OtpScreenState extends State<OtpScreen>
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            AppText("Didn’t Recieved ?",
+                                            AppText(LocaleKeys.did_not_received.tr(),
                                                 textColor:
                                                     AppColor.buttonRightColor,
                                                 size: 11.sp,
@@ -216,7 +218,7 @@ class _OtpScreenState extends State<OtpScreen>
                                                     });
                                                   });
                                                 },
-                                                child: AppText("Re-Send",
+                                                child: AppText(LocaleKeys.resend.tr(),
                                                     textColor:
                                                         AppColor.textColor,
                                                     size: 11.sp,
@@ -246,8 +248,8 @@ class _OtpScreenState extends State<OtpScreen>
                                               state is OtpError
                                           ? AppText(
                                               state is OtpError
-                                                  ? "Error"
-                                                  : "ENTER OTP",
+                                                  ? LocaleKeys.error.tr()
+                                                  : LocaleKeys.ENTER_OTP.tr(),
                                               textColor: state is OtpError
                                                   ? AppColor.errorColor
                                                   : AppColor.white,

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
@@ -10,6 +11,7 @@ import 'package:smart_car_app/views/vehicle/vehicle_detail_screen.dart';
 import '../../constants/routes.dart';
 import '../../main.dart';
 import '../../models/vehicle/VehicleModel.dart';
+import '../../translations/locale_keys.g.dart';
 
 class VehiclesScreen extends StatelessWidget {
   const VehiclesScreen({super.key});
@@ -32,7 +34,7 @@ class VehiclesScreen extends StatelessWidget {
               SizedBox(height: 16.h),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 8.h),
-                child: AppText("MY VEHICLES",
+                child: AppText(LocaleKeys.MY_VEHICLES.tr(),
                     textColor: AppColor.textColor,
                     size: 22.sp,
                     fontWeight: FontWeight.w500),
@@ -150,7 +152,7 @@ class VehiclesScreen extends StatelessWidget {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
         onPressed: () {
-          toast(message: "Add vehicle");
+          toast(message: LocaleKeys.ADD_VEHICLE.tr());
           MyApp.navigatorKey.currentState?.pushNamed(Routes.addVehicle);
         },
         child: Column(
@@ -158,7 +160,7 @@ class VehiclesScreen extends StatelessWidget {
           children: [
             Icon(Icons.add, color: Colors.black, size: 36.sp),
             SizedBox(height: 12.h),
-            AppText("ADD VEHICLE",
+            AppText(LocaleKeys.ADD_VEHICLE.tr(),
                 size: 14.sp,
                 textColor: Colors.black,
                 fontWeight: FontWeight.w500,

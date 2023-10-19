@@ -2,10 +2,12 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:smart_car_app/hive/hive_store.dart';
 import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
+import 'package:smart_car_app/translations/locale_keys.g.dart';
 
 import '../../models/global/LocationModel.dart';
 import '../../services/charge_box_service.dart';
@@ -19,7 +21,7 @@ class ChargeBoxesCubit extends Cubit<ChargeBoxesState> {
       getChargeBoxes(
           lat: LocationModel.latitude!, lon: LocationModel.longitude!);
     } else {
-      String error = 'Current location not detected';
+      String error =LocaleKeys.current_location_not_detected.tr() ;
       emit(ChargeBoxesError(error));
     }
   }

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smart_car_app/components/app_text.dart';
@@ -10,6 +11,8 @@ import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/views/auth/register_screen.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+import '../../translations/locale_keys.g.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({super.key});
@@ -25,11 +28,11 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
 
   List<OnBoardingDetails> list = [
     OnBoardingDetails(
-        title: "YOUR SMART CAR", imagePath: AppImages.onBoarding1),
+        title: LocaleKeys.YOUR_SMART_CAR.tr(), imagePath: AppImages.onBoarding1),
     OnBoardingDetails(
-        title: "ELECTRIC CHARGING", imagePath: AppImages.onBoarding2),
+        title: LocaleKeys.ELECTRIC_CHARGING.tr(), imagePath: AppImages.onBoarding2),
     OnBoardingDetails(
-        title: "FIND CHARGING STATION", imagePath: AppImages.onBoarding3),
+        title: LocaleKeys.FIND_CHARGING_STATION.tr(), imagePath: AppImages.onBoarding3),
   ];
 
   @override
@@ -118,7 +121,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen>
                   ?.pushNamedAndRemoveUntil(Routes.register, (route) => false);
               log("SKIP");
             },
-            child: AppText(index == 3 ? "CONTINUE" : "SKIP",
+            child: AppText(index == 3 ? LocaleKeys.CONTINUE.tr() : LocaleKeys.SKIP.tr(),
                 size: 14.sp,
                 fontWeight: FontWeight.w500,
                 textColor: AppColor.textColorBlue),

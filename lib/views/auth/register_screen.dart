@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,6 +13,7 @@ import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/cubit/register_cubit.dart';
 import 'package:smart_car_app/main.dart';
 
+import '../../translations/locale_keys.g.dart';
 import '../../utils/functions.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -54,12 +56,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   maxLines: 2,
                                   textColor: AppColor.textColor),
                               SizedBox(height: 40.h),
-                              AppText("REGISTER",
+                              AppText(LocaleKeys.REGISTER.tr(),
                                   size: 18.sp,
                                   fontWeight: FontWeight.w600,
                                   textColor: AppColor.textColor),
                               SizedBox(height: 30.h),
-                              titleTextField(title: "Phone number"),
+                              titleTextField(title: LocaleKeys.phone_number.tr()),
                               Form(
                                 key: watch.formKey,
                                 child: AppTextFormField(
@@ -80,7 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         size: 24.sp)),
                               ),
                               SizedBox(height: 20.h),
-                              titleTextField(title: "Password"),
+                              titleTextField(title: LocaleKeys.password.tr()),
                               Form(
                                 key: watch.formKeyPass,
                                 child: FancyPasswordField(
@@ -93,7 +95,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 ),
                               ),
                               SizedBox(height: 20.h),
-                              titleTextField(title: "Confirm password"),
+                              titleTextField(title: LocaleKeys.confirm_password.tr()),
                               Form(
                                 key: watch.formKeyConfirmPass,
                                 child: FancyPasswordField(
@@ -135,8 +137,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                           state is RegisterError
                                       ? AppText(
                                           state is RegisterError
-                                              ? "Error"
-                                              : "Enter and procced",
+                                              ? LocaleKeys.error.tr()
+                                              : LocaleKeys.enter_and_procced.tr(),
                                           textColor: state is RegisterError
                                               ? AppColor.errorColor
                                               : AppColor.white,
@@ -155,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  AppText("Already have an account?",
+                                  AppText(LocaleKeys.already_have_account.tr(),
                                       textColor: AppColor.buttonRightColor,
                                       size: 11.sp,
                                       fontWeight: FontWeight.w400),
@@ -171,7 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         MyApp.navigatorKey.currentState
                                             ?.pushNamed(Routes.login);
                                       },
-                                      child: AppText("Sign in Now",
+                                      child: AppText(LocaleKeys.sign_in_now.tr(),
                                           textColor: AppColor.textColor,
                                           textAlign: TextAlign.start,
                                           size: 11.sp,
@@ -182,7 +184,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               ),
                               SizedBox(height: 30.h),
                               AppText(
-                                "Terms and condition will goes here with more creative way",
+                                LocaleKeys.register_desc.tr(),
                                 size: 11.sp,
                                 fontWeight: FontWeight.w400,
                                 textColor: AppColor.textColor,

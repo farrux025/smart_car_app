@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -19,6 +20,7 @@ import 'package:smart_car_app/services/shared_prefs.dart';
 import 'package:smart_car_app/utils/functions.dart';
 
 import '../../models/global/UserModel.dart';
+import '../../translations/locale_keys.g.dart';
 
 class AddVehicleScreen extends StatefulWidget {
   const AddVehicleScreen({super.key});
@@ -56,7 +58,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
         listener: (context, state) {
           if (state is AddVehicleError) {
             openSnackBar(
-                message: "Xatolik sodir bo'ldi. Qaytadan urunib ko'ring!");
+                message: LocaleKeys.error_retry_please.tr());
           }
         },
         child: BlocBuilder<AddVehicleCubit, AddVehicleState>(
@@ -74,7 +76,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                     elevation: 0,
                     backgroundColor: AppColor.backgroundColorLight,
                     flexibleSpace: FlexibleSpaceBar(
-                      title: AppText("ADD YOUR VEHICLE",
+                      title: AppText(LocaleKeys.ADD_VEHICLE.tr(),
                           size: 16.sp,
                           textColor: AppColor.textColor,
                           fontWeight: FontWeight.w500),
@@ -88,7 +90,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
-                              "Take picture of your car with makers and model number the system Ai will do the rest of the things.",
+                              LocaleKeys.upload_image_desc.tr(),
                               size: 13.sp,
                               maxLines: 4,
                               textColor: AppColor.textColor.withOpacity(0.6),
@@ -115,7 +117,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                         Icon(Icons.camera_alt_outlined,
                                             color: AppColor.white, size: 30.sp),
                                         SizedBox(width: 8.w),
-                                        AppText("Click here to take photo",
+                                        AppText(LocaleKeys.upload_image_btn_text.tr(),
                                             textColor: AppColor.white,
                                             size: 12.sp,
                                             fontWeight: FontWeight.w400)
@@ -124,7 +126,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                   ),
                                   Positioned(
                                     top: 12,
-                                    child: AppText("Optional",
+                                    child: AppText(LocaleKeys.optional.tr(),
                                         size: 12.sp,
                                         textColor:
                                             AppColor.stationIndicatorColor,
@@ -162,7 +164,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                     padding: EdgeInsets.only(
                                         bottom: 20.h, left: 20.w, right: 20.w),
                                     child: AppText(
-                                        "Rasm yuklashda xatolik. Qaytadan urunib ko'ring",
+                                        LocaleKeys.error_retry_please.tr(),
                                         size: 12.sp,
                                         textAlign: TextAlign.center,
                                         textColor: AppColor.errorColor,
@@ -178,7 +180,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AppText('Vehicle type',
+                              AppText(LocaleKeys.vehicle_type.tr(),
                                   size: 16.sp,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColor.textColor),
@@ -214,7 +216,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AppText('Company name',
+                              AppText(LocaleKeys.company_name.tr(),
                                   size: 16.sp,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColor.textColor),
@@ -249,7 +251,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AppText('Brand name',
+                              AppText(LocaleKeys.brand_name.tr(),
                                   size: 16.sp,
                                   fontWeight: FontWeight.w500,
                                   textColor: AppColor.textColor),
@@ -291,7 +293,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                                     width: 18.h,
                                     child: const CircularProgressIndicator(
                                         color: AppColor.white, strokeWidth: 4))
-                                : AppText("ADD NOW",
+                                : AppText(LocaleKeys.ADD_NOW.tr(),
                                     textColor: AppColor.white,
                                     fontWeight: FontWeight.w500,
                                     size: 14.sp),
@@ -359,7 +361,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AppText("Gov number",
+        AppText(LocaleKeys.gov_number.tr(),
             size: 16.sp,
             fontWeight: FontWeight.w500,
             textColor: AppColor.textColor),
@@ -427,7 +429,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   Icon(Icons.camera_alt_outlined,
                       color: AppColor.textColor, size: 28.sp),
                   SizedBox(width: 12.w),
-                  AppText("Camera",
+                  AppText(LocaleKeys.camera.tr(),
                       size: 16.sp,
                       textColor: AppColor.textColor,
                       fontWeight: FontWeight.w400)
@@ -444,7 +446,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                   Icon(Icons.image_outlined,
                       color: AppColor.textColor, size: 28.sp),
                   SizedBox(width: 12.w),
-                  AppText("Gallery",
+                  AppText(LocaleKeys.gallery.tr(),
                       size: 16.sp,
                       textColor: AppColor.textColor,
                       fontWeight: FontWeight.w400)
