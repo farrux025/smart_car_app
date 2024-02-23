@@ -133,7 +133,7 @@ class _StationListScreenState extends State<StationListScreen> {
   _onItemTap(ChargeBoxInfo item) {
     bottomSheet(
         list: [item],
-        chargeBoxId: item.id ?? '',
+        chargeBoxId: item.id ?? 0,
         point: Point(
             latitude: item.locationLatitude ?? 0,
             longitude: item.locationLongitude ?? 0),

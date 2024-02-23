@@ -1,13 +1,15 @@
 class Connectors {
   int? connectorId;
-  String? chargeBoxId;
+  num? chargeBoxId;
   String? connectorTypeId;
+  num? kilowatt;
   String? imageUrl;
 
   Connectors({
     this.connectorId,
     this.chargeBoxId,
     this.connectorTypeId,
+    this.kilowatt,
     this.imageUrl,
   });
 
@@ -15,6 +17,7 @@ class Connectors {
     connectorId = json['connectorId'];
     chargeBoxId = json['chargeBoxId'];
     connectorTypeId = json['connectorTypeId'];
+    kilowatt = json['kilowatt'];
     imageUrl = json['imageUrl'];
   }
 
@@ -23,6 +26,7 @@ class Connectors {
     map['connectorId'] = connectorId;
     map['chargeBoxId'] = chargeBoxId;
     map['connectorTypeId'] = connectorTypeId;
+    map['kilowatt'] = kilowatt;
     map['imageUrl'] = imageUrl;
     return map;
   }

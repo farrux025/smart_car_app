@@ -23,7 +23,7 @@ class ChargeBoxInfo {
   @HiveField(6)
   String? name;
   @HiveField(7)
-  String? id;
+  num? id;
 
   ChargeBoxInfo({
     this.country,
@@ -74,11 +74,11 @@ class ChargeBoxInfo {
 
 compareChargeBox() {
   List<ChargeBoxInfo> list = [
-    ChargeBoxInfo(id: "1", name: "Name 1"),
-    ChargeBoxInfo(id: "2", name: "Name 2"),
-    ChargeBoxInfo(id: "1", name: "Name 3"),
-    ChargeBoxInfo(id: "2", name: "Name 4"),
-    ChargeBoxInfo(id: "3", name: "Name 5"),
+    ChargeBoxInfo(id: 1, name: "Name 1"),
+    ChargeBoxInfo(id: 2, name: "Name 2"),
+    ChargeBoxInfo(id: 1, name: "Name 3"),
+    ChargeBoxInfo(id: 2, name: "Name 4"),
+    ChargeBoxInfo(id: 3, name: "Name 5"),
   ];
   HashSet<ChargeBoxInfo> set = HashSet<ChargeBoxInfo>();
   for (var element in list) {

@@ -24,7 +24,7 @@ class ChargeBoxInfoAdapter extends TypeAdapter<ChargeBoxInfo> {
       locationLatitude: fields[4] as double?,
       locationLongitude: fields[5] as double?,
       name: fields[6] as String?,
-      id: fields[7] as String?,
+      id: fields[7] as num?,
     );
   }
 

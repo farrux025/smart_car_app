@@ -9,6 +9,8 @@ class AppText extends StatelessWidget {
   TextAlign? textAlign;
   TextDecoration? textDecoration;
   String? fontFamily;
+  double? wordSpacing;
+  double? height;
 
   AppText(this.text,
       {super.key,
@@ -18,7 +20,9 @@ class AppText extends StatelessWidget {
       this.fontWeight,
       this.textDecoration,
       this.fontFamily,
-      this.maxLines});
+      this.maxLines,
+      this.wordSpacing,
+      this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +33,8 @@ class AppText extends StatelessWidget {
           fontWeight: fontWeight,
           fontSize: size,
           fontFamily: fontFamily,
+          wordSpacing: wordSpacing,
+          height: height,
           decoration: textDecoration),
       maxLines: maxLines,
       textAlign: textAlign,

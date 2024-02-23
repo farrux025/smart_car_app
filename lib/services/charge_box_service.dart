@@ -34,7 +34,7 @@ class ChargeBoxService {
   // ***************************************************************************
 
   static Future<Response> doGetPublicDetails(
-      {required String chargeBoxId}) async {
+      {required num chargeBoxId}) async {
     Response response = await DioClient.instance
         .get(AppUrl.chargeBoxPublicDetails(), queryParameters: {"id": chargeBoxId});
     log("Public details response: $response");

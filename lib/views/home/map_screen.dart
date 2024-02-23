@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:developer';
 import 'dart:typed_data';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -288,7 +288,7 @@ class _MapScreenState extends State<MapScreen> {
   PlacemarkMapObject _placeMarkMapObject(
       {required ChargeBoxInfo chargeBox, String? imagePath}) {
     return PlacemarkMapObject(
-      mapId: MapObjectId(chargeBox.id ?? ''),
+      mapId: MapObjectId(chargeBox.id.toString() ?? ''),
       point: Point(
           latitude: chargeBox.locationLatitude ?? 0,
           longitude: chargeBox.locationLongitude ?? 0),
@@ -307,7 +307,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<Uint8List> _buildClusterAppearance(Cluster cluster) async {
-    final recorder = PictureRecorder();
+    final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
     const size = Size(80, 80);
     final fillPaint = Paint()
@@ -326,7 +326,7 @@ class _MapScreenState extends State<MapScreen> {
                 color: AppColor.textColorGreen,
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w600)),
-        textDirection: TextDirection.ltr);
+        textDirection: ui.TextDirection.ltr);
 
     textPainter.layout(minWidth: 0, maxWidth: size.width);
 
@@ -341,7 +341,7 @@ class _MapScreenState extends State<MapScreen> {
     final image = await recorder
         .endRecording()
         .toImage(size.width.toInt(), size.height.toInt());
-    final pngBytes = await image.toByteData(format: ImageByteFormat.png);
+    final pngBytes = await image.toByteData(format: ui.ImageByteFormat.png);
 
     return pngBytes!.buffer.asUint8List();
   }
@@ -351,7 +351,7 @@ class _MapScreenState extends State<MapScreen> {
       bottomSheet(
           list:
               _filterChargeBox(chargeBoxList: mainList, point: mapObject.point),
-          chargeBoxId: chargeBox.id ?? '',
+          chargeBoxId: chargeBox.id ?? 0,
           point: Point(
               latitude: chargeBox.locationLatitude ?? 0,
               longitude: chargeBox.locationLongitude ?? 0),
@@ -448,7 +448,7 @@ class _MapScreenState extends State<MapScreen> {
                   onPressed: () {
                     bottomSheet(
                         list: list,
-                        chargeBoxId: chargeBox.id ?? '',
+                        chargeBoxId: chargeBox.id ?? 0,
                         point: Point(
                             latitude: chargeBox.locationLatitude ?? 0,
                             longitude: chargeBox.locationLongitude ?? 0),
@@ -466,7 +466,7 @@ class _MapScreenState extends State<MapScreen> {
 
 void bottomSheet({
   required List<ChargeBoxInfo> list,
-  required String chargeBoxId,
+  required num chargeBoxId,
   required Point point,
   required String stationName,
   required String rating,
@@ -481,7 +481,7 @@ void bottomSheet({
     barrierColor: Colors.transparent.withOpacity(0.5),
     backgroundColor: Colors.transparent,
     builder: (context) => BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+      filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
       child: ChargeBoxDetailsWidget(
           mainList: list,
           chargeBoxId: chargeBoxId,

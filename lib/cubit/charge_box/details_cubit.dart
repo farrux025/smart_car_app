@@ -11,13 +11,13 @@ import '../../models/charge_box/details/PublicDetails.dart';
 part 'details_state.dart';
 
 class DetailsCubit extends Cubit<DetailsState> {
-  final String chargeBoxId;
+  final num chargeBoxId;
 
   DetailsCubit(this.chargeBoxId) : super(DetailsInitial()) {
     getPublicDetails(chargeBoxId: chargeBoxId);
   }
 
-  getPublicDetails({required String chargeBoxId}) async {
+  getPublicDetails({required num chargeBoxId}) async {
     emit(DetailsInitial());
     try {
       await ChargeBoxService.doGetPublicDetails(chargeBoxId: chargeBoxId)

@@ -1,5 +1,5 @@
 class ChargeBox {
-  String? id;
+  num? id;
   String? status;
   dynamic imsi;
   String? lastHeartbeatTimestamp;

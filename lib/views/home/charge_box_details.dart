@@ -24,7 +24,7 @@ import '../../translations/locale_keys.g.dart';
 import 'home.dart';
 
 class ChargeBoxDetailsWidget extends StatefulWidget {
-  final String chargeBoxId;
+  final num chargeBoxId;
   final Point point;
   final String stationName;
   final String rating;
@@ -188,7 +188,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
 
   Widget _tabBarView(ChargeBoxInfo chargeBox) {
     return BlocProvider(
-      create: (context) => DetailsCubit(chargeBox.id ?? ''),
+      create: (context) => DetailsCubit(chargeBox.id ?? 0),
       child: BlocListener<DetailsCubit, DetailsState>(
         listener: (context, state) {},
         child: BlocBuilder<DetailsCubit, DetailsState>(
@@ -228,6 +228,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                             flex: 2,
                             child: AppText(chargeBox.name ?? '',
                                 size: 24.sp,
+                                height: 1.2,
                                 fontFamily: 'RobotoCondense',
                                 textColor: AppColor.textColor,
                                 fontWeight: FontWeight.w800),
@@ -274,7 +275,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                                   fontWeight: FontWeight.w700))
                         ],
                       ),
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 24.h),
                       // available connector
                       AppText(LocaleKeys.available_connector.tr(),
                           textColor: AppColor.textColor.withOpacity(0.9),

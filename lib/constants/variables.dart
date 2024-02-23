@@ -10,7 +10,7 @@ class AppUrl {
   static const otpActivateUrl = "/api/activate";
 
   static chargeBoxListUrl(String lat, String lon, String distance) {
-    return "/api/charge-boxes/public/distance/$lat/$lon/$distance";
+    return "/api/charge-boxes/public/distance/$lat/$lon/$distance?connectorId.in=GB/T (AC)&connectorId.in=GB/T (DC)";
   }
 
   static chargeBoxImageUrl(String id) {

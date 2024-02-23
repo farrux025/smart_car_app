@@ -98,7 +98,7 @@ turnOffGPSAlert({ServiceStatus? status}) {
                 "Iltimos, ilovadan foydalanish uchun geolokatsiyani yoqing!",
             buttonText: "OK",
             onPressed: () {
-              AppSettings.openLocationSettings();
+              AppSettings.openAppSettings(type: AppSettingsType.location);
               if (status == ServiceStatus.enabled) {
                 MyApp.navigatorKey.currentState?.pop();
               }
