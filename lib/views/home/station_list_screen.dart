@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geocoding/geocoding.dart';
@@ -10,8 +11,11 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/images.dart';
-import 'package:smart_car_app/cubit/charge_box/charge_boxes_cubit.dart';
+import 'package:smart_car_app/cubit/charge_box/charge_boxes_list_cubit.dart';
+import 'package:smart_car_app/cubit/charge_box/charge_boxes_map_cubit.dart';
 import 'package:smart_car_app/hive/hive_store.dart';
+import 'package:smart_car_app/models/global/LocationModel.dart';
+import 'package:smart_car_app/services/charge_box_service.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/home.dart';
 import 'package:smart_car_app/views/home/search.dart';
@@ -30,8 +34,13 @@ class StationListScreen extends StatefulWidget {
 }
 
 class _StationListScreenState extends State<StationListScreen> {
-  late List<ChargeBoxInfo>? list;
+  List<ChargeBoxInfo> chargeBoxList = [];
   String address = '';
+  int _page = 0;
+  bool hasMore = true;
+
+  // bool hasData = false;
+  final scrollController = ScrollController();
 
   @override
   void initState() {
@@ -42,7 +51,7 @@ class _StationListScreenState extends State<StationListScreen> {
         setState(() {
           log("Address: $placemark");
           address =
-              "${placemark.subLocality}, ${placemark.locality}, ${placemark.country}";
+              "${placemark.subLocality} ${placemark.locality}, ${placemark.country}";
         });
       });
     });
@@ -50,84 +59,162 @@ class _StationListScreenState extends State<StationListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var box = Hive.box<List<ChargeBoxInfo>>(MyHiveBoxName.chargeBox);
-    return ValueListenableBuilder(
-      valueListenable: box.listenable(),
-      builder: (context, value, child) {
-        list = box.get(MyHiveBoxName.chargeBox);
-        log("Charge boxes count: ${list?.length}");
-        return Scaffold(
-          backgroundColor: AppColor.backgroundColorLight,
-          body: Column(
-            children: [
-              SizedBox(height: 100.h),
-              Flexible(
-                flex: 2,
-                child: ListTile(
-                  leading: Padding(
-                    padding: EdgeInsets.only(left: 18.w),
-                    child: SvgPicture.asset(AppImages.locationPointerSvg,
-                        height: 18.sp,
-                        alignment: Alignment.centerRight,
-                        fit: BoxFit.cover,
-                        width: 15.sp),
-                  ),
-                  title: Padding(
-                    padding: EdgeInsets.only(right: 30.w),
-                    child: AppText(address,
-                        maxLines: 3,
-                        size: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        textColor: AppColor.textColor),
-                  ),
-                  trailing: Container(
-                    height: 26.h,
-                    width: 74.w,
-                    decoration: BoxDecoration(
-                        border: Border.all(color: AppColor.textColor),
-                        borderRadius: BorderRadius.circular(3.r)),
-                    child: MaterialButton(
-                      onPressed: () => MySearch.openSearchView(
-                          list: list ?? [], isMap: false),
-                      child: AppText(LocaleKeys.filter.tr(),
-                          textColor: AppColor.textColor,
-                          size: 12.sp,
-                          fontWeight: FontWeight.w400),
+    var box = Hive.box<List<ChargeBoxInfo>>(MyHiveBoxName.chargeBoxForList);
+    return BlocProvider(
+      create: (BuildContext context) => ChargeBoxesListCubit(),
+      child: BlocListener<ChargeBoxesListCubit, ChargeBoxesListState>(
+        listener: (BuildContext context, state) {
+          if (state is ChargeBoxesListLoading) {
+            log("State is ChargeBoxesListLoading");
+          } else if (state is ChargeBoxesListLoaded) {
+            log("State is ChargeBoxesListLoaded => ${state.list.length} ta");
+            chargeBoxList.addAll(state.list);
+            hasMore = false;
+            // if (state.list.length < _page) {
+            //   hasMore = false;
+            // }
+          } else if (state is ChargeBoxesListError) {
+            log("State is ChargeBoxesListError");
+            List<ChargeBoxInfo>? list = MyHiveStore.chargeBoxForList
+                .get(MyHiveBoxName.chargeBoxForList);
+            chargeBoxList = list ?? [];
+            log(state.error);
+            openSnackBar(message: state.error);
+          }
+        },
+        child: BlocBuilder<ChargeBoxesListCubit, ChargeBoxesListState>(
+          builder: (context, state) {
+            var read = context.read<ChargeBoxesListCubit>();
+            // scrollController.addListener(() {
+            //   if (scrollController.position.maxScrollExtent ==
+            //       scrollController.offset) {
+            //     if (hasMore) {
+            //       _page++;
+            //       read.getChargeBoxesForList(
+            //           lat: LocationModel.latitude!,
+            //           lon: LocationModel.longitude!,
+            //           page: _page);
+            //     }
+            //   }
+            // });
+            return Scaffold(
+              backgroundColor: AppColor.backgroundColorLight,
+              body: Column(
+                children: [
+                  SizedBox(height: 100.h),
+                  Flexible(
+                    flex: 2,
+                    child: ListTile(
+                      leading: Padding(
+                        padding: EdgeInsets.only(left: 18.w),
+                        child: SvgPicture.asset(AppImages.locationPointerSvg,
+                            height: 18.sp,
+                            alignment: Alignment.centerRight,
+                            fit: BoxFit.cover,
+                            width: 15.sp),
+                      ),
+                      title: Padding(
+                        padding: EdgeInsets.only(right: 30.w),
+                        child: AppText(address,
+                            maxLines: 3,
+                            size: 12.sp,
+                            fontWeight: FontWeight.w400,
+                            textColor: AppColor.textColor),
+                      ),
+                      trailing: Container(
+                        height: 26.h,
+                        width: 74.w,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: AppColor.textColor),
+                            borderRadius: BorderRadius.circular(3.r)),
+                        child: MaterialButton(
+                          onPressed: () {
+                            openFilter(() {
+                              chargeBoxList.clear();
+                              log("Filter pressed");
+                              popBack();
+                              read.getChargeBoxesForList(
+                                  lat: mainLat, lon: mainLon);
+                            }, context);
+                            // ChargeBoxService.doGetChargeBoxesForList(
+                            //     distance: '1000000',
+                            //     lat: '41.2154',
+                            //     lon: '69.12514');
+                            // MySearch.openSearchView(
+                            //   list: list ?? [], isMap: false);
+                          },
+                          child: AppText(LocaleKeys.filter.tr(),
+                              textColor: AppColor.textColor,
+                              size: 12.sp,
+                              fontWeight: FontWeight.w400),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              ),
-              Flexible(
-                flex: 22,
-                child: RefreshIndicator(
-                  onRefresh: () async {
-                    await ChargeBoxesCubit()
-                        .getChargeBoxes(lat: mainLat!, lon: mainLon!);
-                  },
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        var chargeBox = list![index];
-                        return GestureDetector(
-                          onTap: () => _onItemTap(chargeBox),
-                          child: chargingStation(
-                              stationName: chargeBox.name ?? '',
-                              distance: distance(
-                                      lat: chargeBox.locationLatitude ?? 0,
-                                      lon: chargeBox.locationLongitude ?? 0)
-                                  .replaceAll(" ${LocaleKeys.away.tr()}", ""),
-                              rating: "4.4",
-                              energyPower: "AC 3.3kw"),
-                        );
+                  Flexible(
+                    flex: 22,
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        hasMore = true;
+                        _page = 0;
+                        chargeBoxList.clear();
+                        read.getChargeBoxesForList(
+                            lat: LocationModel.latitude,
+                            lon: LocationModel.longitude,
+                            page: _page);
+                        // await ChargeBoxesCubit()
+                        //     .getChargeBoxesForMap(lat: mainLat!, lon: mainLon!);
                       },
-                      itemCount: list?.length),
-                ),
-              )
-            ],
-          ),
-        );
-      },
+                      color: AppColor.backgroundColorDark,
+                      child: ListView.builder(
+                          controller: scrollController,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            if (index < chargeBoxList.length) {
+                              var chargeBox = chargeBoxList[index];
+                              return GestureDetector(
+                                onTap: () => _onItemTap(chargeBox),
+                                child: chargingStation(
+                                    stationName: chargeBox.name ?? '',
+                                    distance: distance(
+                                            lat:
+                                                chargeBox.locationLatitude ?? 0,
+                                            lon: chargeBox.locationLongitude ??
+                                                0)
+                                        .replaceAll(
+                                            " ${LocaleKeys.away.tr()}", ""),
+                                    rating: "4.4",
+                                    energyPower: "AC 3.3kw"),
+                              );
+                            } else {
+                              return Padding(
+                                padding: EdgeInsets.symmetric(vertical: 18.h),
+                                child: Center(
+                                    child: hasMore
+                                        ? const CircularProgressIndicator(
+                                            color: AppColor.backgroundColorDark)
+                                        : const SizedBox()),
+                              );
+                            }
+                          },
+                          itemCount: chargeBoxList.length + 1),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      ),
     );
+    // return ValueListenableBuilder(
+    //   valueListenable: box.listenable(),
+    //   builder: (context, value, child) {
+    //     list = box.get(MyHiveBoxName.chargeBoxForList);
+    //     log("Charge boxes count: ${list?.length}");
+    //     return ;
+    //   },
+    // );
   }
 
   _onItemTap(ChargeBoxInfo item) {

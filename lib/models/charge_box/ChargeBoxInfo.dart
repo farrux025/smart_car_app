@@ -23,7 +23,7 @@ class ChargeBoxInfo {
   @HiveField(6)
   String? name;
   @HiveField(7)
-  num? id;
+  dynamic id;
 
   ChargeBoxInfo({
     this.country,

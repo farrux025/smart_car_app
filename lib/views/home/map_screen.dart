@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,15 +15,18 @@ import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/hive/hive_store.dart';
 import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
+import 'package:smart_car_app/services/charge_box_service.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/charge_box_details.dart';
+import 'package:smart_car_app/views/home/filter.dart';
 import 'package:smart_car_app/views/home/search.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
 import '../../constants/color.dart';
 import '../../constants/images.dart';
-import '../../cubit/charge_box/charge_boxes_cubit.dart';
+import '../../cubit/charge_box/charge_boxes_map_cubit.dart';
 import '../../models/charge_box/ChargeBoxInfo.dart';
+import '../../models/charge_box/connector_types/ConnectorTypes.dart';
 import '../../translations/locale_keys.g.dart';
 
 class MapScreen extends StatefulWidget {
@@ -52,12 +56,12 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => ChargeBoxesCubit(),
-      child: BlocListener<ChargeBoxesCubit, ChargeBoxesState>(
+      child: BlocListener<ChargeBoxesCubit, ChargeBoxesMapState>(
         listener: (BuildContext context, state) {
-          if (state is ChargeBoxesLoaded) {
-            log("State is ChargeBoxesLoaded");
+          if (state is ChargeBoxesMapLoaded) {
+            log("State is ChargeBoxesLoaded => ${state.list.length} ta");
             mainList = state.list;
-          } else if (state is ChargeBoxesError) {
+          } else if (state is ChargeBoxesMapError) {
             log("State is ChargeBoxesError");
             List<ChargeBoxInfo>? list =
                 MyHiveStore.chargeBox.get(MyHiveBoxName.chargeBox);
@@ -102,7 +106,7 @@ class _MapScreenState extends State<MapScreen> {
 
           mapObjects.add(collection);
         },
-        child: BlocBuilder<ChargeBoxesCubit, ChargeBoxesState>(
+        child: BlocBuilder<ChargeBoxesCubit, ChargeBoxesMapState>(
           builder: (context, state) {
             var read = context.read<ChargeBoxesCubit>();
             return Scaffold(
@@ -121,7 +125,7 @@ class _MapScreenState extends State<MapScreen> {
                               log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
                               mainLat = cameraPosition.target.latitude;
                               mainLon = cameraPosition.target.longitude;
-                              await read.getChargeBoxes(
+                              await read.getChargeBoxesForMap(
                                   lat: cameraPosition.target.latitude,
                                   lon: cameraPosition.target.longitude);
                             }
@@ -145,29 +149,56 @@ class _MapScreenState extends State<MapScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              SizedBox(
-                                height: 32.h,
-                                width: 32.h,
-                                child: FloatingActionButton(
-                                  onPressed: () async =>
-                                      await read.getChargeBoxes(
-                                          lat: mainLat!, lon: mainLon!),
-                                  heroTag: 'refresh',
-                                  backgroundColor:
-                                      Colors.black.withOpacity(0.5),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.r)),
-                                  child: state is ChargeBoxesLoading
-                                      ? SizedBox(
-                                          width: 14.h,
-                                          height: 14.h,
-                                          child: CircularProgressIndicator(
-                                              color: AppColor.white,
-                                              strokeWidth: 2.4.w),
-                                        )
-                                      : Icon(Icons.refresh,
+                              Column(
+                                children: [
+                                  SizedBox(
+                                    height: 32.h,
+                                    width: 32.h,
+                                    child: FloatingActionButton(
+                                      onPressed: () => openFilter(() {
+                                        log("Filter pressed");
+                                        popBack();
+                                        read.getChargeBoxesForMap(
+                                            lat: mainLat!, lon: mainLon!);
+                                      },context),
+                                      heroTag: 'open-filter',
+                                      backgroundColor:
+                                          Colors.black.withOpacity(0.5),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.r)),
+                                      child: Icon(Icons.filter_alt,
                                           color: AppColor.white, size: 20.sp),
-                                ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  SizedBox(
+                                    height: 32.h,
+                                    width: 32.h,
+                                    child: FloatingActionButton(
+                                      onPressed: () async =>
+                                          await read.getChargeBoxesForMap(
+                                              lat: mainLat!, lon: mainLon!),
+                                      heroTag: 'refresh',
+                                      backgroundColor:
+                                          Colors.black.withOpacity(0.5),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8.r)),
+                                      child: state is ChargeBoxesMapLoading
+                                          ? SizedBox(
+                                              width: 14.h,
+                                              height: 14.h,
+                                              child: CircularProgressIndicator(
+                                                  color: AppColor.white,
+                                                  strokeWidth: 2.4.w),
+                                            )
+                                          : Icon(Icons.refresh,
+                                              color: AppColor.white,
+                                              size: 20.sp),
+                                    ),
+                                  ),
+                                ],
                               ),
                               Column(
                                 children: [
@@ -249,7 +280,7 @@ class _MapScreenState extends State<MapScreen> {
                             ),
                           ),
                         ),
-                        state is ChargeBoxesError
+                        state is ChargeBoxesMapError
                             ? Container(
                                 color: AppColor.backgroundColorError,
                                 padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -462,6 +493,43 @@ class _MapScreenState extends State<MapScreen> {
                   child: AppText(list[index].name ?? '')));
         }));
   }
+
+  static List<ConnectorTypes> connectorTypeList = [
+    ConnectorTypes(
+        id: "Type 1",
+        logos: [ConnectorTypeLogos(url: "https://iili.io/JctlDkN.png")]),
+    ConnectorTypes(
+        id: "Type 2",
+        logos: [ConnectorTypeLogos(url: "https://iili.io/JctlDkN.png")]),
+    ConnectorTypes(
+        id: "Type 3",
+        logos: [ConnectorTypeLogos(url: "https://iili.io/JctlDkN.png")]),
+  ];
+}
+
+openFilter(ui.VoidCallback onFilterPressed,BuildContext context) async {
+  await ChargeBoxService.doGetConnectorTypes().then((response) {
+    if (response.statusCode == 200) {
+      List<ConnectorTypes> connectors = [];
+      response.data.forEach((element) {
+        ConnectorTypes connectorType = ConnectorTypes.fromJson(element);
+        connectors.add(connectorType);
+      });
+      showModalBottomSheet(
+        context: context,
+        barrierColor: Colors.transparent.withOpacity(0.5),
+        builder: (context) => BackdropFilter(
+          filter: ui.ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: FilterWidget(
+            connectorTypeList: connectors,
+            onFilterPressed: onFilterPressed,
+          ),
+        ),
+      );
+    } else {
+      openSnackBar(message: 'Error while getting connector types');
+    }
+  });
 }
 
 void bottomSheet({

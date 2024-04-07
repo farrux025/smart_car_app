@@ -6,6 +6,7 @@ class MySharedPrefs {
 
   static const vehicleImageKey = "vehicleImageKey";
   static const vehicleImageUrlKey = "vehicleImageUrlKey";
+  static const connectorTypeListKey = "connectorTypeListKey";
 
   saveVehicleImage({required String key, required String path}) async {
     final instance = await _sharedPrefs;
@@ -21,5 +22,16 @@ class MySharedPrefs {
   delete({required String key}) async {
     final instance = await _sharedPrefs;
     instance.remove(key);
+  }
+
+  saveConnectorTypeList({required List<String> connectorTypeList}) async {
+    final instance = await _sharedPrefs;
+    instance.setStringList(connectorTypeListKey, connectorTypeList);
+  }
+
+  getConnectorTypeList() async {
+    final instance = await _sharedPrefs;
+    List<String>? list = instance.getStringList(connectorTypeListKey);
+    return list;
   }
 }

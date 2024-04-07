@@ -10,7 +10,8 @@ class SecureStorage {
   static const token = 'token';
 
   static init() {
-    secureStorage = const FlutterSecureStorage();
+    secureStorage = const FlutterSecureStorage(
+        aOptions: AndroidOptions(encryptedSharedPreferences: true));
   }
 
   static Future write({required String key, required String value}) async {

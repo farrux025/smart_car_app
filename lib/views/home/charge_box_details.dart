@@ -117,7 +117,7 @@ class _ChargeBoxDetailsWidgetState extends State<ChargeBoxDetailsWidget>
                       log("NAVIGATE");
                       // MyApp.navigatorKey.currentState?.pop();
                       MapService.launchMap(
-                          title: "Test",
+                          title: "",
                           lat: widget.point.latitude,
                           lon: widget.point.longitude);
                     },

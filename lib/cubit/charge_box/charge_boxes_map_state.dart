@@ -1,31 +1,31 @@
-part of 'charge_boxes_cubit.dart';
+part of 'charge_boxes_map_cubit.dart';
 
 @immutable
-abstract class ChargeBoxesState extends Equatable {}
+abstract class ChargeBoxesMapState extends Equatable {}
 
 // class ChargeBoxesInitial extends ChargeBoxesState {
 //   @override
 //   List<Object?> get props => [];
 // }
 
-class ChargeBoxesLoading extends ChargeBoxesState {
+class ChargeBoxesMapLoading extends ChargeBoxesMapState {
   @override
   List<Object?> get props => [];
 }
 
-class ChargeBoxesLoaded extends ChargeBoxesState {
+class ChargeBoxesMapLoaded extends ChargeBoxesMapState {
   final List<ChargeBoxInfo> list;
 
-  ChargeBoxesLoaded(this.list);
+  ChargeBoxesMapLoaded(this.list);
 
   @override
   List<Object?> get props => [list];
 }
 
-class ChargeBoxesError extends ChargeBoxesState {
+class ChargeBoxesMapError extends ChargeBoxesMapState {
   final String error;
 
-  ChargeBoxesError(this.error);
+  ChargeBoxesMapError(this.error);
 
   @override
   List<Object?> get props => [error];

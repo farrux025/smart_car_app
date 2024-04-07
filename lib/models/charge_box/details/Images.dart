@@ -1,7 +1,7 @@
 class Images {
   String? name;
   String? url;
-  String? id;
+  num? id;
 
   Images({
     this.name,

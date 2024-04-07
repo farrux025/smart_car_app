@@ -16,15 +16,17 @@ class MapService {
       var availableMaps = await MapLauncher.installedMaps;
       log("Available maps: $availableMaps");
       var coords = Coords(lat, lon);
+      var context = MyApp.navigatorKey.currentState!.context;
       showModalBottomSheet(
-          context: MyApp.navigatorKey.currentState!.context,
+          context: context,
           backgroundColor: AppColor.white,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(16.r),
                   topRight: Radius.circular(16.r))),
           builder: (BuildContext context) {
-            return SafeArea(
+            return Container(
+              width: ScreenUtil().screenWidth,
                 child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Wrap(children: [

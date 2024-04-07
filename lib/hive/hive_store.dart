@@ -5,6 +5,7 @@ import 'package:smart_car_app/models/charge_box/ChargeBoxInfo.dart';
 
 class MyHiveStore {
   static late Box<List<ChargeBoxInfo>> chargeBox;
+  static late Box<List<ChargeBoxInfo>> chargeBoxForList;
 
   static init() async {
     log("Hive store init");
@@ -15,6 +16,7 @@ class MyHiveStore {
 
   static Future openBoxes() async {
     chargeBox = await Hive.openBox(MyHiveBoxName.chargeBox);
+    chargeBoxForList = await Hive.openBox(MyHiveBoxName.chargeBoxForList);
   }
 
   static Future clearBoxes() async {
@@ -29,6 +31,7 @@ class MyHiveStore {
 
 class MyHiveBoxName {
   static const chargeBox = 'chargeBoxHive';
+  static const chargeBoxForList = 'chargeBoxForListHive';
 }
 
 class MyHiveTypeId {

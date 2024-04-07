@@ -9,8 +9,12 @@ class AppUrl {
   static const loginUrl = "/api/authenticate";
   static const otpActivateUrl = "/api/activate";
 
-  static chargeBoxListUrl(String lat, String lon, String distance) {
-    return "/api/charge-boxes/public/distance/$lat/$lon/$distance?connectorId.in=GB/T (AC)&connectorId.in=GB/T (DC)";
+  static chargeBoxListUrlForMap(String lat, String lon, String distance) {
+    return "/api/charge-boxes/public/distance/$lat/$lon/$distance"; // ?connectorId.in=GB/T (AC)&connectorId.in=GB/T (DC)";
+  }
+
+  static chargeBoxListUrl(){
+    return "/api/charge-boxes/public/filter";
   }
 
   static chargeBoxImageUrl(String id) {
@@ -27,6 +31,10 @@ class AppUrl {
 
   static uploadImage() {
     return "/api/images/upload";
+  }
+
+  static connectorTypes() {
+    return "/api/connector-types";
   }
 }
 

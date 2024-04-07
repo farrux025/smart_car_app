@@ -24,8 +24,8 @@ notWorking() {
       background: Colors.green.withOpacity(0.8));
 }
 
-openLoading() {
-  var context = MyApp.navigatorKey.currentState!.context;
+openLoading(BuildContext context) {
+  // var context = MyApp.navigatorKey.currentState!.context;
   showDialog(
       context: context,
       builder: (context) => AlertDialog(
