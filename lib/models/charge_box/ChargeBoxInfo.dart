@@ -84,7 +84,7 @@ compareChargeBox() {
   for (var element in list) {
     set.add(element);
   }
-  for (var element in set) {
-    log("Set element: ${element.name}");
-  }
+  // for (var element in set) {
+  //   log("Set element: ${element.name}");
+  // }
 }

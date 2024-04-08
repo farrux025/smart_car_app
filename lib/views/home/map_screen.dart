@@ -16,6 +16,7 @@ import 'package:smart_car_app/hive/hive_store.dart';
 import 'package:smart_car_app/main.dart';
 import 'package:smart_car_app/models/global/LocationModel.dart';
 import 'package:smart_car_app/services/charge_box_service.dart';
+import 'package:smart_car_app/services/shared_prefs.dart';
 import 'package:smart_car_app/utils/functions.dart';
 import 'package:smart_car_app/views/home/charge_box_details.dart';
 import 'package:smart_car_app/views/home/filter.dart';
@@ -125,23 +126,30 @@ class _MapScreenState extends State<MapScreen> {
                               log("onCameraPositionChanged: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
                               mainLat = cameraPosition.target.latitude;
                               mainLon = cameraPosition.target.longitude;
-                              await read.getChargeBoxesForMap(
-                                  lat: cameraPosition.target.latitude,
-                                  lon: cameraPosition.target.longitude);
-                              var horizontalSpace =
-                                  cameraPosition.zoom.horizontalSpace;
-                              var verticalSpace =
-                                  cameraPosition.zoom.verticalSpace;
-                             var zoom =
-                                  cameraPosition.zoom;
-                              _completer.future.then((value) {
-                                value
+                              var zoom = cameraPosition.zoom;
+                              _completer.future.then((ymController) {
+                                ymController
                                     .getScreenPoint(cameraPosition.target)
                                     .then((screenPoint) {
                                   log("cameraPosition.target: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
-                                  log("ZOOM: $zoom => $horizontalSpace, $verticalSpace");
+                                  log("ZOOM: $zoom");
                                   log("Screen Point: ${screenPoint?.x}, ${screenPoint?.y}");
-                                  
+                                  ymController
+                                      .getPoint(const ScreenPoint(x: 0, y: 0))
+                                      .then((sp) async {
+                                    log("SP: $sp");
+                                    var d = Geolocator.distanceBetween(
+                                        sp!.latitude,
+                                        sp.longitude,
+                                        cameraPosition.target.latitude,
+                                        cameraPosition.target.longitude);
+                                    log("Distance: $d");
+                                    await MySharedPrefs()
+                                        .saveDistance(distance: d.toString());
+                                    await read.getChargeBoxesForMap(
+                                        lat: cameraPosition.target.latitude,
+                                        lon: cameraPosition.target.longitude);
+                                  });
                                 });
                               });
                             }

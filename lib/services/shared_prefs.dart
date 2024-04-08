@@ -7,6 +7,7 @@ class MySharedPrefs {
   static const vehicleImageKey = "vehicleImageKey";
   static const vehicleImageUrlKey = "vehicleImageUrlKey";
   static const connectorTypeListKey = "connectorTypeListKey";
+  static const distanceKey = "distanceKey";
 
   saveVehicleImage({required String key, required String path}) async {
     final instance = await _sharedPrefs;
@@ -33,5 +34,16 @@ class MySharedPrefs {
     final instance = await _sharedPrefs;
     List<String>? list = instance.getStringList(connectorTypeListKey);
     return list;
+  }
+
+  saveDistance({required String distance}) async {
+    final instance = await _sharedPrefs;
+    instance.setString(distanceKey, distance);
+  }
+
+  getDistance() async {
+    final instance = await _sharedPrefs;
+    var string = instance.getString(distanceKey);
+    return string ?? "100000";
   }
 }

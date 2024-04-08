@@ -11,6 +11,7 @@ import 'package:smart_car_app/translations/locale_keys.g.dart';
 
 import '../../models/global/LocationModel.dart';
 import '../../services/charge_box_service.dart';
+import '../../services/shared_prefs.dart';
 import '../../utils/functions.dart';
 
 part 'charge_boxes_list_state.dart';
@@ -30,11 +31,13 @@ class ChargeBoxesListCubit extends Cubit<ChargeBoxesListState> {
       {required double? lat, required double? lon, int? page}) async {
     try {
       emit(ChargeBoxesListLoading());
+      String? dis = await MySharedPrefs().getDistance();
+      log("SavedDistance: $dis");
       if (lat != null || lon != null) {
         await ChargeBoxService.doGetChargeBoxesForList(
                 lat: lat.toString(),
                 lon: lon.toString(),
-                distance: "100000",
+                distance: dis ?? "100000",
                 page: page)
             .then((response) {
           if (response.statusCode == 200) {

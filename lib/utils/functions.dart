@@ -62,10 +62,14 @@ String getPhone(String phone) {
       .replaceAll(")", "");
 }
 
-String distance({required double lat, required double lon}) {
+String distance(
+    {required double lat, required double lon, double? lat1, double? lon1}) {
   String distance;
   var distanceBetween = Geolocator.distanceBetween(
-      LocationModel.latitude!, LocationModel.longitude!, lat, lon);
+      lat1 ?? LocationModel.latitude!,
+      lon1 ?? LocationModel.longitude!,
+      lat,
+      lon);
   // log("Distance between: $distanceBetween");
   if (distanceBetween.toInt() > 1000) {
     double d = distanceBetween.toInt() / 1000;

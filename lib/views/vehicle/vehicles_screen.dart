@@ -152,8 +152,9 @@ class VehiclesScreen extends StatelessWidget {
         shape:
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
         onPressed: () {
-          toast(message: LocaleKeys.ADD_VEHICLE.tr());
-          MyApp.navigatorKey.currentState?.pushNamed(Routes.addVehicle);
+          toast(message: "Ishlab chiqish jarayonida");
+          // toast(message: LocaleKeys.ADD_VEHICLE.tr());
+          // MyApp.navigatorKey.currentState?.pushNamed(Routes.addVehicle);
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
