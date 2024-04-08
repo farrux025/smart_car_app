@@ -43,7 +43,7 @@ main() async {
   // log("LIST: $list");
   runApp(EasyLocalization(
       path: 'assets/translations',
-      fallbackLocale: uzLocale,
+      fallbackLocale: ruLocale,
       assetLoader: const CodegenLoader(),
       supportedLocales: const [uzLocale, ruLocale, enLocale, kkLocale],
       child: const MyApp()));

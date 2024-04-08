@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:easy_localization/easy_localization.dart';
 import 'package:fancy_password_field/fancy_password_field.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +13,7 @@ import 'package:smart_car_app/constants/constants.dart';
 import 'package:smart_car_app/constants/routes.dart';
 import 'package:smart_car_app/cubit/register_cubit.dart';
 import 'package:smart_car_app/main.dart';
+import 'package:smart_car_app/views/profile/profile_screen.dart';
 
 import '../../translations/locale_keys.g.dart';
 import '../../utils/functions.dart';
@@ -25,7 +27,7 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext ctx) {
     return BlocProvider(
       create: (context) => RegisterCubit(),
       child: BlocBuilder<RegisterCubit, RegisterState>(
@@ -37,11 +39,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: SingleChildScrollView(
                 child: Container(
                   padding:
-                      EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
+                  EdgeInsets.symmetric(horizontal: 30.w, vertical: 20.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      xaperText(),
+                      Row(mainAxisAlignment:MainAxisAlignment.spaceBetween, children: [
+                        xaperText(),
+                        IconButton(
+                            onPressed: () =>
+                                changeLanguage(route: Routes.register,ctx: ctx),
+                            icon:
+                            Icon(Icons.language, color: AppColor.textColor,size: 26.sp,))
+                      ]),
                       SizedBox(height: 40.h),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,21 +70,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   fontWeight: FontWeight.w600,
                                   textColor: AppColor.textColor),
                               SizedBox(height: 30.h),
-                              titleTextField(title: LocaleKeys.phone_number.tr()),
+                              titleTextField(
+                                  title: LocaleKeys.phone_number.tr()),
                               Form(
                                 key: watch.formKey,
                                 child: AppTextFormField(
                                     textEditingController:
-                                        watch.phoneController,
+                                    watch.phoneController,
                                     hint: '(90) 123-45-67',
                                     inputFormatter: [Mask.PHONE_NUMBER],
                                     prefix: AppText(PREFIX,
                                         textColor: AppColor.textColor,
                                         fontWeight: FontWeight.w500),
-                                    validator: (val) => AppTextValidator(
-                                        watch.phoneController.text,
-                                        required: true,
-                                        minLength: 14),
+                                    validator: (val) =>
+                                        AppTextValidator(
+                                            watch.phoneController.text,
+                                            required: true,
+                                            minLength: 14),
                                     keyboardType: TextInputType.phone,
                                     suffixIcon: Icon(Icons.phone_android,
                                         color: AppColor.textColor,
@@ -88,23 +99,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 child: FancyPasswordField(
                                   controller: watch.passwordController,
                                   hasStrengthIndicator: false,
-                                  validator: (val) => AppTextValidator(
-                                      watch.passwordController.text,
-                                      required: true,
-                                      minLength: 4),
+                                  validator: (val) =>
+                                      AppTextValidator(
+                                          watch.passwordController.text,
+                                          required: true,
+                                          minLength: 4),
                                 ),
                               ),
                               SizedBox(height: 20.h),
-                              titleTextField(title: LocaleKeys.confirm_password.tr()),
+                              titleTextField(
+                                  title: LocaleKeys.confirm_password.tr()),
                               Form(
                                 key: watch.formKeyConfirmPass,
                                 child: FancyPasswordField(
                                   controller: watch.confirmPasswordController,
                                   hasStrengthIndicator: false,
-                                  validator: (val) => AppTextValidator(
-                                      watch.confirmPasswordController.text,
-                                      required: true,
-                                      equalText: watch.passwordController.text),
+                                  validator: (val) =>
+                                      AppTextValidator(
+                                          watch.confirmPasswordController.text,
+                                          required: true,
+                                          equalText: watch.passwordController
+                                              .text),
                                 ),
                               )
                             ],
@@ -118,9 +133,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 width: ScreenUtil().screenWidth,
                                 decoration: const BoxDecoration(
                                     gradient: LinearGradient(colors: [
-                                  AppColor.buttonLeftColor,
-                                  AppColor.buttonRightColor
-                                ])),
+                                      AppColor.buttonLeftColor,
+                                      AppColor.buttonRightColor
+                                    ])),
                                 child: MaterialButton(
                                   onPressed: () {
                                     closeKeyboard();
@@ -133,29 +148,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   height: 57.h,
                                   elevation: 3.sp,
                                   child: state is RegisterLoaded ||
-                                          state is RegisterInitial ||
-                                          state is RegisterError
+                                      state is RegisterInitial ||
+                                      state is RegisterError
                                       ? AppText(
-                                          state is RegisterError
-                                              ? LocaleKeys.error.tr()
-                                              : LocaleKeys.enter_and_procced.tr(),
-                                          textColor: state is RegisterError
-                                              ? AppColor.errorColor
-                                              : AppColor.white,
-                                          size: 14.sp,
-                                          fontWeight: FontWeight.w500)
+                                      state is RegisterError
+                                          ? LocaleKeys.error.tr()
+                                          : LocaleKeys.enter_and_procced
+                                          .tr(),
+                                      textColor: state is RegisterError
+                                          ? AppColor.errorColor
+                                          : AppColor.white,
+                                      size: 14.sp,
+                                      fontWeight: FontWeight.w500)
                                       : const SizedBox(
-                                          height: 24,
-                                          width: 24,
-                                          child: CircularProgressIndicator(
-                                              color: AppColor.white),
-                                        ),
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                        color: AppColor.white),
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 40.h),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   AppText(LocaleKeys.already_have_account.tr(),
                                       textColor: AppColor.buttonRightColor,
@@ -173,7 +189,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         MyApp.navigatorKey.currentState
                                             ?.pushNamed(Routes.login);
                                       },
-                                      child: AppText(LocaleKeys.sign_in_now.tr(),
+                                      child: AppText(
+                                          LocaleKeys.sign_in_now.tr(),
                                           textColor: AppColor.textColor,
                                           textAlign: TextAlign.start,
                                           size: 11.sp,

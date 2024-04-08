@@ -1,6 +1,10 @@
+import 'dart:developer';
+
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:smart_car_app/components/app_components.dart';
 import 'package:smart_car_app/components/app_text.dart';
 import 'package:smart_car_app/constants/color.dart';
 import 'package:smart_car_app/constants/language.dart';
@@ -119,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             subtitle: "Қазақ тілі, O'zbek, Русский язык, English",
             icon: Icons.language,
             onPressed: () {
-              _changeLanguage();
+              changeLanguage(route: Routes.home,ctx: context);
             });
       case 2:
         return settingsItem(
@@ -143,111 +147,132 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return const SizedBox();
     }
   }
+}
 
-  void _changeLanguage() {
-    var context = MyApp.navigatorKey.currentState?.context;
-    var groupValue = context?.locale;
-    showModalBottomSheet(
-      context: context!,
-      isScrollControlled: true,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
-      builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.5,
-          minChildSize: 0.4,
-          maxChildSize: 0.7,
-          builder: (context, scrollController) {
-            return StatefulBuilder(
-              builder: (context, setState) =>  Column(
-                children: [
-                  SizedBox(height: 8.h),
-                  Container(
-                      height: 3.h,
-                      width: 60.w,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
-                          color: Colors.black26),
-                      padding: EdgeInsets.symmetric(vertical: 8.h)),
-                  SizedBox(height: 8.h),
-                  Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10.h),
-                      child: AppText("Change language",
-                          textColor: AppColor.textColor,
-                          size: 16.sp,
-                          fontWeight: FontWeight.w800)),
-                  RadioListTile(
-                      value: kkLocale,
-                      groupValue: groupValue,
-                      onChanged: (value) {
+void changeLanguage({required String route, required BuildContext ctx}) {
+  var context = MyApp.navigatorKey.currentState?.context;
+  var groupValue = context?.locale;
+  showModalBottomSheet(
+    context: context!,
+    isScrollControlled: true,
+    shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12.r))),
+    builder: (context) {
+      return DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.5,
+        minChildSize: 0.4,
+        maxChildSize: 0.7,
+        builder: (context, scrollController) {
+          return StatefulBuilder(
+            builder: (context, setState) => Column(
+              children: [
+                SizedBox(height: 8.h),
+                Container(
+                    height: 3.h,
+                    width: 60.w,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.r),
+                        color: Colors.black26),
+                    padding: EdgeInsets.symmetric(vertical: 8.h)),
+                SizedBox(height: 8.h),
+                Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: AppText("Change language",
+                        textColor: AppColor.textColor,
+                        size: 16.sp,
+                        fontWeight: FontWeight.w800)),
+                RadioListTile(
+                    value: kkLocale,
+                    groupValue: groupValue,
+                    onChanged: (value) {
+                      toast(message: "Ishlab chiqish jarayonida");
+                      // groupValue = value!;
+                      // context.setLocale(kkLocale);
+                      // MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                      //     Routes.home, (route) => false);
+                    },
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: AppText("Қазақ тілі",
+                        size: 14.sp,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w500)),
+                RadioListTile(
+                    value: uzLocale,
+                    groupValue: groupValue,
+                    onChanged: (value) {
+                      toast(message: "Ishlab chiqish jarayonida");
+                      // setState(() {
+                      //   groupValue = value!;
+                      //   ctx.setLocale(uzLocale);
+                      //   log("Set state ishladi");
+                      // });
+                      // if (route == Routes.home) {
+                      //   MyApp.navigatorKey.currentState
+                      //       ?.pushNamedAndRemoveUntil(
+                      //           Routes.home, (route) => false);
+                      // } else {
+                      //   popBack();
+                      // }
+                    },
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: AppText("O'zbek",
+                        size: 14.sp,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w500)),
+                RadioListTile(
+                    value: ruLocale,
+                    groupValue: groupValue,
+                    onChanged: (value) {
+                      setState(() {
                         groupValue = value!;
-                        context.setLocale(kkLocale);
-                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                            Routes.home, (route) => false);
-                      },
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      title: AppText("Қазақ тілі",
-                          size: 14.sp,
-                          textColor: AppColor.textColor,
-                          fontWeight: FontWeight.w500)),
-                  RadioListTile(
-                      value: uzLocale,
-                      groupValue: groupValue,
-                      onChanged: (value) {
+                        ctx.setLocale(ruLocale);
+                        log("Set state ishladi");
+                      });
+                      if (route == Routes.home) {
+                        MyApp.navigatorKey.currentState
+                            ?.pushNamedAndRemoveUntil(
+                                Routes.home, (route) => false);
+                      } else {
+                        popBack();
+                      }
+                    },
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: AppText("Русский язык",
+                        size: 14.sp,
+                        textColor: AppColor.textColor,
+                        fontWeight: FontWeight.w500)),
+                RadioListTile(
+                    value: enLocale,
+                    groupValue: groupValue,
+                    onChanged: (value) {
+                      setState(() {
                         groupValue = value!;
-                        context.setLocale(uzLocale);
-                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                            Routes.home, (route) => false);
-                      },
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      title: AppText("O'zbek",
-                          size: 14.sp,
-                          textColor: AppColor.textColor,
-                          fontWeight: FontWeight.w500)),
-                  RadioListTile(
-                      value: ruLocale,
-                      groupValue: groupValue,
-                      onChanged: (value) {
-                        var buildContext = MyApp.navigatorKey.currentState?.context;
-                        groupValue = value!;
-                        buildContext?.setLocale(ruLocale);
-                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                            Routes.home, (route) => false);
-                      },
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      title: AppText("Русский язык",
-                          size: 14.sp,
-                          textColor: AppColor.textColor,
-                          fontWeight: FontWeight.w500)),
-                  RadioListTile(
-                      value: enLocale,
-                      groupValue: groupValue,
-                      onChanged: (value) {
-                        var buildContext = MyApp.navigatorKey.currentState?.context;
-                        setState(() {
-
-                          groupValue = value!;
-                          buildContext?.setLocale(enLocale);
-                        });
-                        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-                            Routes.home, (route) => false);
-                      },
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      title: Row(
-                        children: [
-                          AppText("English",
-                              size: 14.sp,
-                              textColor: AppColor.textColor,
-                              fontWeight: FontWeight.w500),
-                        ],
-                      )),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
+                        ctx.setLocale(enLocale);
+                        log("Set state ishladi");
+                      });
+                      if (route == Routes.home) {
+                        MyApp.navigatorKey.currentState
+                            ?.pushNamedAndRemoveUntil(
+                                Routes.home, (route) => false);
+                      } else {
+                        popBack();
+                      }
+                    },
+                    controlAffinity: ListTileControlAffinity.trailing,
+                    title: Row(
+                      children: [
+                        AppText("English",
+                            size: 14.sp,
+                            textColor: AppColor.textColor,
+                            fontWeight: FontWeight.w500),
+                      ],
+                    )),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
 }

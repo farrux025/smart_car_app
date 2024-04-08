@@ -128,6 +128,22 @@ class _MapScreenState extends State<MapScreen> {
                               await read.getChargeBoxesForMap(
                                   lat: cameraPosition.target.latitude,
                                   lon: cameraPosition.target.longitude);
+                              var horizontalSpace =
+                                  cameraPosition.zoom.horizontalSpace;
+                              var verticalSpace =
+                                  cameraPosition.zoom.verticalSpace;
+                             var zoom =
+                                  cameraPosition.zoom;
+                              _completer.future.then((value) {
+                                value
+                                    .getScreenPoint(cameraPosition.target)
+                                    .then((screenPoint) {
+                                  log("cameraPosition.target: ${cameraPosition.target.latitude}, ${cameraPosition.target.longitude}");
+                                  log("ZOOM: $zoom => $horizontalSpace, $verticalSpace");
+                                  log("Screen Point: ${screenPoint?.x}, ${screenPoint?.y}");
+                                  
+                                });
+                              });
                             }
                           },
                           // onTrafficChanged: (trafficLevel) {
@@ -160,7 +176,7 @@ class _MapScreenState extends State<MapScreen> {
                                         popBack();
                                         read.getChargeBoxesForMap(
                                             lat: mainLat!, lon: mainLon!);
-                                      },context),
+                                      }, context),
                                       heroTag: 'open-filter',
                                       backgroundColor:
                                           Colors.black.withOpacity(0.5),
@@ -314,6 +330,10 @@ class _MapScreenState extends State<MapScreen> {
         CameraUpdate.newCameraPosition(CameraPosition(target: _initialPoint)));
     controller.moveCamera(CameraUpdate.zoomTo(13));
     controller.toggleUserLayer(visible: true);
+    // var screenPoint = controller.getScreenPoint(_initialPoint);
+    // screenPoint.then((value) {
+    //   log("Screen Point: ${value?.x}, ${value?.y}");
+    // });
   }
 
   PlacemarkMapObject _placeMarkMapObject(
@@ -507,7 +527,7 @@ class _MapScreenState extends State<MapScreen> {
   ];
 }
 
-openFilter(ui.VoidCallback onFilterPressed,BuildContext context) async {
+openFilter(ui.VoidCallback onFilterPressed, BuildContext context) async {
   await ChargeBoxService.doGetConnectorTypes().then((response) {
     if (response.statusCode == 200) {
       List<ConnectorTypes> connectors = [];
